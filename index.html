@@ -1,63 +1,94 @@
-<div class="card">
-    <h2><i class="fa fa-map-location-dot"></i> Trip Planner</h2>
-    <p>Select your destination for instant rates and travel time.</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cool Comfort | Premium Jamaica Pickup</title>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --teal: #008080; --navy: #002b36; --gold: #ffcc00; --white: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--white); color: var(--navy); }
+        header { background: linear-gradient(135deg, var(--navy), var(--teal)); color: white; padding: 2rem; text-align: center; border-bottom: 5px solid var(--gold); }
+        .booking-card { max-width: 500px; margin: -40px auto 40px; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .input-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
+        .btn { background: var(--gold); color: var(--navy); padding: 1rem; border: none; font-weight: bold; width: 100%; border-radius: 5px; cursor: pointer; text-transform: uppercase; }
+        #price-display { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 15px; display: none; text-align: center; border: 1px dashed var(--teal); }
+        .pi-badge { background: var(--gold); padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 5px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>COOL <span style="color:var(--gold)">COMFORT</span></h1>
+    <p>Professional Taxi & Island Tours</p>
+</header>
+
+<section class="booking-card">
+    <h3><span class="pi-badge">PI</span> INSTANT FARE QUOTE</h3>
+    <div class="input-group">
+        <input type="text" id="pickup" placeholder="Pickup (e.g., MBJ Airport or Hotel Name)">
+    </div>
+    <div class="input-group">
+        <input type="text" id="destination" placeholder="Destination (e.g., Rick's Cafe)">
+    </div>
+
+    <div id="price-display">
+        <p id="distance-info" style="color:var(--teal); font-weight:bold;"></p>
+        <h2 id="usd-total" style="margin: 5px 0;">$0.00 USD</h2>
+        <h3 id="jmd-total" style="color:#777; margin: 0;">$0 JMD</h3>
+        <p style="font-size:0.7rem; color:#999; margin-top:10px;">*Price includes fuel, driver time, and vehicle maintenance.</p>
+    </div>
     
-    <label>Select Your Route:</label>
-    <select id="routeSelect" onchange="updateTripDetails()" style="width:100%; padding:12px; margin:15px 0; border-radius:5px; border:none; font-size:1.1em; background: white; color: var(--secondary-navy);">
-        <option value="0|0|0">-- Select a Destination --</option>
-        <option value="15|25|2500">MBJ Airport to Rose Hall Hotels</option>
-        <option value="10|15|1500">MBJ Airport to Montego Bay Town</option>
-        <option value="80|90|12000">MBJ Airport to Negril (7-Mile Beach)</option>
-        <option value="105|110|15000">MBJ Airport to Ocho Rios (Dunn's River)</option>
-        <option value="45|50|7500">Montego Bay to Falmouth (Cruise Port)</option>
-        <option value="custom">Custom Distance...</option>
-    </select>
-
-    <div id="customInput" style="display:none;">
-        <label>Enter Distance (km):</label>
-        <input type="number" id="kmInput" placeholder="e.g. 5" min="1">
-    </div>
-
-    <button class="btn-calc" onclick="finalCalculate()">Show Trip Details</button>
-
-    <div id="tripOutput" style="margin-top: 20px; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; display:none;">
-        <h3 id="fareResult" style="color: var(--accent-gold); margin: 0;"></h3>
-        <p id="timeResult" style="margin: 5px 0 0 0; font-size: 0.9em;"></p>
-        <p id="distResult" style="margin: 5px 0 0 0; font-size: 0.9em; color: #ccc;"></p>
-    </div>
-</div>
+    <button class="btn" onclick="sendWhatsApp()" style="margin-top:15px;">Book Ride via WhatsApp</button>
+</section>
 
 <script>
-    function updateTripDetails() {
-        const route = document.getElementById('routeSelect').value;
-        const customDiv = document.getElementById('customInput');
-        customDiv.style.display = (route === "custom") ? "block" : "none";
+    function initMap() {
+        const options = { componentRestrictions: { country: "jm" } };
+        const pAutocomplete = new google.maps.places.Autocomplete(document.getElementById('pickup'), options);
+        const dAutocomplete = new google.maps.places.Autocomplete(document.getElementById('destination'), options);
+
+        dAutocomplete.addListener('place_changed', () => {
+            const service = new google.maps.DistanceMatrixService();
+            service.getDistanceMatrix({
+                origins: [document.getElementById('pickup').value],
+                destinations: [document.getElementById('destination').value],
+                travelMode: 'DRIVING',
+            }, (response, status) => {
+                if (status === 'OK') {
+                    const data = response.rows[0].elements[0];
+                    if (data.status === "OK") {
+                        const km = data.distance.value / 1000;
+                        
+                        // PRICING LOGIC
+                        const baseFareUSD = 15.00;
+                        const ratePerKmUSD = 1.35;
+                        const exchangeRate = 156.00; 
+                        
+                        const totalUSD = baseFareUSD + (km * ratePerKmUSD);
+                        const totalJMD = totalUSD * exchangeRate;
+
+                        document.getElementById('distance-info').innerText = km.toFixed(1) + " km Trip";
+                        document.getElementById('usd-total').innerText = "$" + totalUSD.toFixed(2) + " USD";
+                        document.getElementById('jmd-total').innerText = "$" + Math.round(totalJMD).toLocaleString() + " JMD";
+                        document.getElementById('price-display').style.display = "block";
+                    }
+                }
+            });
+        });
     }
+    window.onload = initMap;
 
-    function finalCalculate() {
-        const routeValue = document.getElementById('routeSelect').value;
-        let km, mins, price;
-
-        if (routeValue === "custom") {
-            km = document.getElementById('kmInput').value;
-            if (!km || km <= 0) { alert("Please enter distance"); return; }
-            mins = Math.round(km * 1.5); // Average Jamaica traffic estimate
-            price = 500 + (km * 150); // Base + per km
-        } else if (routeValue === "0|0|0") {
-            alert("Please select a route");
-            return;
-        } else {
-            const data = routeValue.split('|');
-            km = data[0];
-            mins = data[1];
-            price = data[2];
-        }
-
-        const usd = (price / 155).toFixed(2);
-        
-        document.getElementById('tripOutput').style.display = "block";
-        document.getElementById('fareResult').innerHTML = "Price: $" + price + " JMD ($" + usd + " USD)";
-        document.getElementById('timeResult').innerHTML = "<i class='fa fa-clock'></i> Est. Time: " + mins + " minutes";
-        document.getElementById('distResult').innerHTML = "<i class='fa fa-road'></i> Distance: " + km + " km";
+    function sendWhatsApp() {
+        const pickup = document.getElementById('pickup').value;
+        const destination = document.getElementById('destination').value;
+        const price = document.getElementById('usd-total').innerText;
+        const text = `Hi Pierce, I'd like to book a Cool Comfort ride.\n\nFrom: ${pickup}\nTo: ${destination}\nQuote: ${price}`;
+        window.open(`https://wa.me/18763933246?text=${encodeURIComponent(text)}`);
     }
 </script>
+
+</body>
+</html>
