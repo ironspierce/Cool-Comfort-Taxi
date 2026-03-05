@@ -4,75 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cool Comfort | Premium Jamaica Pickup</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
+    
+    <meta name="theme-color" content="#002b36">
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Cool%20Comfort%22,%22short_name%22:%22CoolComfort%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23002b36%22,%22theme_color%22:%22%23002b36%22}">
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
         :root { --teal: #008080; --navy: #002b36; --gold: #ffcc00; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f7f7; color: var(--navy); }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f7f7; color: var(--navy); -webkit-tap-highlight-color: transparent; }
         
-        header { 
-            background: linear-gradient(135deg, var(--navy), var(--teal)); 
-            color: white; padding: 2rem 1rem; text-align: center; border-bottom: 5px solid var(--gold); 
-        }
-
+        header { background: linear-gradient(135deg, var(--navy), var(--teal)); color: white; padding: 2rem 1rem; text-align: center; border-bottom: 5px solid var(--gold); }
         .container { max-width: 600px; margin: 0 auto; padding: 0 15px; }
 
-        .booking-card { 
-            margin: -30px auto 30px; background: white; padding: 2rem; border-radius: 15px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); border: 1px solid rgba(0,128,128,0.1);
-        }
+        .booking-card { margin: -30px auto 30px; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
 
         .input-group { margin-bottom: 12px; position: relative; }
         .input-group i { position: absolute; left: 12px; top: 12px; color: var(--teal); }
-        input, select, textarea { 
-            width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #ddd; 
-            border-radius: 8px; box-sizing: border-box; font-size: 16px; 
-        }
+        input, select, textarea { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
 
-        .gps-btn {
-            background: var(--teal); color: white; border: none;
-            padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem;
-            width: 100%; margin-bottom: 15px; font-weight: bold; display: flex; 
-            align-items: center; justify-content: center; gap: 10px;
-        }
+        /* Offline Alert */
+        #offline-notice { display: none; background: #ff4444; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 1000; }
 
-        .passenger-row { display: flex; gap: 10px; margin-bottom: 15px; }
-        .passenger-box { flex: 1; }
-        .passenger-box label { font-size: 0.8rem; font-weight: bold; color: var(--teal); display: block; margin-bottom: 5px; }
-
-        /* Map Styling */
-        #map { width: 100%; height: 300px; border-radius: 10px; margin: 15px 0; display: none; border: 2px solid var(--teal); }
-
-        /* Schedule Section */
-        .schedule-box { margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--gold); }
-        .schedule-box p { margin: 0 0 10px; font-weight: bold; font-size: 0.85rem; color: var(--navy); }
-        .date-time-grid { display: flex; gap: 10px; }
-
-        /* Trip Tracking */
+        .gps-btn { background: var(--teal); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        #map { width: 100%; height: 250px; border-radius: 10px; margin: 15px 0; display: none; border: 2px solid var(--teal); }
+        
         .trip-controls { display: none; margin-top: 25px; padding-top: 20px; border-top: 2px solid #eee; }
-        .status-btn { 
-            padding: 15px; border: none; border-radius: 8px; font-weight: bold; 
-            cursor: pointer; width: 100%; margin-bottom: 10px; font-size: 1rem;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
+        .status-btn { padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-start { background: #28a745; color: white; }
         .btn-end { background: #007bff; color: white; }
 
-        .price-box { 
-            background: #fdfdfd; padding: 20px; border-radius: 10px; margin-top: 15px; 
-            display: none; text-align: center; border: 2px dashed var(--teal);
-        }
-
-        .btn-book { 
-            background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; 
-            font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; 
-            text-transform: uppercase; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; gap: 10px;
-        }
-        
+        .btn-book { background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 10px; }
         footer { text-align: center; padding: 20px; color: #777; font-size: 0.8rem; }
     </style>
 </head>
 <body>
+
+<div id="offline-notice"><i class="fa fa-wifi-slash"></i> You are currently offline. Some features may be limited.</div>
 
 <header>
     <h1>COOL <span style="color:var(--gold)">COMFORT</span></h1>
@@ -81,7 +50,7 @@
 
 <div class="container">
     <section class="booking-card">
-        <button class="gps-btn" onclick="getPreciseLocation()">
+        <button class="gps-btn" id="gpsBtn" onclick="getPreciseLocation()">
             <i class="fa fa-location-crosshairs"></i> USE MY CURRENT LOCATION
         </button>
 
@@ -95,70 +64,52 @@
             <input type="text" id="destination" placeholder="Destination">
         </div>
 
-        <div class="passenger-row">
-            <div class="passenger-box">
-                <label>Adults</label>
-                <select id="adults" onchange="calculatePrice()">
-                    <option value="1">1</option><option value="2">2</option>
-                    <option value="3">3</option><option value="4">4</option>
-                    <option value="5">5</option><option value="6">6</option>
-                </select>
-            </div>
-            <div class="passenger-box">
-                <label>Kids</label>
-                <select id="kids" onchange="calculatePrice()">
-                    <option value="0">0</option><option value="1">1</option>
-                    <option value="2">2</option><option value="3">3</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="schedule-box">
-            <p><i class="fa fa-calendar-check"></i> Schedule for Later?</p>
-            <div class="date-time-grid">
-                <input type="date" id="bookDate">
-                <input type="time" id="bookTime">
-            </div>
-        </div>
-
         <div id="map"></div>
 
-        <div id="price-box" class="price-box">
-            <div id="group-note" style="color: #d4a017; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display: none;">
-                <i class="fa fa-users"></i> Adult Group Surcharge Applied (>3 Adults)
-            </div>
-            <h2 id="usd-total" style="margin: 0; font-size: 2.2rem; color: var(--navy);">$0.00 USD</h2>
-            <h4 id="jmd-total" style="color: #666; font-weight: 400; margin: 5px 0;">$0 JMD</h4>
+        <div id="price-box" style="display:none; text-align:center; padding: 15px; border: 2px dashed var(--teal); border-radius: 10px; margin: 10px 0;">
+            <h2 id="usd-total" style="margin: 0; color: var(--navy);">$0.00 USD</h2>
+            <h4 id="jmd-total" style="color: #666; margin: 5px 0;">$0 JMD</h4>
         </div>
         
-        <button class="btn-book" id="mainActionBtn" onclick="handleBooking()">
-            <i class="fab fa-whatsapp"></i> BOOK WITH PIERCE
+        <button class="btn-book" onclick="handleBooking()">
+            <i class="fab fa-whatsapp"></i> BOOK VIA WHATSAPP
         </button>
 
         <div class="trip-controls" id="tripControls">
-            <h4 style="text-align:center; color: var(--teal);"><i class="fa fa-route"></i> Live Trip Tracking</h4>
-            
-            <button class="status-btn btn-start" onclick="updateTripStatus('Journey Begun 🚗')">
-                <i class="fa fa-play"></i> JOURNEY BEGINS
-            </button>
-            
-            <button class="status-btn btn-end" onclick="updateTripStatus('Journey Completed ✅')">
-                <i class="fa fa-check-double"></i> JOURNEY COMPLETED
-            </button>
-
-            <div class="input-group" style="margin-top: 10px;">
-                <i class="fa fa-comment" style="top: 12px;"></i>
-                <textarea id="tripComment" placeholder="Add optional comment..." rows="2" style="padding-left: 35px;"></textarea>
-            </div>
+            <button class="status-btn btn-start" onclick="updateTripStatus('Journey Begun 🚗')">BEGIN JOURNEY</button>
+            <button class="status-btn btn-end" onclick="updateTripStatus('Journey Completed ✅')">END JOURNEY</button>
+            <textarea id="tripComment" placeholder="Add optional comment..." rows="2" style="margin-top:10px; padding: 10px;"></textarea>
         </div>
     </section>
 </div>
 
-<footer>
-    &copy; 2026 Cool Comfort | Pierce Irons: 876-393-3246
-</footer>
-
 <script>
+    // 1. OFFLINE DETECTION
+    window.addEventListener('online',  updateOnlineStatus);
+    window.addEventListener('offline', updateOnlineStatus);
+
+    function updateOnlineStatus() {
+        const notice = document.getElementById('offline-notice');
+        const gpsBtn = document.getElementById('gpsBtn');
+        if (navigator.onLine) {
+            notice.style.display = 'none';
+            gpsBtn.disabled = false;
+            gpsBtn.style.opacity = "1";
+        } else {
+            notice.style.display = 'block';
+            gpsBtn.disabled = true;
+            gpsBtn.style.opacity = "0.5";
+        }
+    }
+
+    // 2. SERVICE WORKER FOR CACHING (The "Magic" for Offline)
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log("SW failed", err));
+        });
+    }
+
+    // 3. CORE LOGIC (Map, Pricing, WhatsApp)
     let map, directionsService, directionsRenderer, geocoder;
 
     function initMap() {
@@ -168,11 +119,46 @@
         geocoder = new google.maps.Geocoder();
         directionsService = new google.maps.DirectionsService();
         directionsRenderer = new google.maps.DirectionsRenderer({
-            map: new google.maps.Map(document.getElementById('map'), { zoom: 8, center: { lat: 18.1, lng: -77.3 } }),
-            polylineOptions: { strokeColor: "#008080", strokeWeight: 5 }
+            map: new google.maps.Map(document.getElementById('map'), { zoom: 8, center: { lat: 18.1, lng: -77.3 } })
         });
         pAuto.addListener('place_changed', calculatePrice);
         dAuto.addListener('place_changed', calculatePrice);
+    }
+
+    function calculatePrice() {
+        if (!navigator.onLine) return; // Map/Price requires API
+        const origin = document.getElementById('pickup').value;
+        const destination = document.getElementById('destination').value;
+        if (!origin || !destination) return;
+
+        directionsService.route({
+            origin: origin, destination: destination, travelMode: 'DRIVING',
+        }, (response, status) => {
+            if (status === 'OK') {
+                directionsRenderer.setDirections(response);
+                document.getElementById('map').style.display = "block";
+                const km = response.routes[0].legs[0].distance.value / 1000;
+                const totalUSD = 10.00 + (km * 1.00);
+                document.getElementById('usd-total').innerText = "$" + totalUSD.toFixed(2) + " USD";
+                document.getElementById('jmd-total').innerText = "$" + Math.round(totalUSD * 156).toLocaleString() + " JMD";
+                document.getElementById('price-box').style.display = "block";
+            }
+        });
+    }
+
+    function handleBooking() {
+        const p = document.getElementById('pickup').value;
+        const d = document.getElementById('destination').value;
+        const total = document.getElementById('usd-total').innerText;
+        document.getElementById('tripControls').style.display = 'block';
+        const msg = `Hi Pierce! Booking request:\n📍 FROM: ${p}\n🏁 TO: ${d}\n💰 QUOTE: ${total}`;
+        window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
+    }
+
+    function updateTripStatus(statusText) {
+        const comment = document.getElementById('tripComment').value;
+        const msg = `STATUS: ${statusText}\n💬 COMMENT: ${comment || 'No comment'}`;
+        window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
     function getPreciseLocation() {
@@ -187,61 +173,6 @@
                 });
             });
         }
-    }
-
-    function calculatePrice() {
-        const origin = document.getElementById('pickup').value;
-        const destination = document.getElementById('destination').value;
-        const adults = parseInt(document.getElementById('adults').value);
-        if (!origin || !destination) return;
-
-        directionsService.route({
-            origin: origin, destination: destination, travelMode: 'DRIVING',
-        }, (response, status) => {
-            if (status === 'OK') {
-                directionsRenderer.setDirections(response);
-                document.getElementById('map').style.display = "block";
-                const km = response.routes[0].legs[0].distance.value / 1000;
-                
-                // Pricing Logic: Kids free, Adults > 3 = $1.30/km
-                const ratePerKm = (adults > 3) ? 1.30 : 1.00;
-                const totalUSD = 10.00 + (km * ratePerKm);
-                
-                document.getElementById('usd-total').innerText = "$" + totalUSD.toFixed(2) + " USD";
-                document.getElementById('jmd-total').innerText = "$" + Math.round(totalUSD * 156).toLocaleString() + " JMD";
-                document.getElementById('group-note').style.display = (adults > 3) ? "block" : "none";
-                document.getElementById('price-box').style.display = "block";
-            }
-        });
-    }
-
-    function handleBooking() {
-        const p = document.getElementById('pickup').value;
-        const d = document.getElementById('destination').value;
-        const date = document.getElementById('bookDate').value;
-        const time = document.getElementById('bookTime').value;
-        const total = document.getElementById('usd-total').innerText;
-        if(!p || !d) return alert("Select locations!");
-
-        document.getElementById('tripControls').style.display = 'block';
-        
-        let msg = `Hi Pierce! Cool Comfort Booking:\n📍 FROM: ${p}\n🏁 TO: ${d}\n👥 PAX: ${document.getElementById('adults').value} Adults, ${document.getElementById('kids').value} Kids\n💰 QUOTE: ${total}\n`;
-        if(date && time) msg += `📅 SCHEDULED: ${date} at ${time}`;
-        else msg += `⚡ REQUEST: Right Now`;
-
-        window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
-    }
-
-    function updateTripStatus(statusText) {
-        const p = document.getElementById('pickup').value;
-        const d = document.getElementById('destination').value;
-        const comment = document.getElementById('tripComment').value;
-        const timeStr = new Date().toLocaleTimeString();
-
-        let msg = `STATUS: ${statusText}\n📍 ROUTE: ${p} to ${d}\n⏰ TIME: ${timeStr}`;
-        if(comment) msg += `\n💬 COMMENT: ${comment}`;
-
-        window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
     window.onload = initMap;
