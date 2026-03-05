@@ -29,25 +29,14 @@
             border-radius: 6px; box-sizing: border-box; font-size: 16px; 
         }
 
-        /* Local Discount Toggle */
-        .toggle-container {
-            display: flex; justify-content: space-between; align-items: center;
-            background: #fff8e1; padding: 10px 15px; border-radius: 8px; margin-bottom: 15px;
-            border: 1px solid var(--gold);
+        /* GPS Button Styling */
+        .gps-btn {
+            background: var(--teal); color: white; border: none;
+            padding: 12px; border-radius: 8px; cursor: pointer; font-size: 1rem;
+            width: 100%; margin-bottom: 15px; font-weight: bold; display: flex; 
+            align-items: center; justify-content: center; gap: 10px; transition: 0.3s;
         }
-
-        .switch { position: relative; display: inline-block; width: 50px; height: 24px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { 
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc; transition: .4s; border-radius: 24px;
-        }
-        .slider:before { 
-            position: absolute; content: ""; height: 16px; width: 16px; left: 4px; bottom: 4px;
-            background-color: white; transition: .4s; border-radius: 50%;
-        }
-        input:checked + .slider { background-color: var(--teal); }
-        input:checked + .slider:before { transform: translateX(26px); }
+        .gps-btn:hover { background: var(--navy); transform: scale(1.02); }
 
         #map { width: 100%; height: 250px; border-radius: 10px; margin: 15px 0; display: none; border: 2px solid var(--teal); }
         
@@ -69,39 +58,33 @@
 
 <header>
     <h1>COOL <span style="color:var(--gold)">COMFORT</span></h1>
-    <p>Premium Jamaica Pickup & Tours</p>
+    <p>Professional Jamaica Pickup & Tours</p>
 </header>
 
 <div class="container">
     <section class="booking-card">
         
-        <div class="toggle-container">
-            <span style="font-weight: bold; color: var(--navy); font-size: 0.9rem;">
-                <i class="fa fa-id-card"></i> Jamaican Resident Discount?
-            </span>
-            <label class="switch">
-                <input type="checkbox" id="localToggle" onchange="calculatePrice()">
-                <span class="slider"></span>
-            </label>
-        </div>
+        <button class="gps-btn" onclick="getPreciseLocation()">
+            <i class="fa fa-location-crosshairs"></i> USE MY CURRENT LOCATION
+        </button>
 
         <div class="input-group">
             <i class="fa fa-map-pin"></i>
-            <input type="text" id="pickup" placeholder="Pickup Location">
+            <input type="text" id="pickup" placeholder="Pickup Location (e.g., MBJ Airport)">
         </div>
         
         <div class="input-group">
             <i class="fa fa-flag-checkered"></i>
-            <input type="text" id="destination" placeholder="Destination">
+            <input type="text" id="destination" placeholder="Destination (e.g., Hotel Name)">
         </div>
 
-        <div style="margin: 15px 0; padding: 10px; border: 1px solid #eee; border-radius: 8px;">
-            <p style="margin: 0 0 10px; font-weight: bold; font-size: 0.85rem; color: var(--teal);">
-                <i class="fa fa-calendar-check"></i> Schedule for Later (Optional)
+        <div style="margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--gold);">
+            <p style="margin: 0 0 10px; font-weight: bold; font-size: 0.9rem; color: var(--navy);">
+                <i class="fa fa-clock"></i> Schedule for Later?
             </p>
             <div style="display: flex; gap: 10px;">
-                <input type="date" id="bookDate" style="padding-left: 10px;">
-                <input type="time" id="bookTime" style="padding-left: 10px;">
+                <input type="date" id="bookDate">
+                <input type="time" id="bookTime">
             </div>
         </div>
 
@@ -112,9 +95,9 @@
                 <span id="dist-ui"></span>
                 <span id="time-ui"></span>
             </div>
-            <h2 id="usd-total" style="margin: 0; font-size: 2.2rem;">$0.00 USD</h2>
+            <h2 id="usd-total" style="margin: 0; font-size: 2.2rem; color: var(--navy);">$0.00 USD</h2>
             <h4 id="jmd-total" style="margin: 5px 0; color: #666; font-weight: 400;">$0 JMD</h4>
-            <p id="rate-note" style="font-size: 0.7rem; color: #aaa; margin-top: 10px;"></p>
+            <p style="font-size: 0.7rem; color: #aaa; margin-top: 10px;">*Rates: $10 Base + $1/km</p>
         </div>
         
         <button class="btn-book" onclick="sendWhatsApp()" style="margin-top:20px;">
@@ -128,13 +111,14 @@
 </footer>
 
 <script>
-    let map, directionsService, directionsRenderer;
+    let map, directionsService, directionsRenderer, geocoder;
 
     function initMap() {
         const options = { componentRestrictions: { country: "jm" } };
         const pAuto = new google.maps.places.Autocomplete(document.getElementById('pickup'), options);
         const dAuto = new google.maps.places.Autocomplete(document.getElementById('destination'), options);
 
+        geocoder = new google.maps.Geocoder();
         directionsService = new google.maps.DirectionsService();
         directionsRenderer = new google.maps.DirectionsRenderer({
             map: new google.maps.Map(document.getElementById('map'), { zoom: 8, center: { lat: 18.1, lng: -77.3 } }),
@@ -145,10 +129,23 @@
         dAuto.addListener('place_changed', calculatePrice);
     }
 
+    function getPreciseLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const latlng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                geocoder.geocode({ location: latlng }, (results, status) => {
+                    if (status === "OK" && results[0]) {
+                        document.getElementById('pickup').value = results[0].formatted_address;
+                        calculatePrice();
+                    }
+                });
+            }, () => alert("Location access denied. Please type your location manually."));
+        }
+    }
+
     function calculatePrice() {
         const origin = document.getElementById('pickup').value;
         const destination = document.getElementById('destination').value;
-        const isLocal = document.getElementById('localToggle').checked;
         
         if (!origin || !destination) return;
 
@@ -162,18 +159,14 @@
                 const leg = response.routes[0].legs[0];
                 const km = leg.distance.value / 1000;
                 
-                // PRICING: Standard ($10 + $1/km) vs Local ($8 + $0.80/km)
-                const baseUSD = isLocal ? 8.00 : 10.00;
-                const perKmUSD = isLocal ? 0.80 : 1.00;
-                
-                const totalUSD = baseUSD + (km * perKmUSD);
+                // PRICING: $10 Base + $1/km
+                const totalUSD = 10.00 + (km * 1.00);
                 const totalJMD = totalUSD * 156;
 
                 document.getElementById('dist-ui').innerHTML = `<i class="fa fa-road"></i> ${km.toFixed(1)} km`;
                 document.getElementById('time-ui').innerHTML = `<i class="fa fa-clock"></i> ${leg.duration.text}`;
                 document.getElementById('usd-total').innerText = "$" + totalUSD.toFixed(2) + " USD";
                 document.getElementById('jmd-total').innerText = "$" + Math.round(totalJMD).toLocaleString() + " JMD";
-                document.getElementById('rate-note').innerText = `*${isLocal ? 'Local' : 'Standard'} Rate Applied`;
                 document.getElementById('price-box').style.display = "block";
             }
         });
@@ -187,16 +180,15 @@
         const date = document.getElementById('bookDate').value;
         const time = document.getElementById('bookTime').value;
         const quote = document.getElementById('usd-total').innerText;
-        const isLocal = document.getElementById('localToggle').checked;
 
-        if(!p || !d) return alert("Please enter locations!");
+        if(!p || !d) return alert("Please enter locations first!");
         
-        let msg = `Hi Pierce! I'd like a Cool Comfort ride.\n\n📍 FROM: ${p}\n🏁 TO: ${d}\n💰 QUOTE: ${quote} (${isLocal ? 'Local' : 'Standard'})\n`;
+        let msg = `Hi Pierce! I'd like a Cool Comfort ride.\n\n📍 FROM: ${p}\n🏁 TO: ${d}\n💰 QUOTE: ${quote}\n`;
         
         if(date && time) {
             msg += `📅 SCHEDULED FOR: ${date} at ${time}`;
         } else {
-            msg += `⚡ REQUESTING FOR: Right Now`;
+            msg += `⚡ REQUEST: Right Now`;
         }
 
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
