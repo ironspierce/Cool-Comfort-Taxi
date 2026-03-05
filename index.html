@@ -18,38 +18,52 @@
         header { background: linear-gradient(135deg, var(--navy), var(--teal)); color: white; padding: 2rem 1rem; text-align: center; border-bottom: 5px solid var(--gold); }
         .container { max-width: 600px; margin: 0 auto; padding: 0 15px; }
 
-        .booking-card { margin: -30px auto 30px; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); }
+        .booking-card { margin: -30px auto 30px; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); border: 1px solid rgba(0,128,128,0.1); }
 
         .input-group { margin-bottom: 12px; position: relative; }
         .input-group i { position: absolute; left: 12px; top: 12px; color: var(--teal); }
-        input, select, textarea { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; }
+        input, select, textarea { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
 
-        /* Offline Alert */
+        .passenger-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .passenger-box { flex: 1; }
+        .passenger-box label { font-size: 0.8rem; font-weight: bold; color: var(--teal); display: block; margin-bottom: 5px; }
+
+        .schedule-box { margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--gold); }
+        .schedule-box p { margin: 0 0 10px; font-weight: bold; font-size: 0.85rem; }
+
         #offline-notice { display: none; background: #ff4444; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 1000; }
+        #emergency-call { display: none; background: #d9534f; color: white; text-align: center; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-decoration: none; font-weight: bold; }
 
         .gps-btn { background: var(--teal); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        
         #map { width: 100%; height: 250px; border-radius: 10px; margin: 15px 0; display: none; border: 2px solid var(--teal); }
         
-        .trip-controls { display: none; margin-top: 25px; padding-top: 20px; border-top: 2px solid #eee; }
-        .status-btn { padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        .btn-start { background: #28a745; color: white; }
-        .btn-end { background: #007bff; color: white; }
+        .price-box { background: #fdfdfd; padding: 20px; border-radius: 10px; margin-top: 15px; display: none; text-align: center; border: 2px dashed var(--teal); }
+        .btn-book { background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 1.1rem; }
 
-        .btn-book { background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .trip-controls { display: none; margin-top: 25px; padding-top: 20px; border-top: 2px solid #eee; }
+        .status-btn { padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; color: white; }
+        .btn-start { background: #28a745; }
+        .btn-end { background: #007bff; }
+
         footer { text-align: center; padding: 20px; color: #777; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
-<div id="offline-notice"><i class="fa fa-wifi-slash"></i> You are currently offline. Some features may be limited.</div>
+<div id="offline-notice"><i class="fa fa-wifi-slash"></i> Offline Mode: Map and Pricing disabled.</div>
 
 <header>
     <h1>COOL <span style="color:var(--gold)">COMFORT</span></h1>
-    <p>Premium Jamaica Pickup & Tours</p>
+    <p>Professional Jamaica Pickup & Tours</p>
 </header>
 
 <div class="container">
     <section class="booking-card">
+        <a href="tel:18763933246" id="emergency-call">
+            <i class="fa fa-phone-alt"></i> POOR SIGNAL? CALL PIERCE DIRECTLY
+        </a>
+
         <button class="gps-btn" id="gpsBtn" onclick="getPreciseLocation()">
             <i class="fa fa-location-crosshairs"></i> USE MY CURRENT LOCATION
         </button>
@@ -64,52 +78,75 @@
             <input type="text" id="destination" placeholder="Destination">
         </div>
 
+        <div class="passenger-row">
+            <div class="passenger-box">
+                <label>Adults</label>
+                <select id="adults" onchange="calculatePrice()">
+                    <option value="1">1</option><option value="2">2</option>
+                    <option value="3">3</option><option value="4">4</option>
+                    <option value="5">5</option><option value="6">6</option>
+                </select>
+            </div>
+            <div class="passenger-box">
+                <label>Kids</label>
+                <select id="kids" onchange="calculatePrice()">
+                    <option value="0">0</option><option value="1">1</option>
+                    <option value="2">2</option><option value="3">3</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="schedule-box">
+            <p><i class="fa fa-clock"></i> Pre-Order / Schedule Trip</p>
+            <div style="display: flex; gap: 10px;">
+                <input type="date" id="bookDate">
+                <input type="time" id="bookTime">
+            </div>
+        </div>
+
         <div id="map"></div>
 
-        <div id="price-box" style="display:none; text-align:center; padding: 15px; border: 2px dashed var(--teal); border-radius: 10px; margin: 10px 0;">
-            <h2 id="usd-total" style="margin: 0; color: var(--navy);">$0.00 USD</h2>
+        <div id="price-box" class="price-box">
+            <div id="group-note" style="color: #d4a017; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display: none;">
+                <i class="fa fa-users"></i> Group Rate Applied (3+ Adults)
+            </div>
+            <h2 id="usd-total" style="margin: 0; color: var(--navy); font-size: 2.2rem;">$0.00 USD</h2>
             <h4 id="jmd-total" style="color: #666; margin: 5px 0;">$0 JMD</h4>
         </div>
         
         <button class="btn-book" onclick="handleBooking()">
-            <i class="fab fa-whatsapp"></i> BOOK VIA WHATSAPP
+            <i class="fab fa-whatsapp"></i> BOOK WITH PIERCE
         </button>
 
         <div class="trip-controls" id="tripControls">
-            <button class="status-btn btn-start" onclick="updateTripStatus('Journey Begun 🚗')">BEGIN JOURNEY</button>
-            <button class="status-btn btn-end" onclick="updateTripStatus('Journey Completed ✅')">END JOURNEY</button>
-            <textarea id="tripComment" placeholder="Add optional comment..." rows="2" style="margin-top:10px; padding: 10px;"></textarea>
+            <h4 style="text-align:center; color: var(--teal); margin-bottom: 15px;">Live Trip Status</h4>
+            <button class="status-btn btn-start" onclick="updateTripStatus('Journey Begun 🚗')"><i class="fa fa-play"></i> JOURNEY BEGINS</button>
+            <button class="status-btn btn-end" onclick="updateTripStatus('Journey Completed ✅')"><i class="fa fa-check-double"></i> JOURNEY COMPLETED</button>
+            <textarea id="tripComment" placeholder="Optional journey comment..." rows="2" style="margin-top: 10px; padding: 10px;"></textarea>
         </div>
     </section>
 </div>
 
+<footer>
+    &copy; 2026 Cool Comfort | Pierce Irons: 876-393-3246
+</footer>
+
 <script>
-    // 1. OFFLINE DETECTION
     window.addEventListener('online',  updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
 
     function updateOnlineStatus() {
         const notice = document.getElementById('offline-notice');
-        const gpsBtn = document.getElementById('gpsBtn');
+        const emergency = document.getElementById('emergency-call');
         if (navigator.onLine) {
             notice.style.display = 'none';
-            gpsBtn.disabled = false;
-            gpsBtn.style.opacity = "1";
+            emergency.style.display = 'none';
         } else {
             notice.style.display = 'block';
-            gpsBtn.disabled = true;
-            gpsBtn.style.opacity = "0.5";
+            emergency.style.display = 'block';
         }
     }
 
-    // 2. SERVICE WORKER FOR CACHING (The "Magic" for Offline)
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log("SW failed", err));
-        });
-    }
-
-    // 3. CORE LOGIC (Map, Pricing, WhatsApp)
     let map, directionsService, directionsRenderer, geocoder;
 
     function initMap() {
@@ -126,10 +163,12 @@
     }
 
     function calculatePrice() {
-        if (!navigator.onLine) return; // Map/Price requires API
+        if (!navigator.onLine) return;
         const origin = document.getElementById('pickup').value;
         const destination = document.getElementById('destination').value;
         if (!origin || !destination) return;
+
+        const adults = parseInt(document.getElementById('adults').value);
 
         directionsService.route({
             origin: origin, destination: destination, travelMode: 'DRIVING',
@@ -138,9 +177,14 @@
                 directionsRenderer.setDirections(response);
                 document.getElementById('map').style.display = "block";
                 const km = response.routes[0].legs[0].distance.value / 1000;
-                const totalUSD = 10.00 + (km * 1.00);
+                
+                // NEW TRIGGER: 3 or more adults triggers the $1.30 group rate
+                const rate = (adults >= 3) ? 1.30 : 1.00;
+                const totalUSD = 10.00 + (km * rate);
+                
                 document.getElementById('usd-total').innerText = "$" + totalUSD.toFixed(2) + " USD";
                 document.getElementById('jmd-total').innerText = "$" + Math.round(totalUSD * 156).toLocaleString() + " JMD";
+                document.getElementById('group-note').style.display = (adults >= 3) ? "block" : "none";
                 document.getElementById('price-box').style.display = "block";
             }
         });
@@ -149,15 +193,26 @@
     function handleBooking() {
         const p = document.getElementById('pickup').value;
         const d = document.getElementById('destination').value;
+        const date = document.getElementById('bookDate').value;
+        const time = document.getElementById('bookTime').value;
         const total = document.getElementById('usd-total').innerText;
+        
+        if(!p || !d) return alert("Please select locations!");
+
         document.getElementById('tripControls').style.display = 'block';
-        const msg = `Hi Pierce! Booking request:\n📍 FROM: ${p}\n🏁 TO: ${d}\n💰 QUOTE: ${total}`;
+        
+        let msg = `Hi Pierce! Cool Comfort Booking:\n📍 FROM: ${p}\n🏁 TO: ${d}\n👥 ADULTS: ${document.getElementById('adults').value}, KIDS: ${document.getElementById('kids').value}\n💰 QUOTE: ${total}\n`;
+        
+        if(date && time) msg += `📅 SCHEDULED: ${date} at ${time}`;
+        else msg += `⚡ REQUEST: Immediate Pickup`;
+
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
     function updateTripStatus(statusText) {
         const comment = document.getElementById('tripComment').value;
-        const msg = `STATUS: ${statusText}\n💬 COMMENT: ${comment || 'No comment'}`;
+        const timeNow = new Date().toLocaleTimeString();
+        const msg = `UPDATE: ${statusText}\n⏰: ${timeNow}\n💬 COMMENT: ${comment || 'None'}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
