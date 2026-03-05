@@ -29,19 +29,22 @@
             border-radius: 8px; box-sizing: border-box; font-size: 16px; 
         }
         
+        .gps-btn {
+            background: #e0f2f2; color: var(--teal); border: 1px solid var(--teal);
+            padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 0.85rem;
+            margin-bottom: 15px; display: inline-flex; align-items: center; gap: 5px; font-weight: bold;
+        }
+        .gps-btn:hover { background: var(--teal); color: white; }
+
         #map { width: 100%; height: 300px; border-radius: 10px; margin: 20px 0; display: none; border: 2px solid var(--teal); }
         
-        /* Tour Booking Section Styles */
         .tours-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px; }
         .tour-item { 
             background: white; border: 1px solid #ddd; border-radius: 10px; padding: 15px; 
             text-align: center; transition: 0.3s; cursor: pointer; border-bottom: 4px solid var(--teal);
         }
         .tour-item:hover { transform: translateY(-5px); border-bottom: 4px solid var(--gold); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .tour-item i { font-size: 2rem; color: var(--teal); margin-bottom: 10px; }
-        .tour-item h4 { margin: 5px 0; color: var(--navy); }
-        .tour-item p { font-size: 0.85rem; color: #666; margin: 0; }
-
+        
         .btn { 
             background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; 
             font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; 
@@ -67,16 +70,25 @@
 
 <div class="container">
     <section class="booking-card">
-        <h3 style="margin-top:0;"><span class="pi-badge">PI</span> INSTANT QUOTE</h3>
+        <h3 style="margin-top:0;"><span class="pi-badge">PI</span> BOOK A RIDE</h3>
         
+        <button class="gps-btn" onclick="getPreciseLocation()">
+            <i class="fa fa-location-crosshairs"></i> Use My Precise Location
+        </button>
+
         <div class="input-group">
             <i class="fa fa-location-dot"></i>
-            <input type="text" id="pickup" placeholder="Enter Pickup Location">
+            <input type="text" id="pickup" placeholder="Enter Pickup (e.g., MBJ Airport)">
         </div>
         
         <div class="input-group">
             <i class="fa fa-flag-checkered"></i>
-            <input type="text" id="destination" placeholder="Enter Destination">
+            <input type="text" id="destination" placeholder="Enter Destination (e.g., Hotel Name)">
+        </div>
+
+        <div class="input-group">
+            <i class="fa fa-plane-arrival"></i>
+            <input type="text" id="flight" placeholder="Flight Number (Optional for Airport Pickups)">
         </div>
 
         <div id="map"></div>
@@ -95,27 +107,17 @@
         </button>
     </section>
 
-    <h2 style="text-align: center; color: var(--navy); margin-top: 40px;">Popular Tours & Transfers</h2>
+    <h2 style="text-align: center; color: var(--navy);">Quick Tour Booking</h2>
     <div class="tours-grid">
         <div class="tour-item" onclick="quickBook('MBJ Airport', 'Negril (7-Mile Beach)')">
-            <i class="fa fa-shuttle-van"></i>
+            <i class="fa fa-shuttle-van" style="font-size:2rem; color:var(--teal);"></i>
             <h4>MBJ to Negril</h4>
             <p>Approx. 90 mins | $90 USD</p>
         </div>
         <div class="tour-item" onclick="quickBook('Montego Bay', 'Dunn\'s River Falls, Ocho Rios')">
-            <i class="fa fa-water"></i>
-            <h4>Dunn's River Tour</h4>
+            <i class="fa fa-water" style="font-size:2rem; color:var(--teal);"></i>
+            <h4>Dunn's River</h4>
             <p>Approx. 105 mins | $115 USD</p>
-        </div>
-        <div class="tour-item" onclick="quickBook('Montego Bay', 'Rick\'s Cafe, Negril')">
-            <i class="fa fa-sun"></i>
-            <h4>Rick's Cafe Sunset</h4>
-            <p>Approx. 95 mins | $95 USD</p>
-        </div>
-        <div class="tour-item" onclick="quickBook('Montego Bay', 'Blue Hole, Ocho Rios')">
-            <i class="fa fa-mountain"></i>
-            <h4>Blue Hole Adventure</h4>
-            <p>Approx. 115 mins | $120 USD</p>
         </div>
     </div>
 </div>
@@ -125,13 +127,14 @@
 </footer>
 
 <script>
-    let map, directionsService, directionsRenderer;
+    let map, directionsService, directionsRenderer, geocoder;
 
     function initMap() {
         const options = { componentRestrictions: { country: "jm" } };
-        const pAutocomplete = new google.maps.places.Autocomplete(document.getElementById('pickup'), options);
-        const dAutocomplete = new google.maps.places.Autocomplete(document.getElementById('destination'), options);
+        new google.maps.places.Autocomplete(document.getElementById('pickup'), options);
+        new google.maps.places.Autocomplete(document.getElementById('destination'), options);
 
+        geocoder = new google.maps.Geocoder();
         map = new google.maps.Map(document.getElementById('map'), {
             zoom: 8, center: { lat: 18.1096, lng: -77.2975 }
         });
@@ -141,8 +144,22 @@
             map: map, polylineOptions: { strokeColor: "#008080", strokeWeight: 6 }
         });
 
-        pAutocomplete.addListener('place_changed', calculateRoute);
-        dAutocomplete.addListener('place_changed', calculateRoute);
+        document.getElementById('pickup').addEventListener('blur', calculateRoute);
+        document.getElementById('destination').addEventListener('blur', calculateRoute);
+    }
+
+    function getPreciseLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                const latlng = { lat: position.coords.latitude, lng: position.coords.longitude };
+                geocoder.geocode({ location: latlng }, (results, status) => {
+                    if (status === "OK" && results[0]) {
+                        document.getElementById('pickup').value = results[0].formatted_address;
+                        calculateRoute();
+                    }
+                });
+            }, () => alert("Could not get location. Please enable GPS."));
+        }
     }
 
     function calculateRoute() {
@@ -167,7 +184,6 @@
                 document.getElementById('usd-total').innerText = "$" + totalUSD.toFixed(2) + " USD";
                 document.getElementById('jmd-total').innerText = "$" + Math.round(totalJMD).toLocaleString() + " JMD";
                 document.getElementById('price-display').style.display = "block";
-                document.getElementById('price-display').scrollIntoView({ behavior: 'smooth' });
             }
         });
     }
@@ -183,12 +199,13 @@
     function sendWhatsApp() {
         const pickup = document.getElementById('pickup').value;
         const destination = document.getElementById('destination').value;
+        const flight = document.getElementById('flight').value;
         const price = document.getElementById('usd-total').innerText;
         const duration = document.getElementById('duration-info').innerText.replace('-- min', '').trim();
         
         if(!pickup || !destination) { alert("Please enter locations first!"); return; }
 
-        const text = `Hi Pierce! I'd like to book a Cool Comfort ride.\n\n📍 FROM: ${pickup}\n🏁 TO: ${destination}\n⏱️ TIME: ${duration}\n💰 QUOTE: ${price}\n\nPlease confirm availability!`;
+        const text = `Hi Pierce! I'd like to book a Cool Comfort ride.\n\n📍 FROM: ${pickup}\n🏁 TO: ${destination}\n✈️ FLIGHT: ${flight || 'N/A'}\n⏱️ TIME: ${duration}\n💰 QUOTE: ${price}\n\nPlease confirm availability!`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(text)}`);
     }
 </script>
