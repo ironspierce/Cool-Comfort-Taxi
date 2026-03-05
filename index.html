@@ -8,13 +8,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root { --teal: #008080; --navy: #002b36; --gold: #ffcc00; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: var(--white); color: var(--navy); }
-        header { background: linear-gradient(135deg, var(--navy), var(--teal)); color: white; padding: 2rem; text-align: center; border-bottom: 5px solid var(--gold); }
-        .booking-card { max-width: 500px; margin: -40px auto 40px; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f4f4; color: var(--navy); }
+        header { background: linear-gradient(135deg, var(--navy), var(--teal)); color: white; padding: 2.5rem; text-align: center; border-bottom: 5px solid var(--gold); }
+        
+        .booking-card { max-width: 600px; margin: -40px auto 40px; background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .input-group { margin-bottom: 15px; }
-        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
-        .btn { background: var(--gold); color: var(--navy); padding: 1rem; border: none; font-weight: bold; width: 100%; border-radius: 5px; cursor: pointer; text-transform: uppercase; }
+        input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 16px; }
+        
+        /* Map Container Styling */
+        #map { width: 100%; height: 250px; border-radius: 8px; margin-top: 15px; display: none; border: 2px solid var(--teal); }
+        
+        .btn { background: var(--gold); color: var(--navy); padding: 1rem; border: none; font-weight: bold; width: 100%; border-radius: 5px; cursor: pointer; text-transform: uppercase; font-size: 1rem; transition: 0.3s; }
+        .btn:hover { background: #e6b800; transform: translateY(-2px); }
+        
         #price-display { background: #f9f9f9; padding: 15px; border-radius: 8px; margin-top: 15px; display: none; text-align: center; border: 1px dashed var(--teal); }
+        .info-row { display: flex; justify-content: space-around; margin-bottom: 10px; font-weight: bold; color: var(--teal); }
         .pi-badge { background: var(--gold); padding: 2px 6px; border-radius: 4px; font-weight: bold; margin-right: 5px; }
     </style>
 </head>
@@ -22,11 +30,11 @@
 
 <header>
     <h1>COOL <span style="color:var(--gold)">COMFORT</span></h1>
-    <p>Professional Taxi & Island Tours</p>
+    <p><i class="fa fa-car"></i> Professional Taxi & Island Tours</p>
 </header>
 
 <section class="booking-card">
-    <h3><span class="pi-badge">PI</span> INSTANT FARE QUOTE</h3>
+    <h3><span class="pi-badge">PI</span> INSTANT FARE & ROUTE</h3>
     <div class="input-group">
         <input type="text" id="pickup" placeholder="Pickup (e.g., MBJ Airport or Hotel Name)">
     </div>
@@ -34,58 +42,92 @@
         <input type="text" id="destination" placeholder="Destination (e.g., Rick's Cafe)">
     </div>
 
+    <div id="map"></div>
+
     <div id="price-display">
-        <p id="distance-info" style="color:var(--teal); font-weight:bold;"></p>
-        <h2 id="usd-total" style="margin: 5px 0;">$0.00 USD</h2>
+        <div class="info-row">
+            <span id="distance-info"><i class="fa fa-road"></i> 0 km</span>
+            <span id="duration-info"><i class="fa fa-clock"></i> 0 mins</span>
+        </div>
+        <h2 id="usd-total" style="margin: 5px 0; color: var(--navy);">$0.00 USD</h2>
         <h3 id="jmd-total" style="color:#777; margin: 0;">$0 JMD</h3>
-        <p style="font-size:0.7rem; color:#999; margin-top:10px;">*Price includes fuel, driver time, and vehicle maintenance.</p>
+        <p style="font-size:0.7rem; color:#999; margin-top:10px;">*Price includes fuel, 24/7 service, and A/C comfort.</p>
     </div>
     
-    <button class="btn" onclick="sendWhatsApp()" style="margin-top:15px;">Book Ride via WhatsApp</button>
+    <button class="btn" onclick="sendWhatsApp()" style="margin-top:15px;">
+        <i class="fab fa-whatsapp"></i> Book Ride via WhatsApp
+    </button>
 </section>
 
 <script>
+    let map, directionsService, directionsRenderer;
+
     function initMap() {
         const options = { componentRestrictions: { country: "jm" } };
         const pAutocomplete = new google.maps.places.Autocomplete(document.getElementById('pickup'), options);
         const dAutocomplete = new google.maps.places.Autocomplete(document.getElementById('destination'), options);
 
-        dAutocomplete.addListener('place_changed', () => {
-            const service = new google.maps.DistanceMatrixService();
-            service.getDistanceMatrix({
-                origins: [document.getElementById('pickup').value],
-                destinations: [document.getElementById('destination').value],
-                travelMode: 'DRIVING',
-            }, (response, status) => {
-                if (status === 'OK') {
-                    const data = response.rows[0].elements[0];
-                    if (data.status === "OK") {
-                        const km = data.distance.value / 1000;
-                        
-                        // PRICING LOGIC
-                        const baseFareUSD = 15.00;
-                        const ratePerKmUSD = 1.35;
-                        const exchangeRate = 156.00; 
-                        
-                        const totalUSD = baseFareUSD + (km * ratePerKmUSD);
-                        const totalJMD = totalUSD * exchangeRate;
+        // Initialize Map and Directions Services
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 7,
+            center: { lat: 18.1096, lng: -77.2975 }, // Center of Jamaica
+            disableDefaultUI: true
+        });
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer({
+            map: map,
+            polylineOptions: { strokeColor: "#008080", strokeWeight: 5 }
+        });
 
-                        document.getElementById('distance-info').innerText = km.toFixed(1) + " km Trip";
-                        document.getElementById('usd-total').innerText = "$" + totalUSD.toFixed(2) + " USD";
-                        document.getElementById('jmd-total').innerText = "$" + Math.round(totalJMD).toLocaleString() + " JMD";
-                        document.getElementById('price-display').style.display = "block";
-                    }
-                }
-            });
+        dAutocomplete.addListener('place_changed', calculateRoute);
+        pAutocomplete.addListener('place_changed', calculateRoute);
+    }
+
+    function calculateRoute() {
+        const origin = document.getElementById('pickup').value;
+        const destination = document.getElementById('destination').value;
+
+        if (!origin || !destination) return;
+
+        directionsService.route({
+            origin: origin,
+            destination: destination,
+            travelMode: 'DRIVING',
+        }, (response, status) => {
+            if (status === 'OK') {
+                directionsRenderer.setDirections(response);
+                document.getElementById('map').style.display = "block";
+                
+                const data = response.routes[0].legs[0];
+                const km = data.distance.value / 1000;
+                const durationText = data.duration.text;
+                
+                // PIERCE IRONS PRICING LOGIC
+                const baseFareUSD = 15.00;
+                const ratePerKmUSD = 1.35;
+                const exchangeRate = 156.00; 
+                
+                const totalUSD = baseFareUSD + (km * ratePerKmUSD);
+                const totalJMD = totalUSD * exchangeRate;
+
+                // Update UI
+                document.getElementById('distance-info').innerHTML = `<i class="fa fa-road"></i> ${km.toFixed(1)} km`;
+                document.getElementById('duration-info').innerHTML = `<i class="fa fa-clock"></i> ${durationText}`;
+                document.getElementById('usd-total').innerText = "$" + totalUSD.toFixed(2) + " USD";
+                document.getElementById('jmd-total').innerText = "$" + Math.round(totalJMD).toLocaleString() + " JMD";
+                document.getElementById('price-display').style.display = "block";
+            }
         });
     }
+
     window.onload = initMap;
 
     function sendWhatsApp() {
         const pickup = document.getElementById('pickup').value;
         const destination = document.getElementById('destination').value;
         const price = document.getElementById('usd-total').innerText;
-        const text = `Hi Pierce, I'd like to book a Cool Comfort ride.\n\nFrom: ${pickup}\nTo: ${destination}\nQuote: ${price}`;
+        const duration = document.getElementById('duration-info').innerText;
+        const text = `Hi Pierce, I'd like to book a Cool Comfort ride.\n\n📍 From: ${pickup}\n🏁 To: ${destination}\n⏱️ Est. Time: ${duration}\n💰 Quote: ${price}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(text)}`);
     }
 </script>
