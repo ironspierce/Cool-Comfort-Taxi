@@ -36,7 +36,19 @@
             align-items: center; justify-content: center; gap: 10px;
         }
 
-        /* Trip Tracking Buttons */
+        .passenger-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .passenger-box { flex: 1; }
+        .passenger-box label { font-size: 0.8rem; font-weight: bold; color: var(--teal); display: block; margin-bottom: 5px; }
+
+        /* Map Styling */
+        #map { width: 100%; height: 300px; border-radius: 10px; margin: 15px 0; display: none; border: 2px solid var(--teal); }
+
+        /* Schedule Section */
+        .schedule-box { margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px; border-left: 4px solid var(--gold); }
+        .schedule-box p { margin: 0 0 10px; font-weight: bold; font-size: 0.85rem; color: var(--navy); }
+        .date-time-grid { display: flex; gap: 10px; }
+
+        /* Trip Tracking */
         .trip-controls { display: none; margin-top: 25px; padding-top: 20px; border-top: 2px solid #eee; }
         .status-btn { 
             padding: 15px; border: none; border-radius: 8px; font-weight: bold; 
@@ -45,7 +57,7 @@
         }
         .btn-start { background: #28a745; color: white; }
         .btn-end { background: #007bff; color: white; }
-        
+
         .price-box { 
             background: #fdfdfd; padding: 20px; border-radius: 10px; margin-top: 15px; 
             display: none; text-align: center; border: 2px dashed var(--teal);
@@ -64,7 +76,7 @@
 
 <header>
     <h1>COOL <span style="color:var(--gold)">COMFORT</span></h1>
-    <p>Professional Jamaica Pickup & Tours</p>
+    <p>Premium Jamaica Pickup & Tours</p>
 </header>
 
 <div class="container">
@@ -83,9 +95,38 @@
             <input type="text" id="destination" placeholder="Destination">
         </div>
 
+        <div class="passenger-row">
+            <div class="passenger-box">
+                <label>Adults</label>
+                <select id="adults" onchange="calculatePrice()">
+                    <option value="1">1</option><option value="2">2</option>
+                    <option value="3">3</option><option value="4">4</option>
+                    <option value="5">5</option><option value="6">6</option>
+                </select>
+            </div>
+            <div class="passenger-box">
+                <label>Kids</label>
+                <select id="kids" onchange="calculatePrice()">
+                    <option value="0">0</option><option value="1">1</option>
+                    <option value="2">2</option><option value="3">3</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="schedule-box">
+            <p><i class="fa fa-calendar-check"></i> Schedule for Later?</p>
+            <div class="date-time-grid">
+                <input type="date" id="bookDate">
+                <input type="time" id="bookTime">
+            </div>
+        </div>
+
         <div id="map"></div>
 
         <div id="price-box" class="price-box">
+            <div id="group-note" style="color: #d4a017; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display: none;">
+                <i class="fa fa-users"></i> Adult Group Surcharge Applied (>3 Adults)
+            </div>
             <h2 id="usd-total" style="margin: 0; font-size: 2.2rem; color: var(--navy);">$0.00 USD</h2>
             <h4 id="jmd-total" style="color: #666; font-weight: 400; margin: 5px 0;">$0 JMD</h4>
         </div>
@@ -95,7 +136,7 @@
         </button>
 
         <div class="trip-controls" id="tripControls">
-            <h4 style="text-align:center; color: var(--teal);"><i class="fa fa-route"></i> Live Trip Status</h4>
+            <h4 style="text-align:center; color: var(--teal);"><i class="fa fa-route"></i> Live Trip Tracking</h4>
             
             <button class="status-btn btn-start" onclick="updateTripStatus('Journey Begun 🚗')">
                 <i class="fa fa-play"></i> JOURNEY BEGINS
@@ -107,11 +148,15 @@
 
             <div class="input-group" style="margin-top: 10px;">
                 <i class="fa fa-comment" style="top: 12px;"></i>
-                <textarea id="tripComment" placeholder="Add optional comment (e.g. Flight delayed, extra stop...)" rows="2" style="padding-left: 35px;"></textarea>
+                <textarea id="tripComment" placeholder="Add optional comment..." rows="2" style="padding-left: 35px;"></textarea>
             </div>
         </div>
     </section>
 </div>
+
+<footer>
+    &copy; 2026 Cool Comfort | Pierce Irons: 876-393-3246
+</footer>
 
 <script>
     let map, directionsService, directionsRenderer, geocoder;
@@ -147,6 +192,7 @@
     function calculatePrice() {
         const origin = document.getElementById('pickup').value;
         const destination = document.getElementById('destination').value;
+        const adults = parseInt(document.getElementById('adults').value);
         if (!origin || !destination) return;
 
         directionsService.route({
@@ -156,9 +202,14 @@
                 directionsRenderer.setDirections(response);
                 document.getElementById('map').style.display = "block";
                 const km = response.routes[0].legs[0].distance.value / 1000;
-                const totalUSD = 10.00 + (km * 1.00);
+                
+                // Pricing Logic: Kids free, Adults > 3 = $1.30/km
+                const ratePerKm = (adults > 3) ? 1.30 : 1.00;
+                const totalUSD = 10.00 + (km * ratePerKm);
+                
                 document.getElementById('usd-total').innerText = "$" + totalUSD.toFixed(2) + " USD";
                 document.getElementById('jmd-total').innerText = "$" + Math.round(totalUSD * 156).toLocaleString() + " JMD";
+                document.getElementById('group-note').style.display = (adults > 3) ? "block" : "none";
                 document.getElementById('price-box').style.display = "block";
             }
         });
@@ -167,12 +218,17 @@
     function handleBooking() {
         const p = document.getElementById('pickup').value;
         const d = document.getElementById('destination').value;
+        const date = document.getElementById('bookDate').value;
+        const time = document.getElementById('bookTime').value;
+        const total = document.getElementById('usd-total').innerText;
         if(!p || !d) return alert("Select locations!");
 
-        // Show trip controls after initial booking intent
         document.getElementById('tripControls').style.display = 'block';
         
-        const msg = `Hi Pierce! Booking request:\n📍 FROM: ${p}\n🏁 TO: ${d}\n💰 QUOTE: ${document.getElementById('usd-total').innerText}`;
+        let msg = `Hi Pierce! Cool Comfort Booking:\n📍 FROM: ${p}\n🏁 TO: ${d}\n👥 PAX: ${document.getElementById('adults').value} Adults, ${document.getElementById('kids').value} Kids\n💰 QUOTE: ${total}\n`;
+        if(date && time) msg += `📅 SCHEDULED: ${date} at ${time}`;
+        else msg += `⚡ REQUEST: Right Now`;
+
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
@@ -180,9 +236,9 @@
         const p = document.getElementById('pickup').value;
         const d = document.getElementById('destination').value;
         const comment = document.getElementById('tripComment').value;
-        const time = new Date().toLocaleTimeString();
+        const timeStr = new Date().toLocaleTimeString();
 
-        let msg = `STATUS UPDATE: ${statusText}\n📍 ROUTE: ${p} to ${d}\n⏰ TIME: ${time}`;
+        let msg = `STATUS: ${statusText}\n📍 ROUTE: ${p} to ${d}\n⏰ TIME: ${timeStr}`;
         if(comment) msg += `\n💬 COMMENT: ${comment}`;
 
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
