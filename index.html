@@ -1,176 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort Taxi | Pierce Irons</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        :root {
-            --primary-teal: #004b57;
-            --secondary-navy: #001f3f;
-            --accent-gold: #ffd700;
-            --text-white: #ffffff;
-        }
+<div class="card">
+    <h2><i class="fa fa-map-location-dot"></i> Trip Planner</h2>
+    <p>Select your destination for instant rates and travel time.</p>
+    
+    <label>Select Your Route:</label>
+    <select id="routeSelect" onchange="updateTripDetails()" style="width:100%; padding:12px; margin:15px 0; border-radius:5px; border:none; font-size:1.1em; background: white; color: var(--secondary-navy);">
+        <option value="0|0|0">-- Select a Destination --</option>
+        <option value="15|25|2500">MBJ Airport to Rose Hall Hotels</option>
+        <option value="10|15|1500">MBJ Airport to Montego Bay Town</option>
+        <option value="80|90|12000">MBJ Airport to Negril (7-Mile Beach)</option>
+        <option value="105|110|15000">MBJ Airport to Ocho Rios (Dunn's River)</option>
+        <option value="45|50|7500">Montego Bay to Falmouth (Cruise Port)</option>
+        <option value="custom">Custom Distance...</option>
+    </select>
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            color: var(--secondary-navy);
-            line-height: 1.6;
-        }
-
-        /* Header & Branding */
-        header {
-            background: linear-gradient(135deg, var(--primary-teal), var(--secondary-navy));
-            color: var(--accent-gold);
-            padding: 40px 20px;
-            text-align: center;
-            border-bottom: 5px solid var(--accent-gold);
-        }
-
-        .logo-text { font-size: 2.5em; font-weight: bold; margin: 0; text-transform: uppercase; letter-spacing: 2px; }
-        .tagline { color: var(--text-white); font-style: italic; margin-top: 10px; }
-
-        /* Main Container */
-        .container { max-width: 800px; margin: 20px auto; padding: 20px; }
-
-        /* Rates & Calculator Card */
-        .card {
-            background: var(--primary-teal);
-            color: var(--text-white);
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            margin-bottom: 30px;
-        }
-
-        .card h2 { color: var(--accent-gold); border-bottom: 2px solid var(--accent-gold); padding-bottom: 10px; }
-
-        input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            margin: 15px 0;
-            border-radius: 5px;
-            border: none;
-            font-size: 1.1em;
-        }
-
-        .btn-calc {
-            background: var(--accent-gold);
-            color: var(--secondary-navy);
-            border: none;
-            padding: 15px;
-            width: 100%;
-            font-weight: bold;
-            font-size: 1.1em;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-
-        .btn-calc:hover { background: #e6c200; transform: scale(1.02); }
-
-        /* Services Grid */
-        .services { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .service-item {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 5px solid var(--primary-teal);
-            text-align: center;
-        }
-
-        /* Floating WhatsApp Button */
-        .whatsapp-float {
-            position: fixed;
-            width: 65px;
-            height: 65px;
-            bottom: 30px;
-            right: 30px;
-            background-color: #25d366;
-            color: #FFF;
-            border-radius: 50px;
-            text-align: center;
-            font-size: 35px;
-            box-shadow: 2px 5px 15px rgba(0,0,0,0.3);
-            z-index: 1000;
-            transition: 0.3s;
-        }
-        .whatsapp-float:hover { transform: scale(1.1); }
-        .whatsapp-float i { margin-top: 15px; }
-
-        /* Footer */
-        footer { text-align: center; padding: 40px 20px; font-size: 0.9em; color: #666; }
-
-        @media (max-width: 600px) {
-            .services { grid-template-columns: 1fr; }
-            .logo-text { font-size: 1.8em; }
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="logo-text">Cool Comfort Taxi</div>
-        <div class="tagline">Professional Pickup Service | Jamaica</div>
-        <p style="color: var(--accent-gold); font-weight: bold; margin-top: 20px;">
-            <i class="fa fa-phone"></i> 876-393-3246
-        </p>
-    </header>
-
-    <div class="container">
-        
-        <div class="card">
-            <h2><i class="fa fa-calculator"></i> Quick Fare Estimate</h2>
-            <p>Local Rates starting from <strong>$50 JMD</strong></p>
-            <label>Enter Distance (Kilometers):</label>
-            <input type="number" id="kmInput" placeholder="e.g. 5" min="1">
-            <button class="btn-calc" onclick="calculateFare()">Calculate Price</button>
-            <h3 id="fareResult" style="margin-top: 20px; text-align: center;"></h3>
-        </div>
-
-        <h2>Our Services</h2>
-        <div class="services">
-            <div class="service-item"><i class="fa fa-plane"></i><br>Airport Transfers</div>
-            <div class="service-item"><i class="fa fa-map-marked-alt"></i><br>Island Tours</div>
-            <div class="service-item"><i class="fa fa-hotel"></i><br>Hotel Pickups</div>
-            <div class="service-item"><i class="fa fa-clock"></i><br>24/7 Availability</div>
-        </div>
-
-        <div style="margin-top: 30px; text-align: center;">
-            <p>⭐ Trusted by International Travelers | Professional Driver: <strong>Pierce Irons</strong></p>
-        </div>
-
+    <div id="customInput" style="display:none;">
+        <label>Enter Distance (km):</label>
+        <input type="number" id="kmInput" placeholder="e.g. 5" min="1">
     </div>
 
-    <footer>
-        &copy; 2026 Cool Comfort Taxi Jamaica. All Rights Reserved.<br>
-        Live Rates in USD & JMD
-    </footer>
+    <button class="btn-calc" onclick="finalCalculate()">Show Trip Details</button>
 
-    <a href="https://wa.me/18763933246?text=Hi%20Pierce,%20I'd%20like%20to%20book%20a%20ride!" class="whatsapp-float" target="_blank">
-        <i class="fab fa-whatsapp"></i>
-    </a>
+    <div id="tripOutput" style="margin-top: 20px; background: rgba(255,255,255,0.1); padding: 15px; border-radius: 8px; display:none;">
+        <h3 id="fareResult" style="color: var(--accent-gold); margin: 0;"></h3>
+        <p id="timeResult" style="margin: 5px 0 0 0; font-size: 0.9em;"></p>
+        <p id="distResult" style="margin: 5px 0 0 0; font-size: 0.9em; color: #ccc;"></p>
+    </div>
+</div>
 
-    <script>
-        function calculateFare() {
-            const km = document.getElementById('kmInput').value;
-            if (km > 0) {
-                const baseRate = 500; // Starting JMD
-                const ratePerKm = 150; // JMD per km
-                const totalJMD = baseRate + (km * ratePerKm);
-                const totalUSD = (totalJMD / 155).toFixed(2); // Estimated conversion
-                
-                document.getElementById('fareResult').innerHTML = 
-                    "Estimate: $" + totalJMD + " JMD (approx. $" + totalUSD + " USD)";
-            } else {
-                alert("Please enter a valid distance.");
-            }
+<script>
+    function updateTripDetails() {
+        const route = document.getElementById('routeSelect').value;
+        const customDiv = document.getElementById('customInput');
+        customDiv.style.display = (route === "custom") ? "block" : "none";
+    }
+
+    function finalCalculate() {
+        const routeValue = document.getElementById('routeSelect').value;
+        let km, mins, price;
+
+        if (routeValue === "custom") {
+            km = document.getElementById('kmInput').value;
+            if (!km || km <= 0) { alert("Please enter distance"); return; }
+            mins = Math.round(km * 1.5); // Average Jamaica traffic estimate
+            price = 500 + (km * 150); // Base + per km
+        } else if (routeValue === "0|0|0") {
+            alert("Please select a route");
+            return;
+        } else {
+            const data = routeValue.split('|');
+            km = data[0];
+            mins = data[1];
+            price = data[2];
         }
-    </script>
 
-</body>
-</html>
+        const usd = (price / 155).toFixed(2);
+        
+        document.getElementById('tripOutput').style.display = "block";
+        document.getElementById('fareResult').innerHTML = "Price: $" + price + " JMD ($" + usd + " USD)";
+        document.getElementById('timeResult').innerHTML = "<i class='fa fa-clock'></i> Est. Time: " + mins + " minutes";
+        document.getElementById('distResult').innerHTML = "<i class='fa fa-road'></i> Distance: " + km + " km";
+    }
+</script>
