@@ -12,47 +12,63 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --teal: #008080; --navy: #002b36; --gold: #ffcc00; --white: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f4f7f7; color: var(--navy); -webkit-tap-highlight-color: transparent; }
+        :root { --teal: #008080; --navy: #002b36; --gold: #ffcc00; --white: #ffffff; --light-bg: #f4f7f7; --text-color: #002b36; --border-color: #ddd; }
+        
+        /* Dark Mode Support */
+        body.dark { --teal: #4db6ac; --navy: #0e3b43; --white: #212121; --light-bg: #121212; --text-color: #e0e0e0; --border-color: #444; }
+
+        /* Font Update: Times New Roman */
+        body { font-family: 'Times New Roman', Times, serif; margin: 0; background: var(--light-bg); color: var(--text-color); -webkit-tap-highlight-color: transparent; }
         
         header { background: linear-gradient(135deg, var(--navy), var(--teal)); color: white; padding: 2.5rem 1rem; text-align: center; border-bottom: 5px solid var(--gold); }
-        .motto { font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px; color: var(--gold); font-weight: bold; opacity: 0.9; }
+        .motto { font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px; color: var(--gold); font-weight: bold; }
 
         .container { max-width: 600px; margin: 0 auto; padding: 0 15px; }
-        .booking-card { margin: -30px auto 30px; background: white; padding: 2rem; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); border: 1px solid rgba(0,128,128,0.1); }
+        .booking-card { margin: -30px auto 30px; background: var(--white); padding: 2rem; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); border: 1px solid rgba(0,128,128,0.1); }
 
         .input-group { margin-bottom: 12px; position: relative; }
         .input-group i { position: absolute; left: 12px; top: 12px; color: var(--teal); }
-        input, select, textarea { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; }
+        input, select { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; box-sizing: border-box; background: var(--white); color: var(--text-color); font-family: 'Times New Roman', serif; }
 
         .passenger-row { display: flex; gap: 10px; margin-bottom: 15px; }
         .passenger-box { flex: 1; }
-        .passenger-box label { font-size: 0.8rem; font-weight: bold; color: var(--teal); display: block; margin-bottom: 5px; }
+        .passenger-box label { font-size: 0.9rem; font-weight: bold; color: var(--teal); display: block; margin-bottom: 5px; }
 
-        #offline-notice { display: none; background: #ff4444; color: white; text-align: center; padding: 10px; font-weight: bold; position: sticky; top: 0; z-index: 1000; }
-        #emergency-call { display: none; background: #d9534f; color: white; text-align: center; padding: 15px; border-radius: 8px; margin-bottom: 15px; text-decoration: none; font-weight: bold; }
-
-        .gps-btn { background: var(--teal); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .gps-btn { background: var(--teal); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 15px; font-weight: bold; display: flex; align-items: center; justify-content: center; gap: 10px; font-family: 'Times New Roman', serif; font-size: 1rem; }
+        
         #map { width: 100%; height: 250px; border-radius: 10px; margin: 15px 0; display: none; border: 2px solid var(--teal); }
         
-        .price-box { background: #fdfdfd; padding: 20px; border-radius: 10px; margin-top: 15px; display: none; text-align: center; border: 2px dashed var(--teal); }
-        .btn-book { background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 1.1rem; }
+        .price-box { background: var(--light-bg); padding: 20px; border-radius: 10px; margin-top: 15px; display: none; text-align: center; border: 2px dashed var(--teal); }
+        #calculating-fare { font-size: 1rem; color: #777; margin-top: 10px; display: none; }
+        
+        .btn-book { background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; display: flex; justify-content: center; align-items: center; gap: 10px; font-size: 1.2rem; font-family: 'Times New Roman', serif; }
 
-        .trip-controls { display: none; margin-top: 25px; padding-top: 20px; border-top: 2px solid #eee; }
-        .status-btn { padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; width: 100%; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 10px; color: white; }
-        .btn-start { background: #28a745; }
-        .btn-end { background: #007bff; }
+        .quick-selects { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; justify-content: center; }
+        .quick-btn { background: var(--navy); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 0.9rem; font-weight: bold; display: flex; align-items: center; gap: 5px; font-family: 'Times New Roman', serif; }
 
-        footer { text-align: center; padding: 30px 20px; color: #777; font-size: 0.8rem; line-height: 1.5; }
+        .currency-switch { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 15px 0; font-size: 1rem; font-weight: bold; }
+        .currency-switch input[type="checkbox"] { display: none; }
+        .currency-switch label { position: relative; width: 40px; height: 20px; background: #ddd; border-radius: 10px; cursor: pointer; }
+        .currency-switch label::after { content: ''; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.3s; }
+        .currency-switch input:checked + label { background: var(--gold); }
+        .currency-switch input:checked + label::after { transform: translateX(20px); }
+
+        .mode-toggles { display: flex; gap: 10px; justify-content: center; margin: 15px 0; }
+        .toggle-btn { background: var(--border-color); color: var(--text-color); border: none; padding: 8px 15px; border-radius: 20px; cursor: pointer; font-size: 0.9rem; font-weight: bold; font-family: 'Times New Roman', serif; }
+        .toggle-btn.active { background: var(--teal); color: white; }
+
+        footer { text-align: center; padding: 30px 20px; color: #777; font-size: 0.9rem; line-height: 1.5; }
         .privacy-link { color: var(--teal); text-decoration: none; font-weight: bold; }
         
         #privacyModal { display:none; position:fixed; z-index:2000; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,0.8); overflow:auto; }
-        .modal-content { background:white; margin:15% auto; padding:30px; border-radius:15px; width:85%; max-width:500px; line-height:1.6; position: relative; }
+        .modal-content { background:var(--white); margin:15% auto; padding:30px; border-radius:15px; width:85%; max-width:500px; line-height:1.6; position: relative; color: var(--text-color); }
+        
+        #how-it-works { background: var(--light-bg); padding: 20px; border-radius: 10px; margin-top: 15px; display: none; text-align: left; }
+        #how-it-works h4 { color: var(--teal); margin: 0 0 10px 0; text-align: center; }
+        #how-it-works ol { margin: 0; padding-left: 20px; font-size: 1rem; }
     </style>
 </head>
 <body>
-
-<div id="offline-notice"><i class="fa fa-wifi-slash"></i> Offline Mode: Map and Pricing disabled.</div>
 
 <header>
     <h1>COOL <span style="color:var(--gold)">COMFORT</span></h1>
@@ -61,9 +77,17 @@
 
 <div class="container">
     <section class="booking-card">
-        <a href="tel:18763933246" id="emergency-call">
-            <i class="fa fa-phone-alt"></i> POOR SIGNAL? CALL PIERCE DIRECTLY
-        </a>
+        
+        <div class="mode-toggles">
+            <button class="toggle-btn active" id="btn-light" onclick="toggleMode('light')">Light Mode</button>
+            <button class="toggle-btn" id="btn-dark" onclick="toggleMode('dark')">Dark Mode</button>
+        </div>
+
+        <div class="quick-selects">
+            <button class="quick-btn" onclick="quickDestination('MBJ Airport')"><i class="fa fa-plane-arrival"></i> MBJ Airport</button>
+            <button class="quick-btn" onclick="quickDestination('Ocho Rios Pier')"><i class="fa fa-ship"></i> Ochi Pier</button>
+            <button class="quick-btn" onclick="quickDestination('Negril 7-Mile')"><i class="fa fa-umbrella-beach"></i> Negril 7-Mile</button>
+        </div>
 
         <button class="gps-btn" id="gpsBtn" onclick="getPreciseLocation()">
             <i class="fa fa-location-crosshairs"></i> USE MY CURRENT LOCATION
@@ -71,12 +95,12 @@
 
         <div class="input-group">
             <i class="fa fa-map-pin"></i>
-            <input type="text" id="pickup" placeholder="Pickup Location">
+            <input type="text" id="pickup" placeholder="Pickup Location" required>
         </div>
         
         <div class="input-group">
             <i class="fa fa-flag-checkered"></i>
-            <input type="text" id="destination" placeholder="Destination">
+            <input type="text" id="destination" placeholder="Destination" required>
         </div>
 
         <div class="passenger-row">
@@ -98,23 +122,34 @@
         </div>
 
         <div id="map"></div>
+        <div id="calculating-fare"><i class="fa fa-spinner fa-spin"></i> Calculating fare...</div>
 
         <div id="price-box" class="price-box">
-            <div id="group-note" style="color: #d4a017; font-size: 0.8rem; font-weight: bold; margin-bottom: 5px; display: none;">
+            <div id="group-note" style="color: #d4a017; font-size: 0.9rem; font-weight: bold; margin-bottom: 5px; display: none;">
                 <i class="fa fa-users"></i> Group Rate Applied (3+ Adults)
             </div>
-            <h2 id="usd-total" style="margin: 0; color: var(--navy); font-size: 2.2rem;">$0.00 USD</h2>
-            <h4 id="jmd-total" style="color: #666; margin: 5px 0;">$0 JMD</h4>
+            
+            <div class="currency-switch">
+                <span>USD</span>
+                <input type="checkbox" id="currSwitch" onchange="calculatePrice()">
+                <label for="currSwitch"></label>
+                <span>JMD</span>
+            </div>
+
+            <h2 id="total-price" style="margin: 0; color: var(--navy); font-size: 2.2rem;">$0.00 USD</h2>
         </div>
         
         <button class="btn-book" onclick="handleBooking()">
             <i class="fab fa-whatsapp"></i> BOOK WITH PIERCE
         </button>
 
-        <div class="trip-controls" id="tripControls">
-            <h4 style="text-align:center; color: var(--teal); margin-bottom: 15px;">Live Trip Status</h4>
-            <button class="status-btn btn-start" onclick="updateTripStatus('Journey Begun 🚗')"><i class="fa fa-play"></i> JOURNEY BEGINS</button>
-            <button class="status-btn btn-end" onclick="updateTripStatus('Journey Completed ✅')"><i class="fa fa-check-double"></i> JOURNEY COMPLETED</button>
+        <div id="how-it-works">
+            <h4>How It Works</h4>
+            <ol>
+                <li><strong>Calculate:</strong> Enter your locations to see the fare.</li>
+                <li><strong>Confirm:</strong> Click the WhatsApp button to send your request.</li>
+                <li><strong>Chat:</strong> Pierce will confirm your pickup time instantly.</li>
+            </ol>
         </div>
     </section>
 </div>
@@ -128,14 +163,14 @@
     <div class="modal-content">
         <span onclick="document.getElementById('privacyModal').style.display='none'" style="float:right; font-size:28px; font-weight:bold; cursor:pointer;">&times;</span>
         <h2 style="color:var(--teal)">Privacy Policy</h2>
-        <p><strong>1. Data Use:</strong> We use Google Maps API to calculate fares. We do not store your location history.</p>
-        <p><strong>2. Contact:</strong> Booking details are sent via WhatsApp to Pierce Irons for service fulfillment.</p>
+        <p><strong>1. Data Use:</strong> We use Google Maps API to calculate fares based on location. We do not save your location data.</p>
+        <p><strong>2. Service:</strong> Booking details are sent via WhatsApp to Pierce Irons for service fulfillment.</p>
     </div>
 </div>
 
 <script>
-    // Logic for Pricing, Maps and WhatsApp integration remains as previously defined
     let map, directionsService, directionsRenderer, geocoder;
+    let isJMD = false;
 
     function initMap() {
         const options = { componentRestrictions: { country: "jm" } };
@@ -146,8 +181,20 @@
         directionsRenderer = new google.maps.DirectionsRenderer({
             map: new google.maps.Map(document.getElementById('map'), { zoom: 8, center: { lat: 18.1, lng: -77.3 } })
         });
+        
         pAuto.addListener('place_changed', calculatePrice);
         dAuto.addListener('place_changed', calculatePrice);
+    }
+
+    const pickupInput = document.getElementById('pickup');
+    pickupInput.addEventListener('focus', function() {
+        if(!map) initMap();
+    });
+
+    function quickDestination(locationName) {
+        document.getElementById('destination').value = locationName;
+        if(!map) initMap();
+        setTimeout(calculatePrice, 500); 
     }
 
     function calculatePrice() {
@@ -156,17 +203,29 @@
         if (!origin || !destination) return;
         const adults = parseInt(document.getElementById('adults').value);
 
+        document.getElementById('calculating-fare').style.display = 'block';
+        document.getElementById('price-box').style.display = 'none';
+
         directionsService.route({
             origin: origin, destination: destination, travelMode: 'DRIVING',
         }, (response, status) => {
+            document.getElementById('calculating-fare').style.display = 'none';
+            
             if (status === 'OK') {
                 directionsRenderer.setDirections(response);
                 document.getElementById('map').style.display = "block";
                 const km = response.routes[0].legs[0].distance.value / 1000;
                 const rate = (adults >= 3) ? 1.30 : 1.00;
-                const totalUSD = 10.00 + (km * rate);
-                document.getElementById('usd-total').innerText = "$" + totalUSD.toFixed(2) + " USD";
-                document.getElementById('jmd-total').innerText = "$" + Math.round(totalUSD * 156).toLocaleString() + " JMD";
+                let totalUSD = 10.00 + (km * rate);
+                let totalJMD = Math.round(totalUSD * 156).toLocaleString();
+
+                isJMD = document.getElementById('currSwitch').checked;
+                if(isJMD) {
+                    document.getElementById('total-price').innerText = "$" + totalJMD + " JMD";
+                } else {
+                    document.getElementById('total-price').innerText = "$" + totalUSD.toFixed(2) + " USD";
+                }
+
                 document.getElementById('group-note').style.display = (adults >= 3) ? "block" : "none";
                 document.getElementById('price-box').style.display = "block";
             }
@@ -176,19 +235,33 @@
     function handleBooking() {
         const p = document.getElementById('pickup').value;
         const d = document.getElementById('destination').value;
-        const total = document.getElementById('usd-total').innerText;
-        if(!p || !d) return alert("Please select locations!");
-        document.getElementById('tripControls').style.display = 'block';
-        let msg = `Hi Pierce! Cool Comfort Booking:\n📍 FROM: ${p}\n🏁 TO: ${d}\n👥 ADULTS: ${document.getElementById('adults').value}\n💰 QUOTE: ${total}`;
+        const total = document.getElementById('total-price').innerText;
+        
+        if(!p || !d) {
+            alert("Please provide both a Pickup and Destination location.");
+            return;
+        }
+
+        let msg = `Hi Pierce! Cool Comfort Booking:\n📍 FROM: ${p}\n🏁 TO: ${d}\n👥 ADULTS: ${document.getElementById('adults').value}, KIDS: ${document.getElementById('kids').value}\n💰 QUOTE: ${total}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
+
+        document.getElementById('how-it-works').style.display = 'block';
     }
 
-    function updateTripStatus(statusText) {
-        const msg = `UPDATE: ${statusText}`;
-        window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
+    function toggleMode(mode) {
+        if (mode === 'dark') {
+            document.body.classList.add('dark');
+            document.getElementById('btn-dark').classList.add('active');
+            document.getElementById('btn-light').classList.remove('active');
+        } else {
+            document.body.classList.remove('dark');
+            document.getElementById('btn-light').classList.add('active');
+            document.getElementById('btn-dark').classList.remove('active');
+        }
     }
 
     function getPreciseLocation() {
+        if(!map) initMap();
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition((pos) => {
                 const latlng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
@@ -201,7 +274,6 @@
             });
         }
     }
-    window.onload = initMap;
 </script>
 </body>
 </html>
