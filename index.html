@@ -44,7 +44,6 @@
 
         .btn-book { background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 1.2rem; font-family: 'Times New Roman', serif; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; }
 
-        /* Pending Order Styles */
         .pending-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--gold); }
         .order-item { background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 10px; position: relative; font-size: 0.9rem; text-align: left; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); }
         .order-item.dark-card { background: #2a2a2a; color: #fff; border-color: #444; }
@@ -71,7 +70,7 @@
         
         <div class="input-group">
             <i class="fa fa-map-pin"></i>
-            <input type="text" id="pickup" placeholder="Pickup location (Hotel, Villa, etc.)" required>
+            <input type="text" id="pickup" placeholder="Pickup location (Hotel, Villa, Airport)" required>
         </div>
         <div class="input-group">
             <i class="fa fa-flag-checkered"></i>
@@ -175,7 +174,6 @@
 
         if(!p || !d) { alert("Please enter locations first."); return; }
         
-        // Log to Pending Orders
         const order = { id: Date.now(), p, d, pr, px, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) };
         orders.push(order);
         renderOrders();
@@ -192,7 +190,7 @@
             item.className = `order-item ${document.body.classList.contains('dark') ? 'dark-card' : ''}`;
             item.innerHTML = `
                 <button class="btn-delete" onclick="remove(${o.id})">&times;</button>
-                <small style="color:var(--teal)">${o.time}</small><br>
+                <small style="color:var(--teal)">Inquiry at ${o.time}</small><br>
                 <b>To:</b> ${o.d}<br>
                 <b>Quote:</b> ${o.pr} (${o.px} Pax)
             `;
@@ -219,8 +217,6 @@
                     }
                 });
             });
-        } else {
-            alert("Geolocation is not supported by this browser.");
         }
     }
 
