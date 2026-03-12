@@ -34,6 +34,8 @@
         .pax-row label { font-size: 0.8rem; font-weight: bold; color: var(--teal); display: block; margin-bottom: 4px; }
 
         .price-box { background: var(--light-bg); padding: 15px; border-radius: 10px; margin-top: 15px; display: none; text-align: center; border: 2px dashed var(--teal); }
+        #display-price-jmd { color: var(--teal); font-weight: bold; font-size: 1.2rem; margin-top: 5px; }
+        
         .btn-book { background: var(--gold); color: var(--navy); padding: 1rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; font-family: 'Times New Roman', serif; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
 
         .pending-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--gold); }
@@ -89,7 +91,8 @@
         <div id="map"></div>
 
         <div id="price-box" class="price-box">
-            <h2 id="display-price" style="margin:0;">$0.00 USD</h2>
+            <h2 id="display-price-usd" style="margin:0;">$0.00 USD</h2>
+            <div id="display-price-jmd">$0 JMD</div>
         </div>
 
         <button class="btn-book" onclick="book()"><i class="fab fa-whatsapp"></i> BOOK WITH PIERCE</button>
@@ -105,6 +108,7 @@
 
 <script>
     let map, ds, dr, geo, orders = [];
+    const EX_RATE = 156;
 
     function init() {
         const opts = { componentRestrictions: { country: "jm" } };
@@ -140,7 +144,10 @@
                 const ad = parseInt(document.getElementById('adults').value);
                 const rate = (ad >= 3) ? 1.30 : 1.00;
                 const usd = 10 + (km * rate);
-                document.getElementById('display-price').innerText = "$" + usd.toFixed(2) + " USD";
+                const jmd = usd * EX_RATE;
+                
+                document.getElementById('display-price-usd').innerText = "$" + usd.toFixed(2) + " USD";
+                document.getElementById('display-price-jmd').innerText = "≈ $" + Math.round(jmd).toLocaleString() + " JMD";
                 document.getElementById('price-box').style.display = 'block';
             }
         });
@@ -149,15 +156,16 @@
     function book() {
         const p = document.getElementById('pickup').value, d = document.getElementById('destination').value;
         const dt = document.getElementById('book-date').value, tm = document.getElementById('book-time').value;
-        const pr = document.getElementById('display-price').innerText;
+        const usd = document.getElementById('display-price-usd').innerText;
+        const jmd = document.getElementById('display-price-jmd').innerText;
         const ad = document.getElementById('adults').value, kd = document.getElementById('kids').value;
         
         if(!p || !d || !dt || !tm) return alert("Please fill all details");
         
-        orders.push({ id: Date.now(), d, dt, tm, pr, ad, kd });
+        orders.push({ id: Date.now(), d, dt, tm, usd, jmd, ad, kd });
         renderOrders();
 
-        const msg = `Hi Pierce! Cool Comfort Booking:\n📅 ${dt} @ ${tm}\n📍 From: ${p}\n🏁 To: ${d}\n👥 Adults: ${ad}, Kids: ${kd}\n💰 Quote: ${pr}`;
+        const msg = `Hi Pierce! Cool Comfort Booking:\n📅 ${dt} @ ${tm}\n📍 From: ${p}\n🏁 To: ${d}\n👥 Adults: ${ad}, Kids: ${kd}\n💰 Quote: ${usd} (${jmd})`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
@@ -171,7 +179,8 @@
                 <button class="btn-delete" onclick="remove(${o.id})">&times;</button>
                 <small style="color:var(--teal)">${o.dt} @ ${o.tm}</small><br>
                 <b>To:</b> ${o.d}<br>
-                <b>Quote:</b> ${o.pr} (${o.ad}A, ${o.kd}K)
+                <b>Quote:</b> ${o.usd} / ${o.jmd}<br>
+                <small>(${o.ad} Adults, ${o.kd} Kids)</small>
             `;
             list.appendChild(item);
         });
