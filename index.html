@@ -15,41 +15,31 @@
         :root { --teal: #008080; --navy: #002b36; --gold: #ffcc00; --white: #ffffff; --light-bg: #f4f7f7; --text-color: #002b36; --border-color: #ddd; }
         body.dark { --teal: #4db6ac; --navy: #0e3b43; --white: #212121; --light-bg: #121212; --text-color: #e0e0e0; --border-color: #444; }
 
-        body { font-family: 'Times New Roman', Times, serif; margin: 0; background: var(--light-bg); color: var(--text-color); -webkit-tap-highlight-color: transparent; transition: background 0.3s; }
-        header { background: linear-gradient(135deg, var(--navy), var(--teal)); color: white; padding: 2.5rem 1rem; text-align: center; border-bottom: 5px solid var(--gold); }
-        .motto { font-size: 1rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px; color: var(--gold); font-weight: bold; }
+        body { font-family: 'Times New Roman', Times, serif; margin: 0; background: var(--light-bg); color: var(--text-color); transition: background 0.3s; }
+        header { background: linear-gradient(135deg, var(--navy), var(--teal)); color: white; padding: 2rem 1rem; text-align: center; border-bottom: 5px solid var(--gold); }
+        .motto { font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px; color: var(--gold); font-weight: bold; }
 
         .container { max-width: 600px; margin: 0 auto; padding: 0 15px; }
-        .booking-card { margin: -30px auto 30px; background: var(--white); padding: 2rem; border-radius: 15px; box-shadow: 0 15px 35px rgba(0,0,0,0.2); border: 1px solid rgba(0,128,128,0.1); }
+        .booking-card { margin: -20px auto 30px; background: var(--white); padding: 1.5rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(0,128,128,0.1); }
 
-        .mode-toggles { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
-        .toggle-btn { padding: 8px 15px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; font-family: 'Times New Roman', serif; font-size: 0.8rem; background: var(--white); color: var(--text-color); }
-        .toggle-btn.active { background: var(--teal); color: white; border: none; }
-
-        .gps-btn { background: var(--teal); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 15px; font-weight: bold; font-family: 'Times New Roman', serif; display: flex; align-items: center; justify-content: center; gap: 10px; }
-        
         .input-group { margin-bottom: 12px; position: relative; }
         .input-group i { position: absolute; left: 12px; top: 12px; color: var(--teal); }
         input, select { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; box-sizing: border-box; background: var(--white); color: var(--text-color); font-family: 'Times New Roman', serif; }
 
-        #map { width: 100%; height: 250px; border-radius: 10px; margin: 15px 0; display: none; border: 2px solid var(--teal); }
-        .price-box { background: var(--light-bg); padding: 20px; border-radius: 10px; margin-top: 15px; display: none; text-align: center; border: 2px dashed var(--teal); }
+        .btn-book { background: var(--gold); color: var(--navy); padding: 1rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; font-family: 'Times New Roman', serif; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
+
+        /* Pending Section Styles */
+        .pending-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--gold); text-align: center; }
+        .btn-add-manual { background: var(--navy); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Times New Roman', serif; font-size: 0.9rem; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 8px; }
         
-        .currency-switch { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 10px; font-weight: bold; }
-        .currency-switch input { display: none; }
-        .currency-switch label { width: 40px; height: 20px; background: #ddd; border-radius: 10px; cursor: pointer; position: relative; }
-        .currency-switch label::after { content: ''; position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: 0.3s; }
-        .currency-switch input:checked + label { background: var(--gold); }
-        .currency-switch input:checked + label::after { transform: translateX(20px); }
+        .manual-form { display: none; background: var(--light-bg); padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--border-color); text-align: left; }
+        
+        .order-item { background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 10px; position: relative; text-align: left; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); }
+        .order-item.dark-card { background: #2a2a2a; color: #fff; }
+        .btn-delete { position: absolute; right: 10px; top: 10px; color: #ff4444; border: none; background: none; font-size: 1.3rem; cursor: pointer; }
 
-        .btn-book { background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 1.2rem; font-family: 'Times New Roman', serif; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 15px; }
-
-        .pending-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--gold); }
-        .order-item { background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 10px; position: relative; font-size: 0.9rem; text-align: left; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); }
-        .order-item.dark-card { background: #2a2a2a; color: #fff; border-color: #444; }
-        .btn-delete { position: absolute; right: 10px; top: 10px; color: #ff4444; border: none; background: none; font-size: 1.3rem; cursor: pointer; line-height: 1; }
-
-        footer { text-align: center; padding: 40px 20px; font-size: 0.9rem; color: #777; line-height: 1.6; }
+        #map { width: 100%; height: 200px; border-radius: 10px; margin: 15px 0; display: none; }
+        footer { text-align: center; padding: 30px; font-size: 0.8rem; color: #777; }
     </style>
 </head>
 <body>
@@ -61,164 +51,101 @@
 
 <div class="container">
     <div class="booking-card">
-        <div class="mode-toggles">
-            <button id="lBtn" class="toggle-btn active" onclick="setMode('light')">Light Mode</button>
-            <button id="dBtn" class="toggle-btn" onclick="setMode('dark')">Dark Mode</button>
-        </div>
-
-        <button class="gps-btn" onclick="getLocation()"><i class="fa fa-location-dot"></i> USE MY CURRENT LOCATION</button>
+        <div class="input-group"><i class="fa fa-map-pin"></i><input type="text" id="pickup" placeholder="Pickup"></div>
+        <div class="input-group"><i class="fa fa-flag-checkered"></i><input type="text" id="destination" placeholder="Destination"></div>
         
-        <div class="input-group">
-            <i class="fa fa-map-pin"></i>
-            <input type="text" id="pickup" placeholder="Pickup location (Hotel, Villa, Airport)" required>
-        </div>
-        <div class="input-group">
-            <i class="fa fa-flag-checkered"></i>
-            <input type="text" id="destination" placeholder="Destination" required>
-        </div>
-
-        <div class="input-group">
-            <i class="fa fa-users"></i>
-            <select id="pax" onchange="calc()">
-                <option value="1">1 Passenger</option>
-                <option value="2">2 Passengers</option>
-                <option value="3">3 Passengers (Group Rate)</option>
-                <option value="4">4 Passengers (Group Rate)</option>
-                <option value="5">5 Passengers (Group Rate)</option>
-                <option value="6">6 Passengers (Group Rate)</option>
-            </select>
+        <div style="display:flex; gap:10px; margin-bottom:12px;">
+            <input type="date" id="book-date">
+            <input type="time" id="book-time">
         </div>
 
         <div id="map"></div>
-
-        <div id="price-box" class="price-box">
-            <div class="currency-switch">
-                <span>USD</span>
-                <input type="checkbox" id="curr" onchange="calc()">
-                <label for="curr"></label>
-                <span>JMD</span>
-            </div>
-            <h2 id="display-price" style="margin:0; font-size: 2rem;">$0.00 USD</h2>
-        </div>
-
         <button class="btn-book" onclick="book()"><i class="fab fa-whatsapp"></i> BOOK WITH PIERCE</button>
 
         <div class="pending-section">
-            <h3 style="text-align:center; font-family: 'Times New Roman', serif;">Pending Orders</h3>
+            <h3 style="font-family: 'Times New Roman', serif;">Pending Orders</h3>
+            
+            <button class="btn-add-manual" onclick="toggleManualForm()">
+                <i class="fa fa-plus-circle"></i> ADD CUSTOM ORDER
+            </button>
+
+            <div id="manual-form" class="manual-form">
+                <input type="text" id="m-loc" placeholder="Location/Note" style="margin-bottom:8px; padding-left:10px;">
+                <div style="display:flex; gap:5px;">
+                    <input type="date" id="m-date" style="padding-left:10px;">
+                    <input type="time" id="m-time" style="padding-left:10px;">
+                </div>
+                <button class="btn-book" style="margin-top:10px; font-size:0.9rem; padding:8px;" onclick="saveManual()">SAVE TO LIST</button>
+            </div>
+
             <div id="order-list"></div>
         </div>
     </div>
 </div>
 
-<footer>
-    &copy; 2026 Cool Comfort Jamaica<br>
-    Pierce Irons | 876-393-3246<br>
-    Arrive in Comfort, Arrive in Style.
-</footer>
+<footer>&copy; 2026 Cool Comfort | Pierce Irons</footer>
 
 <script>
-    let map, ds, dr, geo, orders = [];
+    let map, ds, dr, orders = [];
 
     function init() {
         const opts = { componentRestrictions: { country: "jm" } };
-        const pAuto = new google.maps.places.Autocomplete(document.getElementById('pickup'), opts);
-        const dAuto = new google.maps.places.Autocomplete(document.getElementById('destination'), opts);
-        
-        pAuto.addListener('place_changed', calc);
-        dAuto.addListener('place_changed', calc);
-
+        new google.maps.places.Autocomplete(document.getElementById('pickup'), opts);
+        new google.maps.places.Autocomplete(document.getElementById('destination'), opts);
         ds = new google.maps.DirectionsService();
-        geo = new google.maps.Geocoder();
-        dr = new google.maps.DirectionsRenderer({ 
-            map: new google.maps.Map(document.getElementById('map'), { 
-                zoom: 8, center: { lat: 18.1, lng: -77.3 },
-                disableDefaultUI: true 
-            }) 
-        });
+        dr = new google.maps.DirectionsRenderer({ map: new google.maps.Map(document.getElementById('map'), { zoom: 8, center: { lat: 18.1, lng: -77.3 } }) });
+        document.getElementById('book-date').valueAsDate = new Date();
     }
 
-    function calc() {
-        const p = document.getElementById('pickup').value;
-        const d = document.getElementById('destination').value;
-        if (!p || !d) return;
+    function toggleManualForm() {
+        const f = document.getElementById('manual-form');
+        f.style.display = (f.style.display === 'block') ? 'none' : 'block';
+    }
 
-        ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
-            if (stat === 'OK') {
-                dr.setDirections(res);
-                document.getElementById('map').style.display = 'block';
-                
-                const km = res.routes[0].legs[0].distance.value / 1000;
-                const paxCount = parseInt(document.getElementById('pax').value);
-                
-                // Pricing Logic: $10 Base + $1.00/km (Standard) or $1.30/km (Group)
-                const rate = (paxCount >= 3) ? 1.30 : 1.00;
-                const usd = 10.00 + (km * rate);
-                
-                const isJmd = document.getElementById('curr').checked;
-                if(isJmd) {
-                    document.getElementById('display-price').innerText = "$" + Math.round(usd * 156).toLocaleString() + " JMD";
-                } else {
-                    document.getElementById('display-price').innerText = "$" + usd.toFixed(2) + " USD";
-                }
-                
-                document.getElementById('price-box').style.display = 'block';
-            }
-        });
+    function saveManual() {
+        const loc = document.getElementById('m-loc').value;
+        const date = document.getElementById('m-date').value;
+        const time = document.getElementById('m-time').value;
+        
+        if(!loc || !date || !time) return alert("Fill all fields");
+        
+        addOrder(loc, date, time, "Manual Entry");
+        document.getElementById('manual-form').style.display = 'none';
+        document.getElementById('m-loc').value = '';
     }
 
     function book() {
-        const p = document.getElementById('pickup').value;
-        const d = document.getElementById('destination').value;
-        const pr = document.getElementById('display-price').innerText;
-        const px = document.getElementById('pax').value;
-
-        if(!p || !d) { alert("Please enter locations first."); return; }
+        const p = document.getElementById('pickup').value, d = document.getElementById('destination').value;
+        const date = document.getElementById('book-date').value, time = document.getElementById('book-time').value;
         
-        const order = { id: Date.now(), p, d, pr, px, time: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) };
-        orders.push(order);
-        renderOrders();
+        if(!p || !d || !date || !time) return alert("Fill all fields");
+        
+        addOrder(d, date, time, "WhatsApp Lead");
+        window.open(`https://wa.me/18763933246?text=${encodeURIComponent("Booking: " + d + " on " + date + " at " + time)}`);
+    }
 
-        const msg = `Hi Pierce! Booking for Cool Comfort:\n📍 From: ${p}\n🏁 To: ${d}\n👥 Pax: ${px}\n💰 Quote: ${pr}`;
-        window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
+    function addOrder(loc, date, time, type) {
+        orders.push({ id: Date.now(), loc, date, time, type });
+        renderOrders();
     }
 
     function renderOrders() {
         const list = document.getElementById('order-list');
-        list.innerHTML = orders.length ? '' : '<p style="text-align:center; opacity:0.5; font-size:0.8rem;">No active inquiries yet.</p>';
+        list.innerHTML = orders.length ? '' : '<p style="opacity:0.5; font-size:0.8rem;">No active orders.</p>';
         orders.forEach(o => {
             const item = document.createElement('div');
-            item.className = `order-item ${document.body.classList.contains('dark') ? 'dark-card' : ''}`;
+            item.className = 'order-item';
             item.innerHTML = `
                 <button class="btn-delete" onclick="remove(${o.id})">&times;</button>
-                <small style="color:var(--teal)">Inquiry at ${o.time}</small><br>
-                <b>To:</b> ${o.d}<br>
-                <b>Quote:</b> ${o.pr} (${o.px} Pax)
+                <small style="color:var(--teal)">${o.type}</small><br>
+                <b>Date:</b> ${o.date} | <b>Time:</b> ${o.time}<br>
+                <b>Loc:</b> ${o.loc}
             `;
             list.appendChild(item);
         });
     }
 
     function remove(id) { orders = orders.filter(o => o.id !== id); renderOrders(); }
-
-    function setMode(m) {
-        document.body.className = m;
-        document.getElementById('lBtn').className = m === 'light' ? 'toggle-btn active' : 'toggle-btn';
-        document.getElementById('dBtn').className = m === 'dark' ? 'toggle-btn active' : 'toggle-btn';
-        renderOrders();
-    }
-
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(pos => {
-                geo.geocode({ location: { lat: pos.coords.latitude, lng: pos.coords.longitude } }, (res, stat) => {
-                    if (stat === "OK" && res[0]) { 
-                        document.getElementById('pickup').value = res[0].formatted_address; 
-                        calc(); 
-                    }
-                });
-            });
-        }
-    }
 
     window.onload = init;
 </script>
