@@ -13,8 +13,6 @@
     
     <style>
         :root { --teal: #008080; --navy: #002b36; --gold: #ffcc00; --white: #ffffff; --light-bg: #f4f7f7; --text-color: #002b36; --border-color: #ddd; }
-        body.dark { --teal: #4db6ac; --navy: #0e3b43; --white: #212121; --light-bg: #121212; --text-color: #e0e0e0; --border-color: #444; }
-
         body { font-family: 'Times New Roman', Times, serif; margin: 0; background: var(--light-bg); color: var(--text-color); transition: background 0.3s; }
         header { background: linear-gradient(135deg, var(--navy), var(--teal)); color: white; padding: 2rem 1rem; text-align: center; border-bottom: 5px solid var(--gold); }
         .motto { font-size: 0.9rem; letter-spacing: 2px; text-transform: uppercase; margin-top: 10px; color: var(--gold); font-weight: bold; }
@@ -22,20 +20,24 @@
         .container { max-width: 600px; margin: 0 auto; padding: 0 15px; }
         .booking-card { margin: -20px auto 30px; background: var(--white); padding: 1.5rem; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); border: 1px solid rgba(0,128,128,0.1); }
 
+        .quick-selects { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 15px; justify-content: center; }
+        .quick-btn { background: var(--navy); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; font-size: 0.8rem; font-family: 'Times New Roman', serif; display: flex; align-items: center; gap: 5px; }
+
+        .gps-btn { background: var(--teal); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 15px; font-weight: bold; font-family: 'Times New Roman', serif; display: flex; align-items: center; justify-content: center; gap: 10px; }
+
         .input-group { margin-bottom: 12px; position: relative; }
         .input-group i { position: absolute; left: 12px; top: 12px; color: var(--teal); }
         input, select { width: 100%; padding: 10px 10px 10px 35px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; box-sizing: border-box; background: var(--white); color: var(--text-color); font-family: 'Times New Roman', serif; }
 
+        .pax-row { display: flex; gap: 10px; margin-bottom: 12px; }
+        .pax-row div { flex: 1; }
+        .pax-row label { font-size: 0.8rem; font-weight: bold; color: var(--teal); display: block; margin-bottom: 4px; }
+
+        .price-box { background: var(--light-bg); padding: 15px; border-radius: 10px; margin-top: 15px; display: none; text-align: center; border: 2px dashed var(--teal); }
         .btn-book { background: var(--gold); color: var(--navy); padding: 1rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; font-family: 'Times New Roman', serif; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
 
-        /* Pending Section Styles */
-        .pending-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--gold); text-align: center; }
-        .btn-add-manual { background: var(--navy); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-family: 'Times New Roman', serif; font-size: 0.9rem; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 8px; }
-        
-        .manual-form { display: none; background: var(--light-bg); padding: 15px; border-radius: 10px; margin-bottom: 15px; border: 1px solid var(--border-color); text-align: left; }
-        
-        .order-item { background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 10px; position: relative; text-align: left; box-shadow: 2px 2px 5px rgba(0,0,0,0.05); }
-        .order-item.dark-card { background: #2a2a2a; color: #fff; }
+        .pending-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid var(--gold); }
+        .order-item { background: #fff; border: 1px solid var(--border-color); padding: 12px; border-radius: 8px; margin-bottom: 10px; position: relative; text-align: left; }
         .btn-delete { position: absolute; right: 10px; top: 10px; color: #ff4444; border: none; background: none; font-size: 1.3rem; cursor: pointer; }
 
         #map { width: 100%; height: 200px; border-radius: 10px; margin: 15px 0; display: none; }
@@ -51,7 +53,15 @@
 
 <div class="container">
     <div class="booking-card">
-        <div class="input-group"><i class="fa fa-map-pin"></i><input type="text" id="pickup" placeholder="Pickup"></div>
+        <div class="quick-selects">
+            <button class="quick-btn" onclick="setDest('MBJ Airport')"><i class="fa fa-plane"></i> MBJ Airport</button>
+            <button class="quick-btn" onclick="setDest('Ocho Rios Pier')"><i class="fa fa-ship"></i> Ochi Pier</button>
+            <button class="quick-btn" onclick="setDest('Negril 7-Mile Beach')"><i class="fa fa-umbrella-beach"></i> Negril</button>
+        </div>
+
+        <button class="gps-btn" onclick="getLocation()"><i class="fa fa-location-crosshairs"></i> USE MY CURRENT LOCATION</button>
+        
+        <div class="input-group"><i class="fa fa-map-pin"></i><input type="text" id="pickup" placeholder="Pickup point"></div>
         <div class="input-group"><i class="fa fa-flag-checkered"></i><input type="text" id="destination" placeholder="Destination"></div>
         
         <div style="display:flex; gap:10px; margin-bottom:12px;">
@@ -59,25 +69,33 @@
             <input type="time" id="book-time">
         </div>
 
+        <div class="pax-row">
+            <div>
+                <label>Adults</label>
+                <select id="adults" onchange="calc()">
+                    <option value="1">1</option><option value="2">2</option>
+                    <option value="3">3</option><option value="4">4</option>
+                </select>
+            </div>
+            <div>
+                <label>Kids</label>
+                <select id="kids" onchange="calc()">
+                    <option value="0">0</option><option value="1">1</option>
+                    <option value="2">2</option><option value="3">3</option>
+                </select>
+            </div>
+        </div>
+
         <div id="map"></div>
+
+        <div id="price-box" class="price-box">
+            <h2 id="display-price" style="margin:0;">$0.00 USD</h2>
+        </div>
+
         <button class="btn-book" onclick="book()"><i class="fab fa-whatsapp"></i> BOOK WITH PIERCE</button>
 
         <div class="pending-section">
-            <h3 style="font-family: 'Times New Roman', serif;">Pending Orders</h3>
-            
-            <button class="btn-add-manual" onclick="toggleManualForm()">
-                <i class="fa fa-plus-circle"></i> ADD CUSTOM ORDER
-            </button>
-
-            <div id="manual-form" class="manual-form">
-                <input type="text" id="m-loc" placeholder="Location/Note" style="margin-bottom:8px; padding-left:10px;">
-                <div style="display:flex; gap:5px;">
-                    <input type="date" id="m-date" style="padding-left:10px;">
-                    <input type="time" id="m-time" style="padding-left:10px;">
-                </div>
-                <button class="btn-book" style="margin-top:10px; font-size:0.9rem; padding:8px;" onclick="saveManual()">SAVE TO LIST</button>
-            </div>
-
+            <h3 style="text-align:center; font-family: 'Times New Roman', serif;">Pending Orders</h3>
             <div id="order-list"></div>
         </div>
     </div>
@@ -86,60 +104,74 @@
 <footer>&copy; 2026 Cool Comfort | Pierce Irons</footer>
 
 <script>
-    let map, ds, dr, orders = [];
+    let map, ds, dr, geo, orders = [];
 
     function init() {
         const opts = { componentRestrictions: { country: "jm" } };
-        new google.maps.places.Autocomplete(document.getElementById('pickup'), opts);
-        new google.maps.places.Autocomplete(document.getElementById('destination'), opts);
+        new google.maps.places.Autocomplete(document.getElementById('pickup'), opts).addListener('place_changed', calc);
+        new google.maps.places.Autocomplete(document.getElementById('destination'), opts).addListener('place_changed', calc);
         ds = new google.maps.DirectionsService();
+        geo = new google.maps.Geocoder();
         dr = new google.maps.DirectionsRenderer({ map: new google.maps.Map(document.getElementById('map'), { zoom: 8, center: { lat: 18.1, lng: -77.3 } }) });
         document.getElementById('book-date').valueAsDate = new Date();
     }
 
-    function toggleManualForm() {
-        const f = document.getElementById('manual-form');
-        f.style.display = (f.style.display === 'block') ? 'none' : 'block';
+    function setDest(val) { document.getElementById('destination').value = val; calc(); }
+
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(pos => {
+                geo.geocode({ location: { lat: pos.coords.latitude, lng: pos.coords.longitude } }, (res, stat) => {
+                    if (stat === "OK") { document.getElementById('pickup').value = res[0].formatted_address; calc(); }
+                });
+            });
+        }
     }
 
-    function saveManual() {
-        const loc = document.getElementById('m-loc').value;
-        const date = document.getElementById('m-date').value;
-        const time = document.getElementById('m-time').value;
-        
-        if(!loc || !date || !time) return alert("Fill all fields");
-        
-        addOrder(loc, date, time, "Manual Entry");
-        document.getElementById('manual-form').style.display = 'none';
-        document.getElementById('m-loc').value = '';
+    function calc() {
+        const p = document.getElementById('pickup').value, d = document.getElementById('destination').value;
+        if (!p || !d) return;
+
+        ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
+            if (stat === 'OK') {
+                dr.setDirections(res);
+                document.getElementById('map').style.display = 'block';
+                const km = res.routes[0].legs[0].distance.value / 1000;
+                const ad = parseInt(document.getElementById('adults').value);
+                const rate = (ad >= 3) ? 1.30 : 1.00;
+                const usd = 10 + (km * rate);
+                document.getElementById('display-price').innerText = "$" + usd.toFixed(2) + " USD";
+                document.getElementById('price-box').style.display = 'block';
+            }
+        });
     }
 
     function book() {
         const p = document.getElementById('pickup').value, d = document.getElementById('destination').value;
-        const date = document.getElementById('book-date').value, time = document.getElementById('book-time').value;
+        const dt = document.getElementById('book-date').value, tm = document.getElementById('book-time').value;
+        const pr = document.getElementById('display-price').innerText;
+        const ad = document.getElementById('adults').value, kd = document.getElementById('kids').value;
         
-        if(!p || !d || !date || !time) return alert("Fill all fields");
+        if(!p || !d || !dt || !tm) return alert("Please fill all details");
         
-        addOrder(d, date, time, "WhatsApp Lead");
-        window.open(`https://wa.me/18763933246?text=${encodeURIComponent("Booking: " + d + " on " + date + " at " + time)}`);
-    }
-
-    function addOrder(loc, date, time, type) {
-        orders.push({ id: Date.now(), loc, date, time, type });
+        orders.push({ id: Date.now(), d, dt, tm, pr, ad, kd });
         renderOrders();
+
+        const msg = `Hi Pierce! Cool Comfort Booking:\n📅 ${dt} @ ${tm}\n📍 From: ${p}\n🏁 To: ${d}\n👥 Adults: ${ad}, Kids: ${kd}\n💰 Quote: ${pr}`;
+        window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
     function renderOrders() {
         const list = document.getElementById('order-list');
-        list.innerHTML = orders.length ? '' : '<p style="opacity:0.5; font-size:0.8rem;">No active orders.</p>';
+        list.innerHTML = orders.length ? '' : '<p style="text-align:center; opacity:0.5; font-size:0.8rem;">No active inquiries.</p>';
         orders.forEach(o => {
             const item = document.createElement('div');
             item.className = 'order-item';
             item.innerHTML = `
                 <button class="btn-delete" onclick="remove(${o.id})">&times;</button>
-                <small style="color:var(--teal)">${o.type}</small><br>
-                <b>Date:</b> ${o.date} | <b>Time:</b> ${o.time}<br>
-                <b>Loc:</b> ${o.loc}
+                <small style="color:var(--teal)">${o.dt} @ ${o.tm}</small><br>
+                <b>To:</b> ${o.d}<br>
+                <b>Quote:</b> ${o.pr} (${o.ad}A, ${o.kd}K)
             `;
             list.appendChild(item);
         });
