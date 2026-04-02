@@ -126,9 +126,13 @@
         });
         dr = new google.maps.DirectionsRenderer({ map: mapInstance });
         
-        // Default to Now
+        // AUTO-SET DATE AND TIME TO "NOW"
         const now = new Date();
-        document.getElementById('book-date').valueAsDate = now;
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        document.getElementById('book-date').value = `${year}-${month}-${day}`;
+        
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         document.getElementById('book-time').value = `${hours}:${minutes}`;
@@ -173,7 +177,7 @@
         hours = parseInt(hours);
         const ampm = hours >= 12 ? 'PM' : 'AM';
         hours = hours % 12;
-        hours = hours ? hours : 12; // the hour '0' should be '12'
+        hours = hours ? hours : 12;
         return `${hours}:${minutes} ${ampm}`;
     }
 
@@ -188,10 +192,9 @@
 
         if(!p || !d || !dt || !tmRaw) return alert("Please fill in all booking details.");
 
-        // Convert Army time to AM/PM for the message
         const tmFormatted = formatAMPM(tmRaw);
 
-        // Lock inputs
+        // LOCK EVERYTHING
         const inputs = document.querySelectorAll('input, select, button');
         inputs.forEach(input => input.disabled = true);
         document.getElementById('book-btn').innerHTML = '<i class="fa fa-spinner fa-spin"></i> SENDING...';
