@@ -126,10 +126,9 @@
         });
         dr = new google.maps.DirectionsRenderer({ map: mapInstance });
         
-        // Auto-set current date and time
+        // Default to Now
         const now = new Date();
         document.getElementById('book-date').valueAsDate = now;
-        
         const hours = String(now.getHours()).padStart(2, '0');
         const minutes = String(now.getMinutes()).padStart(2, '0');
         document.getElementById('book-time').value = `${hours}:${minutes}`;
@@ -147,7 +146,6 @@
         const p = document.getElementById('pickup').value;
         const d = document.getElementById('destination').value;
         const isRT = document.getElementById('roundtrip').checked;
-        
         if (!p || !d) return;
 
         ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
@@ -155,10 +153,8 @@
                 dr.setDirections(res);
                 document.getElementById('map').style.display = 'block';
                 const km = res.routes[0].legs[0].distance.value / 1000;
-                
                 let totalJMD = BASE_JMD + (km * KM_RATE_JMD);
                 if (isRT) totalJMD = (totalJMD * 2) * 0.90;
-
                 document.getElementById('user-bid').value = Math.round(totalJMD);
                 updateUSD();
                 document.getElementById('price-box').style.display = 'block';
@@ -172,18 +168,30 @@
         document.getElementById('usd-equivalent').innerText = `≈ $${usd} USD`;
     }
 
+    function formatAMPM(time) {
+        let [hours, minutes] = time.split(':');
+        hours = parseInt(hours);
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        return `${hours}:${minutes} ${ampm}`;
+    }
+
     function book() {
         const p = document.getElementById('pickup').value;
         const d = document.getElementById('destination').value;
         const dt = document.getElementById('book-date').value;
-        const tm = document.getElementById('book-time').value;
+        const tmRaw = document.getElementById('book-time').value;
         const jmd = document.getElementById('user-bid').value;
         const pax = document.getElementById('pax-count').value;
         const rt = document.getElementById('roundtrip').checked ? "YES" : "NO";
 
-        if(!p || !d || !dt || !tm) return alert("Please fill in all booking details.");
+        if(!p || !d || !dt || !tmRaw) return alert("Please fill in all booking details.");
 
-        // Lock all inputs immediately
+        // Convert Army time to AM/PM for the message
+        const tmFormatted = formatAMPM(tmRaw);
+
+        // Lock inputs
         const inputs = document.querySelectorAll('input, select, button');
         inputs.forEach(input => input.disabled = true);
         document.getElementById('book-btn').innerHTML = '<i class="fa fa-spinner fa-spin"></i> SENDING...';
@@ -192,7 +200,7 @@
 
         const msg = `*Cool Comfort Ride Request* 🚕\n\n` +
                     `📅 *Date:* ${dt}\n` +
-                    `⏰ *Time:* ${tm}\n` +
+                    `⏰ *Time:* ${tmFormatted}\n` +
                     `📍 *From:* ${p}\n` +
                     `🏁 *To:* ${d}\n` +
                     `👥 *Pax:* ${pax}\n` +
@@ -213,9 +221,7 @@
                         calc(); 
                     }
                 });
-            }, () => {
-                alert("Please enable location services.");
-            });
+            }, () => alert("Please enable location services."));
         }
     }
 
