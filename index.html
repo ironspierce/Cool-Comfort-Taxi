@@ -93,7 +93,6 @@
         const d = document.getElementById('destination').value;
         const phone = document.getElementById('user-phone').value.replace(/\D/g, '');
         
-        // --- REQUIRE PHONE NUMBER BEFORE SHOWING PRICE ---
         if (!p || !d || phone.length < 7) {
             document.getElementById('price-box').style.display = 'none';
             return;
@@ -106,13 +105,13 @@
                 const km = res.routes[0].legs[0].distance.value / 1000;
                 
                 // --- PHONE-BASED DIFFERENTIATION ---
-                let base = 500, rate = 90;
+                let base = 500; // Local base
+                let rate = 90;  // Local km rate
                 
-                // Sniff for Jamaican codes (876 or 658)
                 const isLocal = phone.startsWith('876') || phone.startsWith('1876') || phone.startsWith('658') || phone.startsWith('1658');
                 
                 if (!isLocal) {
-                    base = 1000;
+                    base = 800; // UPDATED TOURIST BASE
                     rate = 180;
                 }
 
