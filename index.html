@@ -30,7 +30,7 @@
         .bid-input { font-size: 1.8rem; font-weight: bold; color: var(--teal); border: 2px solid var(--teal); border-radius: 8px; width: 80%; text-align: center; margin: 10px 0; background: white; }
         .btn-book { background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; font-family: 'Times New Roman', serif; margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; }
         .btn-book:disabled { background: #ccc; cursor: not-allowed; }
-        #map { width: 100%; height: 200px; border-radius: 10px; margin: 15px 0; display: none; }
+        #map { width: 100%; height: 250px; border-radius: 10px; margin: 15px 0; display: none; border: 1px solid var(--border-color); }
         footer { text-align: center; padding: 30px; font-size: 0.8rem; color: #777; border-top: 1px solid var(--border-color); margin-top: 20px; }
     </style>
 </head>
@@ -44,7 +44,7 @@
 <div class="container">
     <div class="booking-card">
         <button class="gps-btn" onclick="getLocation()"><i class="fa fa-location-crosshairs"></i> USE MY CURRENT LOCATION</button>
-        <div class="input-group"><input type="text" id="pickup" placeholder="Pickup point"></div>
+        <div class="input-group"><input type="text" id="pickup" placeholder="Pickup point (Address or Lot #)"></div>
         <div class="input-group"><input type="text" id="destination" placeholder="Destination"></div>
         <div style="display:flex; gap:10px; margin-bottom:12px;"><input type="date" id="book-date"><input type="time" id="book-time"></div>
         <div class="rt-toggle" onclick="toggleRT()">
@@ -68,18 +68,36 @@
 <footer>© 2026 Cool Comfort Jamaica | Pierce Irons</footer>
 
 <script>
-    let ds, dr, geo;
+    let ds, dr, geo, pickupAc, destAc;
     const EX_RATE = 156;
 
     function init() {
-        const opts = { componentRestrictions: { country: "jm" } };
-        new google.maps.places.Autocomplete(document.getElementById('pickup'), opts).addListener('place_changed', calc);
-        new google.maps.places.Autocomplete(document.getElementById('destination'), opts).addListener('place_changed', calc);
+        const opts = { 
+            componentRestrictions: { country: "jm" },
+            fields: ["formatted_address", "geometry"] 
+        };
+        
+        pickupAc = new google.maps.places.Autocomplete(document.getElementById('pickup'), opts);
+        destAc = new google.maps.places.Autocomplete(document.getElementById('destination'), opts);
+        
+        pickupAc.addListener('place_changed', calc);
+        destAc.addListener('place_changed', calc);
+        
         ds = new google.maps.DirectionsService();
         geo = new google.maps.Geocoder();
+        
         const mapEl = document.getElementById('map');
-        const mapInstance = new google.maps.Map(mapEl, { zoom: 8, center: { lat: 18.1, lng: -77.3 }, disableDefaultUI: true });
-        dr = new google.maps.DirectionsRenderer({ map: mapInstance });
+        const mapInstance = new google.maps.Map(mapEl, { 
+            zoom: 12, 
+            center: { lat: 17.9175, lng: -77.1328 }, // Centered near Old Harbour/Kingston area
+            disableDefaultUI: true 
+        });
+        
+        dr = new google.maps.DirectionsRenderer({ 
+            map: mapInstance,
+            panel: null,
+            suppressMarkers: false
+        });
         
         const now = new Date();
         const year = now.getFullYear();
@@ -90,26 +108,36 @@
     }
 
     function calc() {
-        const p = document.getElementById('pickup').value.toLowerCase();
-        const d = document.getElementById('destination').value.toLowerCase();
+        const p = document.getElementById('pickup').value;
+        const d = document.getElementById('destination').value;
         if (!p || !d) return;
-        ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
+
+        ds.route({ 
+            origin: p, 
+            destination: d, 
+            travelMode: 'DRIVING',
+            provideRouteAlternatives: false
+        }, (res, stat) => {
             if (stat === 'OK') {
                 dr.setDirections(res);
                 document.getElementById('map').style.display = 'block';
+                
                 const km = res.routes[0].legs[0].distance.value / 1000;
                 
                 // RIDE-SHARE COMPETITIVE LOCAL LOGIC
                 let base = 400, rate = 90;
                 
                 // TOURIST PREMIUM LOGIC
+                const pLower = p.toLowerCase();
+                const dLower = d.toLowerCase();
                 const touristZones = ['airport', 'hotel', 'resort', 'villa', 'inn', 'sandals', 'bahia', 'riu', 'hilton', 'hyatt', 'grand palladium', 'cruise', 'baha'];
-                if (touristZones.some(k => p.includes(k) || d.includes(k))) { base = 1500; rate = 180; }
+                if (touristZones.some(k => pLower.includes(k) || dLower.includes(k))) { 
+                    base = 1500; 
+                    rate = 180; 
+                }
 
                 let total = base + (km * rate);
                 if (document.getElementById('roundtrip').checked) total = (total * 2) * 0.90;
-                
-                // Minimum Fare Protection for Locals
                 if (total < 500 && base < 1000) total = 500;
 
                 document.getElementById('user-bid').value = Math.round(total);
@@ -131,11 +159,12 @@
     }
 
     function book() {
-        const p = document.getElementById('pickup').value, d = document.getElementById('destination').value;
-        const dt = document.getElementById('book-date').value, tm = document.getElementById('book-time').value;
+        const p = document.getElementById('pickup').value;
+        const d = document.getElementById('destination').value;
+        const dt = document.getElementById('book-date').value;
+        const tm = document.getElementById('book-time').value;
         if(!p || !d || !dt || !tm) return alert("Fill all details.");
 
-        // Lock inputs to prevent changes after clicking
         const inputs = document.querySelectorAll('input, select, button');
         inputs.forEach(i => i.disabled = true);
         document.getElementById('book-btn').innerHTML = '<i class="fa fa-spinner fa-spin"></i> SENDING...';
@@ -146,7 +175,20 @@
     }
 
     function toggleRT() { const cb = document.getElementById('roundtrip'); if(!cb.disabled) { cb.checked = !cb.checked; calc(); } }
-    function getLocation() { if (navigator.geolocation) { navigator.geolocation.getCurrentPosition(pos => { geo.geocode({ location: { lat: pos.coords.latitude, lng: pos.coords.longitude } }, (res, stat) => { if (stat === "OK") { document.getElementById('pickup').value = res[0].formatted_address; calc(); } }); }); } }
+    
+    function getLocation() { 
+        if (navigator.geolocation) { 
+            navigator.geolocation.getCurrentPosition(pos => { 
+                geo.geocode({ location: { lat: pos.coords.latitude, lng: pos.coords.longitude } }, (res, stat) => { 
+                    if (stat === "OK") { 
+                        document.getElementById('pickup').value = res[0].formatted_address; 
+                        calc(); 
+                    } 
+                }); 
+            }); 
+        } 
+    }
+    
     window.onload = init;
 </script>
 </body>
