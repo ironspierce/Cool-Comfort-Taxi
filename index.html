@@ -29,6 +29,7 @@
         .price-box { background: #f0fff4; padding: 20px; border-radius: 10px; margin-top: 15px; display: none; text-align: center; border: 2px dashed var(--teal); }
         .bid-input { font-size: 1.8rem; font-weight: bold; color: var(--teal); border: 2px solid var(--teal); border-radius: 8px; width: 80%; text-align: center; margin: 10px 0; background: white; }
         .btn-book { background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; font-family: 'Times New Roman', serif; margin-top: 15px; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        .btn-book:disabled { background: #ccc; cursor: not-allowed; }
         #map { width: 100%; height: 200px; border-radius: 10px; margin: 15px 0; display: none; }
         footer { text-align: center; padding: 30px; font-size: 0.8rem; color: #777; border-top: 1px solid var(--border-color); margin-top: 20px; }
     </style>
@@ -79,8 +80,12 @@
         const mapEl = document.getElementById('map');
         const mapInstance = new google.maps.Map(mapEl, { zoom: 8, center: { lat: 18.1, lng: -77.3 }, disableDefaultUI: true });
         dr = new google.maps.DirectionsRenderer({ map: mapInstance });
+        
         const now = new Date();
-        document.getElementById('book-date').valueAsDate = now;
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        document.getElementById('book-date').value = `${year}-${month}-${day}`;
         document.getElementById('book-time').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
     }
 
@@ -94,13 +99,19 @@
                 document.getElementById('map').style.display = 'block';
                 const km = res.routes[0].legs[0].distance.value / 1000;
                 
-                // Silent Logic
-                let base = 750, rate = 110;
-                const touristZones = ['airport', 'hotel', 'resort', 'villa', 'inn', 'sandals', 'bahia', 'riu', 'hilton', 'hyatt', 'grand palladium', 'cruise'];
+                // RIDE-SHARE COMPETITIVE LOCAL LOGIC
+                let base = 400, rate = 90;
+                
+                // TOURIST PREMIUM LOGIC
+                const touristZones = ['airport', 'hotel', 'resort', 'villa', 'inn', 'sandals', 'bahia', 'riu', 'hilton', 'hyatt', 'grand palladium', 'cruise', 'baha'];
                 if (touristZones.some(k => p.includes(k) || d.includes(k))) { base = 1500; rate = 180; }
 
                 let total = base + (km * rate);
                 if (document.getElementById('roundtrip').checked) total = (total * 2) * 0.90;
+                
+                // Minimum Fare Protection for Locals
+                if (total < 500 && base < 1000) total = 500;
+
                 document.getElementById('user-bid').value = Math.round(total);
                 updateUSD();
                 document.getElementById('price-box').style.display = 'block';
@@ -124,6 +135,7 @@
         const dt = document.getElementById('book-date').value, tm = document.getElementById('book-time').value;
         if(!p || !d || !dt || !tm) return alert("Fill all details.");
 
+        // Lock inputs to prevent changes after clicking
         const inputs = document.querySelectorAll('input, select, button');
         inputs.forEach(i => i.disabled = true);
         document.getElementById('book-btn').innerHTML = '<i class="fa fa-spinner fa-spin"></i> SENDING...';
