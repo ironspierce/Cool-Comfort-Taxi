@@ -43,9 +43,9 @@
 <div class="container">
     <div class="booking-card">
         <button class="gps-btn" onclick="getLocation()"><i class="fa fa-location-crosshairs"></i> USE MY CURRENT LOCATION</button>
-        <div class="input-group"><input type="text" id="pickup" placeholder="Pickup point (Address or Lot #)"></div>
+        <div class="input-group"><input type="text" id="pickup" placeholder="Pickup point"></div>
         <div class="input-group"><input type="text" id="destination" placeholder="Destination"></div>
-        <div class="input-group"><input type="tel" id="user-phone" placeholder="WhatsApp Number (e.g. 876-123-4567)" oninput="calc()"></div>
+        <div class="input-group"><input type="tel" id="user-phone" placeholder="WhatsApp Number (Area Code Required)" oninput="calc()"></div>
         <div style="display:flex; gap:10px; margin-bottom:12px;"><input type="date" id="book-date"><input type="time" id="book-time"></div>
         <div class="rt-toggle" onclick="toggleRT()">
             <span style="font-size: 0.85rem; font-weight: bold;"><i class="fa fa-arrows-rotate"></i> Add Round Trip (10% Off)</span>
@@ -82,6 +82,7 @@
         const mapEl = document.getElementById('map');
         const mapInstance = new google.maps.Map(mapEl, { zoom: 12, center: { lat: 17.9175, lng: -77.1328 }, disableDefaultUI: true });
         dr = new google.maps.DirectionsRenderer({ map: mapInstance });
+        
         const now = new Date();
         document.getElementById('book-date').valueAsDate = now;
         document.getElementById('book-time').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
@@ -91,7 +92,12 @@
         const p = document.getElementById('pickup').value;
         const d = document.getElementById('destination').value;
         const phone = document.getElementById('user-phone').value.replace(/\D/g, '');
-        if (!p || !d) return;
+        
+        // --- REQUIRE PHONE NUMBER BEFORE SHOWING PRICE ---
+        if (!p || !d || phone.length < 7) {
+            document.getElementById('price-box').style.display = 'none';
+            return;
+        }
 
         ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
             if (stat === 'OK') {
@@ -99,20 +105,15 @@
                 document.getElementById('map').style.display = 'block';
                 const km = res.routes[0].legs[0].distance.value / 1000;
                 
-                // --- SMART DIFFERENTIATION ---
+                // --- PHONE-BASED DIFFERENTIATION ---
                 let base = 500, rate = 90;
                 
-                const pLower = p.toLowerCase();
-                const dLower = d.toLowerCase();
-                const touristZones = ['airport', 'hotel', 'resort', 'villa', 'inn', 'sandals', 'bahia', 'riu', 'hilton', 'hyatt', 'grand palladium', 'cruise', 'baha'];
+                // Sniff for Jamaican codes (876 or 658)
+                const isLocal = phone.startsWith('876') || phone.startsWith('1876') || phone.startsWith('658') || phone.startsWith('1658');
                 
-                // Trigger Tourist Price if Location is touristy OR Phone is NOT Jamaican (876 or 658)
-                const isForeignPhone = phone.length > 7 && !phone.startsWith('876') && !phone.startsWith('1876') && !phone.startsWith('658') && !phone.startsWith('1658');
-                const isTouristLocation = touristZones.some(k => pLower.includes(k) || dLower.includes(k));
-
-                if (isTouristLocation || isForeignPhone) { 
-                    base = 1000; 
-                    rate = 180; 
+                if (!isLocal) {
+                    base = 1000;
+                    rate = 180;
                 }
 
                 let total = base + (km * rate);
@@ -140,7 +141,7 @@
         const p = document.getElementById('pickup').value, d = document.getElementById('destination').value;
         const phone = document.getElementById('user-phone').value;
         const dt = document.getElementById('book-date').value, tm = document.getElementById('book-time').value;
-        if(!p || !d || !dt || !tm || !phone) return alert("Please include your WhatsApp number and trip details.");
+        if(!p || !d || !dt || !tm || phone.length < 7) return alert("Please fill in all details, including your phone number.");
 
         const inputs = document.querySelectorAll('input, select, button');
         inputs.forEach(i => i.disabled = true);
