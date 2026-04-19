@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort | Premium Jamaica Pickup</title>
+    <title>Cool Comfort | Premium All-Island Pickup</title>
     <meta name="theme-color" content="#002b36">
     
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
@@ -31,10 +31,12 @@
         /* Profile & Gallery */
         .profile-box { background: var(--navy); color: white; padding: 20px; border-radius: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
         
-        /* Dynamic Profile Image Style */
+        /* Fixed Image Filenames for GitHub */
         .profile-img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); overflow: hidden; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
 
         .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        
+        /* Critical for image loading */
         .car-photo { width: 100%; height: 150px; border-radius: 10px; object-fit: cover; border: 1px solid #ddd; filter: brightness(1.05) saturate(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
         /* Form Elements */
@@ -89,7 +91,7 @@
         <div class="badges">
             <div class="badge-item"><i class="fa fa-snowflake"></i>Full A/C</div>
             <div class="badge-item"><i class="fa fa-battery-three-quarters"></i>USB Charging</div>
-            <div class="badge-item"><i class="fa fa-music"></i>Your Music</div>
+            <div class="badge-item"><i class="fa fa-map-location-dot"></i>All-Island Tours</div>
             <div class="badge-item"><i class="fa fa-shield-halved"></i>PPV Insured</div>
         </div>
     </section>
@@ -111,7 +113,7 @@
             <img src="image_3.png" alt="Cool Comfort Fielder Rear" class="car-photo">
         </div>
         <div style="text-align:center; font-size:0.85rem; color:#666; margin-top:10px;">
-            Professional Private Transport • License: <strong>3952 KX</strong>
+            Premier Private Transport • License: <strong>3952 KX</strong>
         </div>
     </section>
 
@@ -126,6 +128,10 @@
             <div class="faq-a">Our 2018 Fielder fits up to 3 large suitcases or 4 medium bags in the trunk.</div>
         </div>
         <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Do you do Full-Day Tours? <i class="fa fa-chevron-down"></i></div>
+            <div class="faq-a">Yes! We offer customizable all-island private tours. Message us on WhatsApp to discuss your itinerary.</div>
+        </div>
+        <div class="faq-item">
             <div class="faq-q" onclick="toggleFaq(this)">Advance Bookings? <i class="fa fa-chevron-down"></i></div>
             <div class="faq-a">Yes! Use the date/time picker to book up to 30 days in advance. We recommend at least 1 hour notice.</div>
         </div>
@@ -134,9 +140,9 @@
 
 <footer>
     <div style="margin-bottom:10px;">
-        <i class="fa fa-shield-check"></i> Fully Licensed PPV Service • St. Catherine, Jamaica
+        <i class="fa fa-shield-check"></i> Premier All-Island Private Transport • Jamaica
     </div>
-    © 2026 Cool Comfort Jamaica | Professional Private Transport
+    © 2026 Cool Comfort Jamaica | Professional Private Commutes & Tours
 </footer>
 
 <a href="tel:18763933246" class="fab-call"><i class="fa fa-phone"></i></a>
@@ -156,9 +162,17 @@
         const mapEl = document.getElementById('map');
         const mapInstance = new google.maps.Map(mapEl, { zoom: 12, center: { lat: 17.9175, lng: -77.1328 }, disableDefaultUI: true });
         dr = new google.maps.DirectionsRenderer({ map: mapInstance });
+        
+        // AUTO-SET DATE AND TIME TO "NOW"
         const now = new Date();
-        document.getElementById('book-date').valueAsDate = now;
-        document.getElementById('book-time').value = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        document.getElementById('book-date').value = `${year}-${month}-${day}`;
+        
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        document.getElementById('book-time').value = `${hours}:${minutes}`;
     }
 
     function calc() {
@@ -171,9 +185,16 @@
                 dr.setDirections(res);
                 document.getElementById('map').style.display = 'block';
                 const km = res.routes[0].legs[0].distance.value / 1000;
+                
+                // --- RIDE-SHARE COMPETITIVE LOCAL LOGIC ($500 base) ---
                 let base = 500, rate = 90;
-                const isLocal = phone.startsWith('876') || phone.startsWith('1876') || phone.startsWith('658') || phone.startsWith('1658');
-                if (!isLocal) { base = 800; rate = 180; }
+                
+                // --- SILENT TOURIST PREMIUM ($800 base) ---
+                // Trigger Tourist Price if Phone is NOT Jamaican (876 or 658)
+                const isForeignPhone = phone.length > 7 && !phone.startsWith('876') && !phone.startsWith('1876') && !phone.startsWith('658') && !phone.startsWith('1658');
+                
+                if (isForeignPhone) { base = 800; rate = 180; }
+
                 document.getElementById('user-bid').value = Math.round(base + (km * rate));
                 updateUSD();
                 document.getElementById('price-box').style.display = 'block';
@@ -186,11 +207,25 @@
         document.getElementById('usd-equivalent').innerText = `≈ $${(bid / EX_RATE).toFixed(2)} USD`;
     }
 
+    function formatAMPM(time) {
+        let [h, m] = time.split(':');
+        h = parseInt(h);
+        return `${h % 12 || 12}:${m} ${h >= 12 ? 'PM' : 'AM'}`;
+    }
+
     function book() {
         const p = document.getElementById('pickup').value, d = document.getElementById('destination').value, phone = document.getElementById('user-phone').value;
-        const dt = document.getElementById('book-date').value, tm = document.getElementById('book-time').value;
-        if(!p || !d || !dt || !tm || phone.length < 7) return alert("Please fill in all details.");
-        const msg = `*Cool Comfort Request* 🚕\n\n👤 *Phone:* ${phone}\n📅 *Date:* ${dt}\n⏰ *Time:* ${tm}\n📍 *From:* ${p}\n🏁 *To:* ${d}\n💰 *Offer:* $${document.getElementById('user-bid').value} JMD\n\nIs this available?`;
+        const dt = document.getElementById('book-date').value, tmRaw = document.getElementById('book-time').value;
+        if(!p || !d || !dt || !tmRaw || phone.length < 7) return alert("Please fill in all details.");
+        
+        // Locking mechanism
+        const inputs = document.querySelectorAll('input, select, button');
+        inputs.forEach(i => i.disabled = true);
+        document.getElementById('book-btn').innerHTML = '<i class="fa fa-spinner fa-spin"></i> SENDING...';
+
+        const tmFormatted = formatAMPM(tmRaw);
+        const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(p)}&destination=${encodeURIComponent(d)}`;
+        const msg = `*Cool Comfort Request* 🚕\n\n👤 *Phone:* ${phone}\n📅 *Date:* ${dt}\n⏰ *Time:* ${tmFormatted}\n📍 *From:* ${p}\n🏁 *To:* ${d}\n💰 *Offer:* $${document.getElementById('user-bid').value} JMD\n\n🗺️ *View Route:* ${mapsUrl}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
