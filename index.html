@@ -28,28 +28,25 @@
         .badge-item i { display: block; font-size: 1.5rem; margin-bottom: 8px; color: var(--gold); }
 
         .profile-box { background: var(--navy); color: white; padding: 20px; border-radius: 15px; display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .profile-img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); overflow: hidden; object-fit: cover; }
+        .profile-img { width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--gold); overflow: hidden; object-fit: cover; background: #444; }
 
         .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .car-photo { width: 100%; height: 150px; border-radius: 10px; object-fit: cover; border: 1px solid #ddd; }
+        .car-photo { width: 100%; height: 160px; border-radius: 10px; object-fit: cover; border: 1px solid #ddd; background: #eee; }
 
-        /* Form Elements */
-        .gps-btn { background: var(--teal); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; margin-bottom: 15px; font-weight: bold; font-family: 'Times New Roman', serif; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .input-group { margin-bottom: 12px; }
         input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; box-sizing: border-box; font-family: 'Times New Roman', serif; }
 
         .price-box { background: #f0fff4; padding: 20px; border-radius: 10px; margin-top: 15px; display: none; text-align: center; border: 2px dashed var(--teal); }
         .bid-input { font-size: 1.8rem; font-weight: bold; color: var(--teal); border: 2px solid var(--teal); width: 80%; text-align: center; margin: 10px 0; border-radius: 8px; }
 
-        /* PayPal Container */
-        #paypal-button-container { margin-top: 15px; display: none; }
+        #paypal-button-container { margin-top: 15px; }
 
         .btn-book { background: var(--gold); color: var(--navy); padding: 1.2rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
         .btn-call { background: var(--navy); color: white; padding: 1rem; border: none; font-weight: bold; width: 100%; border-radius: 8px; cursor: pointer; text-transform: uppercase; text-decoration: none; display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 10px; }
         
         .faq-item { background: white; margin-bottom: 8px; border-radius: 8px; border: 1px solid #eee; overflow: hidden; }
-        .faq-q { padding: 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; font-size: 0.9rem; }
-        .faq-a { padding: 0 15px 15px; font-size: 0.85rem; color: #555; display: none; border-top: 1px solid #f9f9f9; padding-top: 10px; }
+        .faq-q { padding: 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; font-size: 0.9rem; align-items: center; }
+        .faq-a { padding: 0 15px 15px; font-size: 0.85rem; color: #555; display: none; border-top: 1px solid #f9f9f9; padding-top: 10px; line-height: 1.4; }
 
         footer { text-align: center; padding: 40px 20px; background: #eee; font-size: 0.8rem; color: #666; }
     </style>
@@ -63,10 +60,9 @@
 
 <div class="container">
     <div class="booking-card">
-        <button class="gps-btn" onclick="getLocation()"><i class="fa fa-location-crosshairs"></i> USE MY CURRENT LOCATION</button>
         <div class="input-group"><input type="text" id="pickup" placeholder="Pickup point"></div>
         <div class="input-group"><input type="text" id="destination" placeholder="Destination"></div>
-        <div class="input-group"><input type="tel" id="user-phone" placeholder="WhatsApp Number" oninput="calc()"></div>
+        <div class="input-group"><input type="tel" id="user-phone" placeholder="WhatsApp Number (e.g. 1876...)" oninput="calc()"></div>
         <div style="display:flex; gap:10px; margin-bottom:12px;"><input type="date" id="book-date"><input type="time" id="book-time"></div>
         
         <div id="map" style="width:100%; height:200px; display:none; border-radius:10px; margin-bottom:15px;"></div>
@@ -74,19 +70,18 @@
         <div id="price-box" class="price-box">
             <span style="font-size: 0.75rem; font-weight: bold; color: var(--teal);">SUGGESTED JMD FARE</span><br>
             <input type="number" id="user-bid" class="bid-input" oninput="updateUSD()">
-            <div id="usd-equivalent" style="opacity:0.6; font-size:0.9rem; margin-bottom:10px;">≈ $0.00 USD</div>
-            
+            <div id="usd-equivalent" style="opacity:0.6; font-size:0.9rem; margin-bottom:15px;">≈ $0.00 USD</div>
             <div id="paypal-button-container"></div>
         </div>
 
-        <button id="book-btn" class="btn-book" onclick="book()"><i class="fab fa-whatsapp"></i> REQUEST PICKUP</button>
+        <button id="book-btn" class="btn-book" onclick="book()"><i class="fab fa-whatsapp"></i> REQUEST VIA WHATSAPP</button>
         <a href="tel:18763933246" class="btn-call"><i class="fa fa-phone"></i> CALL FOR PICKUP</a>
     </div>
 
     <section>
         <div class="badges">
             <div class="badge-item"><i class="fa fa-snowflake"></i>Full A/C</div>
-            <div class="badge-item"><i class="fa fa-credit-card"></i>PayPal / Card</div>
+            <div class="badge-item"><i class="fa fa-credit-card"></i>PayPal Ready</div>
             <div class="badge-item"><i class="fa fa-map-location-dot"></i>All-Island</div>
             <div class="badge-item"><i class="fa fa-shield-halved"></i>PPV Insured</div>
         </div>
@@ -95,21 +90,41 @@
     <section>
         <h2>The Founder & Vehicle</h2>
         <div class="profile-box">
-            <img src="f0b190b8-2623-41a1-907a-1e475b39d839-1_all_521.jpg" alt="Pierce I." class="profile-img">
+            <img src="driver.jpg" alt="Founder" class="profile-img">
             <div>
                 <strong style="font-size: 1.1rem;">Pierce I.</strong><br>
-                <small style="opacity:0.8;">Founder, IT & Operator</small>
+                <small style="opacity:0.8;">Founder & Operator</small>
             </div>
         </div>
         <div class="gallery">
-            <img src="f0b190b8-2623-41a1-907a-1e475b39d839-1_all_1520.jpg" alt="Front View" class="car-photo">
-            <img src="f0b190b8-2623-41a1-907a-1e475b39d839-1_all_1519.jpg" alt="Rear View" class="car-photo">
+            <img src="car-front.jpg" alt="Front View" class="car-photo">
+            <img src="car-rear.jpg" alt="Rear View" class="car-photo">
+        </div>
+    </section>
+
+    <section>
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">How do I pay? <i class="fa fa-chevron-down"></i></div>
+            <div class="faq-a">We accept Cash (JMD/USD), Lynk transfers, and PayPal. For PayPal, you can pay directly through this website once your fare is calculated.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">What is the luggage capacity? <i class="fa fa-chevron-down"></i></div>
+            <div class="faq-a">Our Toyota Fielder comfortably fits up to 3 large suitcases or 4-5 medium travel bags in the trunk.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Do you offer airport transfers? <i class="fa fa-chevron-down"></i></div>
+            <div class="faq-a">Yes! We provide premier pickup and drop-off services for both NMIA (Kingston) and Sangster International (Montego Bay).</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-q" onclick="toggleFaq(this)">Can I book a full-day tour? <i class="fa fa-chevron-down"></i></div>
+            <div class="faq-a">Absolutely. We offer all-island tours. Please use the WhatsApp button to send us your itinerary for a custom quote.</div>
         </div>
     </section>
 </div>
 
 <footer>
-    © 2026 Cool Comfort Jamaica | irons.pierce@gmail.com
+    © 2026 Cool Comfort Jamaica | Professional All-Island Transport
 </footer>
 
 <script>
@@ -124,20 +139,16 @@
         geo = new google.maps.Geocoder();
         dr = new google.maps.DirectionsRenderer({ map: new google.maps.Map(document.getElementById('map'), { zoom: 12, center: { lat: 17.9175, lng: -77.1328 }, disableDefaultUI: true }) });
         
-        // Initialize PayPal
         paypal.Buttons({
             createOrder: (data, actions) => {
-                const usdAmount = (document.getElementById('user-bid').value / EX_RATE).toFixed(2);
+                const usd = (document.getElementById('user-bid').value / EX_RATE).toFixed(2);
                 return actions.order.create({
-                    purchase_units: [{
-                        amount: { value: usdAmount },
-                        payee: { email_address: 'irons.pierce@gmail.com' }
-                    }]
+                    purchase_units: [{ amount: { value: usd }, payee: { email_address: 'irons.pierce@gmail.com' } }]
                 });
             },
             onApprove: (data, actions) => {
                 return actions.order.capture().then(details => {
-                    alert('Transaction completed by ' + details.payer.name.given_name + '! Showing this to your driver as proof.');
+                    alert('Payment successful! Please send the WhatsApp request now to confirm your trip details.');
                 });
             }
         }).render('#paypal-button-container');
@@ -154,12 +165,14 @@
                 dr.setDirections(res);
                 document.getElementById('map').style.display = 'block';
                 const km = res.routes[0].legs[0].distance.value / 1000;
+                
+                // Tiered Pricing: Locals vs Tourists
                 let base = 500, rate = 90;
                 if (!phone.startsWith('876') && !phone.startsWith('1876')) { base = 800; rate = 180; }
+                
                 document.getElementById('user-bid').value = Math.round(base + (km * rate));
                 updateUSD();
                 document.getElementById('price-box').style.display = 'block';
-                document.getElementById('paypal-button-container').style.display = 'block';
             }
         });
     }
@@ -167,6 +180,14 @@
     function updateUSD() {
         const bid = document.getElementById('user-bid').value;
         document.getElementById('usd-equivalent').innerText = `≈ $${(bid / EX_RATE).toFixed(2)} USD`;
+    }
+
+    function toggleFaq(el) {
+        const ans = el.nextElementSibling;
+        const icon = el.querySelector('i');
+        const isOpen = ans.style.display === 'block';
+        ans.style.display = isOpen ? 'none' : 'block';
+        icon.className = isOpen ? 'fa fa-chevron-up' : 'fa fa-chevron-down';
     }
 
     function book() {
