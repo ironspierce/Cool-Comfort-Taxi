@@ -33,8 +33,11 @@
         .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         .car-photo { width: 100%; height: 160px; border-radius: 10px; object-fit: cover; border: 1px solid #ddd; background: #eee; }
 
-        .input-group { margin-bottom: 12px; }
+        .input-group { margin-bottom: 12px; position: relative; }
         input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; box-sizing: border-box; font-family: 'Times New Roman', serif; }
+        
+        /* Location Button Styling */
+        .loc-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--teal); cursor: pointer; font-size: 1.1rem; padding: 5px; }
 
         .price-box { background: #f0fff4; padding: 20px; border-radius: 10px; margin-top: 15px; display: none; text-align: center; border: 2px dashed var(--teal); }
         .bid-input { font-size: 1.8rem; font-weight: bold; color: var(--teal); border: 2px solid var(--teal); width: 80%; text-align: center; margin: 10px 0; border-radius: 8px; }
@@ -60,7 +63,10 @@
 
 <div class="container">
     <div class="booking-card">
-        <div class="input-group"><input type="text" id="pickup" placeholder="Pickup point"></div>
+        <div class="input-group">
+            <input type="text" id="pickup" placeholder="Pickup point">
+            <button class="loc-btn" onclick="useCurrentLocation()" title="Use current location"><i class="fa-solid fa-location-crosshairs"></i></button>
+        </div>
         <div class="input-group"><input type="text" id="destination" placeholder="Destination"></div>
         <div class="input-group"><input type="tel" id="user-phone" placeholder="WhatsApp Number (e.g. 1876...)" oninput="calc()"></div>
         <div style="display:flex; gap:10px; margin-bottom:12px;"><input type="date" id="book-date"><input type="time" id="book-time"></div>
@@ -154,6 +160,20 @@
         }).render('#paypal-button-container');
     }
 
+    function useCurrentLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const latlng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                geo.geocode({ location: latlng }, (results, status) => {
+                    if (status === "OK" && results[0]) {
+                        document.getElementById('pickup').value = results[0].formatted_address;
+                        calc();
+                    }
+                });
+            }, () => alert("Location access denied."));
+        }
+    }
+
     function calc() {
         const p = document.getElementById('pickup').value;
         const d = document.getElementById('destination').value;
@@ -166,7 +186,6 @@
                 document.getElementById('map').style.display = 'block';
                 const km = res.routes[0].legs[0].distance.value / 1000;
                 
-                // Tiered Pricing: Locals vs Tourists
                 let base = 500, rate = 90;
                 if (!phone.startsWith('876') && !phone.startsWith('1876')) { base = 800; rate = 180; }
                 
