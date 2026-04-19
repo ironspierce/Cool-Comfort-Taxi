@@ -45,10 +45,6 @@
         .call-wrapper { text-align: center; margin-top: 20px; }
         .btn-call { background: var(--navy); color: white; padding: 1rem 2rem; border: none; font-weight: bold; width: 100%; max-width: 300px; border-radius: 10px; cursor: pointer; text-transform: uppercase; text-decoration: none; display: inline-flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; }
         
-        .faq-item { background: white; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border-color); overflow: hidden; }
-        .faq-q { padding: 18px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; font-size: 0.95rem; align-items: center; }
-        .faq-a { padding: 0 18px 18px; font-size: 0.9rem; color: #444; display: none; border-top: 1px solid #f8fafa; padding-top: 12px; }
-
         footer { text-align: center; padding: 50px 20px; background: #eee; font-size: 0.85rem; color: #555; border-top: 1px solid #ddd; }
     </style>
 </head>
@@ -72,7 +68,7 @@
         <div id="map" style="width:100%; height:220px; display:none; border-radius:12px; margin-bottom:20px; border: 1px solid var(--border-color);"></div>
 
         <div id="price-box" class="price-box">
-            <span style="font-size: 0.8rem; font-weight: bold; color: var(--teal); letter-spacing: 1px;">ESTIMATED JMD FARE</span><br>
+            <span style="font-size: 0.8rem; font-weight: bold; color: var(--teal); letter-spacing: 1px;">LIVE FARE (GAS ADJUSTED)</span><br>
             <input type="number" id="user-bid" class="bid-input" oninput="updateUSD()">
             <div id="usd-equivalent" style="font-weight: bold; color: #666; font-size:1rem; margin-bottom:20px;">≈ $0.00 USD</div>
             <div id="paypal-button-container"></div>
@@ -86,15 +82,6 @@
     </div>
 
     <section>
-        <div class="badges">
-            <div class="badge-item"><i class="fa fa-snowflake"></i>Climate Controlled</div>
-            <div class="badge-item"><i class="fa fa-credit-card"></i>PayPal & Card</div>
-            <div class="badge-item"><i class="fa fa-map-location-dot"></i>All-Island Reach</div>
-            <div class="badge-item"><i class="fa fa-shield-halved"></i>Fully PPV Insured</div>
-        </div>
-    </section>
-
-    <section>
         <h2>Your Professional Operator</h2>
         <div class="profile-box">
             <img src="Cover Image.jpg" alt="Founder" class="profile-img">
@@ -102,26 +89,6 @@
                 <strong style="font-size: 1.2rem;">Pierce I.</strong><br>
                 <small style="opacity:0.9; letter-spacing: 1px;">Founder & Operator</small>
             </div>
-        </div>
-    </section>
-
-    <section>
-        <h2>Frequently Asked Questions</h2>
-        <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)">How do I settle payment? <i class="fa fa-chevron-down"></i></div>
-            <div class="faq-a">We accept Cash (JMD/USD), Lynk transfers, and PayPal. PayPal payments can be processed directly on this page after your fare is calculated.</div>
-        </div>
-        <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)">What is the vehicle's capacity? <i class="fa fa-chevron-down"></i></div>
-            <div class="faq-a">Our transport service comfortably accommodates up to 4 passengers with ample luggage space for suitcases and travel bags.</div>
-        </div>
-        <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)">Do you offer airport transfers? <i class="fa fa-chevron-down"></i></div>
-            <div class="faq-a">Yes. We specialize in punctual transfers to and from NMIA (Kingston) and Sangster International (Montego Bay).</div>
-        </div>
-        <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)">Are full-day bookings available? <i class="fa fa-chevron-down"></i></div>
-            <div class="faq-a">Certainly. For island tours or multi-stop business trips, please contact us via WhatsApp for a custom day-rate.</div>
         </div>
     </section>
 </div>
@@ -135,8 +102,23 @@
 <script>
     let ds, dr, geo;
     const EX_RATE = 156;
+    let currentGasPrice = 185; // Default base price JMD
+
+    async function fetchGasPrice() {
+        try {
+            // Attempt to fetch live fuel data for Jamaica
+            const response = await fetch('https://api.collectapi.com/gasPrice/stateAndCityFuelPrices?city=jamaica', {
+                headers: { "content-type": "application/json", "authorization": "apikey YOUR_COLLECT_API_KEY" }
+            });
+            const data = await response.json();
+            if(data.success) currentGasPrice = data.result[0].gasoline;
+        } catch (e) {
+            console.log("Using default gas price.");
+        }
+    }
 
     function init() {
+        fetchGasPrice();
         const opts = { componentRestrictions: { country: "jm" } };
         new google.maps.places.Autocomplete(document.getElementById('pickup'), opts).addListener('place_changed', calc);
         new google.maps.places.Autocomplete(document.getElementById('destination'), opts).addListener('place_changed', calc);
@@ -153,7 +135,7 @@
             },
             onApprove: (data, actions) => {
                 return actions.order.capture().then(details => {
-                    alert('Payment successful! Please click the WhatsApp button to finalize your pickup details.');
+                    alert('Payment successful! Click WhatsApp to confirm pickup.');
                 });
             }
         }).render('#paypal-button-container');
@@ -169,7 +151,7 @@
                         calc();
                     }
                 });
-            }, () => alert("Location permission denied."));
+            });
         }
     }
 
@@ -185,8 +167,14 @@
                 document.getElementById('map').style.display = 'block';
                 const km = res.routes[0].legs[0].distance.value / 1000;
                 
-                let base = 500, rate = 90;
-                if (!phone.startsWith('876') && !phone.startsWith('1876')) { base = 800; rate = 180; }
+                // Gas Fluctuations Logic
+                // Standard Rate = 90 JMD/km at 180 JMD Gas Price
+                const gasImpact = (currentGasPrice / 180); 
+                let base = 500, rate = 90 * gasImpact;
+                
+                if (!phone.startsWith('876') && !phone.startsWith('1876')) { 
+                    base = 800; rate = 180 * gasImpact; 
+                }
                 
                 let rawPrice = base + (km * rate);
                 document.getElementById('user-bid').value = Math.round(rawPrice / 10) * 10;
@@ -202,20 +190,8 @@
         document.getElementById('usd-equivalent').innerText = `≈ $${(bid / EX_RATE).toFixed(2)} USD`;
     }
 
-    function toggleFaq(el) {
-        const ans = el.nextElementSibling;
-        const isOpen = ans.style.display === 'block';
-        ans.style.display = isOpen ? 'none' : 'block';
-    }
-
     function book() {
-        const pickup = document.getElementById('pickup').value;
-        const dest = document.getElementById('destination').value;
-        const price = document.getElementById('user-bid').value;
-        const date = document.getElementById('book-date').value;
-        const time = document.getElementById('book-time').value;
-        
-        const msg = `*Cool Comfort Booking*\n📍 Pickup: ${pickup}\n🏁 Destination: ${dest}\n📅 Date: ${date}\n⏰ Time: ${time}\n💰 Fare: $${price} JMD`;
+        const msg = `*Cool Comfort Booking*\n📍 Pickup: ${document.getElementById('pickup').value}\n🏁 Destination: ${document.getElementById('destination').value}\n📅 Date: ${document.getElementById('book-date').value}\n⏰ Time: ${document.getElementById('book-time').value}\n💰 Fare: $${document.getElementById('user-bid').value} JMD`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
