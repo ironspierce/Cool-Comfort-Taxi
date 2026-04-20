@@ -3,224 +3,288 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort | Premium All-Island Pickup</title>
+    <title>Cool Comfort | Premium All-Island Transport</title>
     
-    <script src="https://www.paypal.com/sdk/js?client-id=BAA8P6X3C7B5W&merchant-id=26SBN3BDG55FQ&currency=USD&intent=capture"></script>
-    
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <script src="https://www.paypal.com/sdk/js?client-id=BAA8P6X3C7B5W&merchant-id=26SBN3BDG55FQ&currency=USD"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
+    
     <style>
-        :root { --teal: #008080; --navy: #002b36; --gold: #ffcc00; --white: #ffffff; --light-bg: #f8fafa; --text-color: #002b36; --border-color: #e0e6e6; }
-        body { font-family: 'Times New Roman', Times, serif; margin: 0; background: var(--light-bg); color: var(--text-color); scroll-behavior: smooth; line-height: 1.6; }
-        
-        header { background: linear-gradient(135deg, var(--navy), var(--teal)); color: white; padding: 4rem 1rem; text-align: center; border-bottom: 5px solid var(--gold); }
-        .motto { font-size: 0.9rem; letter-spacing: 3px; text-transform: uppercase; margin-top: 12px; color: var(--gold); font-weight: bold; }
+        :root {
+            --gold: #d4af37;
+            --navy: #001f26;
+            --teal: #004d4d;
+            --glass: rgba(255, 255, 255, 0.08);
+            --white: #ffffff;
+        }
 
-        .container { max-width: 650px; margin: 0 auto; padding: 0 20px; }
-        section { margin-bottom: 50px; }
-        h2 { text-align: center; color: var(--navy); text-transform: uppercase; letter-spacing: 2px; font-size: 1.3rem; margin-bottom: 25px; position: relative; padding-bottom: 10px; }
-        h2::after { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 50px; height: 3px; background: var(--gold); }
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; 
+            font-family: 'Montserrat', sans-serif; 
+            background: var(--navy); 
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
 
-        .booking-card { margin: -40px auto 40px; background: var(--white); padding: 2rem; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,43,54,0.1); border: 1px solid rgba(0,128,128,0.05); position: relative; z-index: 10; }
-        
-        .badges { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin: 25px 0; }
-        .badge-item { background: white; padding: 18px; border-radius: 12px; text-align: center; border: 1px solid var(--border-color); font-size: 0.85rem; font-weight: bold; color: var(--teal); }
-        .badge-item i { display: block; font-size: 1.6rem; margin-bottom: 10px; color: var(--gold); }
+        /* Hero Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(rgba(0,31,38,0.7), rgba(0,31,38,0.9)), url('Cover Image.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 40px 20px;
+        }
 
-        .profile-box { background: var(--navy); color: white; padding: 25px; border-radius: 18px; display: flex; align-items: center; gap: 20px; margin-bottom: 0px; }
-        .profile-img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--gold); overflow: hidden; object-fit: cover; background: #333; }
+        h1 { 
+            font-family: 'Playfair Display', serif; 
+            font-size: clamp(2.5rem, 8vw, 4rem); 
+            margin: 0; 
+            letter-spacing: 4px;
+            color: var(--gold);
+        }
+
+        .motto { 
+            text-transform: uppercase; 
+            letter-spacing: clamp(3px, 1vw, 8px); 
+            font-size: 0.9rem; 
+            margin-bottom: 30px;
+            opacity: 0.8;
+        }
+
+        /* Glassmorphism Booking Card */
+        .booking-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: clamp(20px, 5vw, 40px);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 550px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+        }
 
         .input-group { margin-bottom: 15px; position: relative; }
-        input { width: 100%; padding: 14px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 16px; box-sizing: border-box; font-family: 'Times New Roman', serif; transition: 0.3s; background: #fff; }
-        input:focus { outline: none; border-color: var(--teal); box-shadow: 0 0 0 3px rgba(0,128,128,0.1); }
-        
-        .loc-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--teal); cursor: pointer; font-size: 1.2rem; transition: 0.2s; }
+        input {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+        input:focus { outline: none; border-color: var(--gold); background: rgba(255,255,255,0.15); }
 
-        .price-box { background: #f0fff4; padding: 25px; border-radius: 15px; margin: 20px 0; display: none; text-align: center; border: 2px dashed var(--teal); }
-        .bid-input { font-size: 2rem; font-weight: bold; color: var(--teal); border: 2px solid var(--teal); width: 85%; text-align: center; margin: 15px 0; border-radius: 10px; background: white; }
+        .price-box {
+            background: rgba(212, 175, 55, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border: 1px solid var(--gold);
+            display: none;
+        }
 
-        .btn-book { background: var(--gold); color: var(--navy); padding: 1.3rem; border: none; font-weight: bold; width: 100%; border-radius: 10px; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 15px; transition: 0.3s; }
-        
-        .call-wrapper { text-align: center; margin-top: 20px; }
-        .btn-call { background: var(--navy); color: white; padding: 1rem 2rem; border: none; font-weight: bold; width: 100%; max-width: 300px; border-radius: 10px; cursor: pointer; text-transform: uppercase; text-decoration: none; display: inline-flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; }
-        
-        .faq-item { background: white; margin-bottom: 10px; border-radius: 10px; border: 1px solid var(--border-color); overflow: hidden; }
-        .faq-q { padding: 18px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; font-size: 0.95rem; align-items: center; }
-        .faq-a { padding: 0 18px 18px; font-size: 0.9rem; color: #444; display: none; border-top: 1px solid #f8fafa; padding-top: 12px; }
+        .btn-book {
+            background: var(--gold);
+            color: var(--navy);
+            padding: 18px;
+            border: none;
+            width: 100%;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-book:hover { background: #f1c40f; transform: scale(1.02); }
 
-        footer { text-align: center; padding: 50px 20px; background: #eee; font-size: 0.85rem; color: #555; border-top: 1px solid #ddd; }
+        /* Content Sections */
+        .section-padding { padding: 100px 20px; max-width: 1100px; margin: 0 auto; }
+        h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; text-align: center; margin-bottom: 50px; color: var(--gold); }
+
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .feature-box {
+            background: rgba(255,255,255,0.03);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--gold);
+        }
+        .feature-box i { font-size: 2.5rem; color: var(--gold); margin-bottom: 20px; }
+
+        .operator-card {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            background: linear-gradient(135deg, var(--teal), var(--navy));
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        .profile-img { width: 140px; height: 140px; border-radius: 50%; border: 4px solid var(--gold); object-fit: cover; }
+
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .car-img { width: 100%; height: 350px; object-fit: cover; border-radius: 20px; }
+
+        @media (max-width: 768px) {
+            .operator-card { flex-direction: column; text-align: center; }
+            .gallery { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <h1 style="margin:0; font-size: 2.5rem; letter-spacing: 2px;">COOL <span style="color:var(--gold)">COMFORT</span></h1>
-    <div class="motto">PREMIER • PUNCTUAL • PROFESSIONAL</div>
-</header>
-
-<div class="container">
+<section class="hero">
+    <div class="motto">Premier • Punctual • Professional</div>
+    <h1>COOL COMFORT</h1>
+    
     <div class="booking-card">
         <div class="input-group">
-            <input type="text" id="pickup" placeholder="Enter Pickup Point">
-            <button class="loc-btn" onclick="useCurrentLocation()" title="Use my location"><i class="fa-solid fa-location-crosshairs"></i></button>
+            <input type="text" id="pickup" placeholder="Enter Pickup Location">
         </div>
-        <div class="input-group"><input type="text" id="destination" placeholder="Enter Destination"></div>
-        <div class="input-group"><input type="tel" id="user-phone" placeholder="WhatsApp Number (e.g. 1876...)" oninput="calc()"></div>
-        <div style="display:flex; gap:10px; margin-bottom:15px;"><input type="date" id="book-date"><input type="time" id="book-time"></div>
-        
-        <div id="map" style="width:100%; height:220px; display:none; border-radius:12px; margin-bottom:20px; border: 1px solid var(--border-color);"></div>
+        <div class="input-group">
+            <input type="text" id="destination" placeholder="Enter Destination">
+        </div>
+        <div class="input-group">
+            <input type="tel" id="user-phone" placeholder="WhatsApp Number" oninput="calcFare()">
+        </div>
+        <div style="display:flex; gap:10px; margin-bottom:15px;">
+            <input type="date" id="book-date">
+            <input type="time" id="book-time">
+        </div>
 
         <div id="price-box" class="price-box">
-            <span style="font-size: 0.8rem; font-weight: bold; color: var(--teal); letter-spacing: 1px;">LIVE FARE (GAS ADJUSTED)</span><br>
-            <input type="number" id="user-bid" class="bid-input" oninput="updateUSD()">
-            <div id="usd-equivalent" style="font-weight: bold; color: #666; font-size:1rem; margin-bottom:20px;">≈ $0.00 USD</div>
-            <div id="paypal-button-container"></div>
+            <small style="color:var(--gold); letter-spacing:1px; font-weight:bold;">LIVE FARE (GAS ADJUSTED)</small>
+            <div id="jmd-price" style="font-size: 2rem; font-weight: 700; margin: 5px 0;">$0 JMD</div>
+            <div id="usd-price" style="opacity:0.7;">≈ $0.00 USD</div>
+            <div id="paypal-button-container" style="margin-top:20px;"></div>
         </div>
 
-        <button id="book-btn" class="btn-book" onclick="book()"><i class="fab fa-whatsapp"></i> REQUEST VIA WHATSAPP</button>
-        
-        <div class="call-wrapper">
-            <a href="tel:18763933246" class="btn-call"><i class="fa fa-phone"></i> CALL FOR PICKUP</a>
+        <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> REQUEST PICKUP</button>
+    </div>
+</section>
+
+<section class="section-padding">
+    <div class="feature-grid">
+        <div class="feature-box">
+            <i class="fa-solid fa-gas-pump"></i>
+            <h3>Dynamic Pricing</h3>
+            <p>Our algorithms track live gas fluctuations to ensure your fare is always fair and market-accurate.</p>
+        </div>
+        <div class="feature-box">
+            <i class="fa-solid fa-snowflake"></i>
+            <h3>Executive Comfort</h3>
+            <p>Travel in a climate-controlled 2018 Toyota Fielder, maintained to professional military standards.</p>
+        </div>
+        <div class="feature-box">
+            <i class="fa-solid fa-shield-halved"></i>
+            <h3>Safe & Insured</h3>
+            <p>Over 80 successful pickups with full PPV insurance for every passenger, every time.</p>
         </div>
     </div>
+</section>
 
-    <section>
-        <div class="badges">
-            <div class="badge-item"><i class="fa fa-snowflake"></i>Climate Controlled</div>
-            <div class="badge-item"><i class="fa fa-credit-card"></i>PayPal & Card</div>
-            <div class="badge-item"><i class="fa fa-map-location-dot"></i>All-Island Reach</div>
-            <div class="badge-item"><i class="fa fa-shield-halved"></i>Fully PPV Insured</div>
-        </div>
-    </section>
-
-    <section>
-        <h2>Your Professional Operator</h2>
-        <div class="profile-box">
-            <img src="Cover Image.jpg" alt="Founder" class="profile-img">
-            <div>
-                <strong style="font-size: 1.2rem;">Pierce I.</strong><br>
-                <small style="opacity:0.9; letter-spacing: 1px;">Founder & Operator</small>
+<section class="section-padding" style="background: rgba(0,0,0,0.2);">
+    <h2>The Operator</h2>
+    <div class="operator-card">
+        <img src="Cover Image.jpg" alt="Pierce I." class="profile-img">
+        <div style="flex: 1;">
+            <h3 style="margin:0; font-size: 1.8rem;">Pierce I.</h3>
+            <p style="color: var(--gold); font-weight: bold;">Founder & Professional Driver</p>
+            <p>Leveraging technical expertise and military-grade discipline to provide the most reliable transport service in St. James.</p>
+            <div style="margin-top:15px; font-weight:bold;">
+                <i class="fa-solid fa-phone" style="color:var(--gold);"></i> +1 (876) 393-3246
             </div>
         </div>
-    </section>
+        <img src="qr-code.png" alt="Scan to Contact" style="width:110px; height:110px; border-radius:12px; background:white; padding:5px;">
+    </div>
+</section>
 
-    <section>
-        <h2>Frequently Asked Questions</h2>
-        <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)">How do I settle payment? <i class="fa fa-chevron-down"></i></div>
-            <div class="faq-a">We accept Cash (JMD/USD), Lynk transfers, and PayPal. PayPal payments can be processed directly on this page after your fare is calculated.</div>
-        </div>
-        <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)">What is the vehicle's capacity? <i class="fa fa-chevron-down"></i></div>
-            <div class="faq-a">Our transport service comfortably accommodates up to 4 passengers with ample luggage space for suitcases and travel bags in our premium vehicles.</div>
-        </div>
-        <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)">Do you offer airport transfers? <i class="fa fa-chevron-down"></i></div>
-            <div class="faq-a">Yes. We specialize in punctual transfers to and from NMIA (Kingston) and Sangster International (Montego Bay).</div>
-        </div>
-        <div class="faq-item">
-            <div class="faq-q" onclick="toggleFaq(this)">Are full-day bookings available? <i class="fa fa-chevron-down"></i></div>
-            <div class="faq-a">Certainly. For island tours or multi-stop business trips, please contact us via WhatsApp for a custom day-rate.</div>
-        </div>
-    </section>
-</div>
+<section class="section-padding">
+    <h2>Meet the Car</h2>
+    <div class="gallery">
+        <img src="Front Fielder.jpg" alt="Front View" class="car-img">
+        <img src="Rear Fielder.jpg" alt="Rear View" class="car-img">
+    </div>
+</section>
 
-<footer>
-    <p><strong>COOL COMFORT JAMAICA</strong></p>
-    Professional All-Island Transport Services<br>
-    © 2026 | St. James, Jamaica
+<footer style="padding: 60px 20px; text-align: center; opacity: 0.6; font-size: 0.8rem;">
+    <p>COOL COMFORT JAMAICA &copy; 2026 | All-Island Service</p>
 </footer>
 
 <script>
     let ds, dr, geo;
     const EX_RATE = 156;
-    let currentGasPrice = 185; 
+    const CURRENT_GAS_PRICE = 185; // This could be fetched via API
 
-    function init() {
+    function initMap() {
         const opts = { componentRestrictions: { country: "jm" } };
-        new google.maps.places.Autocomplete(document.getElementById('pickup'), opts).addListener('place_changed', calc);
-        new google.maps.places.Autocomplete(document.getElementById('destination'), opts).addListener('place_changed', calc);
+        new google.maps.places.Autocomplete(document.getElementById('pickup'), opts).addListener('place_changed', calcFare);
+        new google.maps.places.Autocomplete(document.getElementById('destination'), opts).addListener('place_changed', calcFare);
         ds = new google.maps.DirectionsService();
-        geo = new google.maps.Geocoder();
-        dr = new google.maps.DirectionsRenderer({ map: new google.maps.Map(document.getElementById('map'), { zoom: 12, center: { lat: 18.4762, lng: -77.8939 }, disableDefaultUI: true }) });
+        dr = new google.maps.DirectionsRenderer();
         
         paypal.Buttons({
             createOrder: (data, actions) => {
-                const usd = (document.getElementById('user-bid').value / EX_RATE).toFixed(2);
-                return actions.order.create({
-                    purchase_units: [{ amount: { value: usd }, payee: { email_address: 'irons.pierce@gmail.com' } }]
-                });
+                const amount = document.getElementById('usd-price').innerText.replace('≈ $', '').replace(' USD', '');
+                return actions.order.create({ purchase_units: [{ amount: { value: amount } }] });
             },
             onApprove: (data, actions) => {
-                return actions.order.capture().then(details => {
-                    alert('Payment successful! Please click WhatsApp to confirm your pickup.');
-                });
+                return actions.order.capture().then(() => alert('Payment confirmed! Please send the WhatsApp message to coordinate.'));
             }
         }).render('#paypal-button-container');
     }
 
-    function useCurrentLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                const latlng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
-                geo.geocode({ location: latlng }, (results, status) => {
-                    if (status === "OK" && results[0]) {
-                        document.getElementById('pickup').value = results[0].formatted_address;
-                        calc();
-                    }
-                });
-            });
-        }
-    }
-
-    function calc() {
-        const p = document.getElementById('pickup').value;
-        const d = document.getElementById('destination').value;
+    function calcFare() {
+        const origin = document.getElementById('pickup').value;
+        const dest = document.getElementById('destination').value;
         const phone = document.getElementById('user-phone').value;
-        if (!p || !d || phone.length < 7) return;
 
-        ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
+        if (!origin || !dest || phone.length < 7) return;
+
+        ds.route({ origin, destination: dest, travelMode: 'DRIVING' }, (res, stat) => {
             if (stat === 'OK') {
-                dr.setDirections(res);
-                document.getElementById('map').style.display = 'block';
                 const km = res.routes[0].legs[0].distance.value / 1000;
+                const gasImpact = (CURRENT_GAS_PRICE / 180); 
                 
-                const gasImpact = (currentGasPrice / 180); 
                 let base = 500, rate = 90 * gasImpact;
-                
                 if (!phone.startsWith('876') && !phone.startsWith('1876')) { 
                     base = 800; rate = 180 * gasImpact; 
                 }
-                
-                let rawPrice = base + (km * rate);
-                document.getElementById('user-bid').value = Math.round(rawPrice / 10) * 10;
-                
-                updateUSD();
+
+                let total = Math.round((base + (km * rate)) / 10) * 10;
+                document.getElementById('jmd-price').innerText = `$${total} JMD`;
+                document.getElementById('usd-price').innerText = `≈ $${(total / EX_RATE).toFixed(2)} USD`;
                 document.getElementById('price-box').style.display = 'block';
             }
         });
     }
 
-    function updateUSD() {
-        const bid = document.getElementById('user-bid').value;
-        document.getElementById('usd-equivalent').innerText = `≈ $${(bid / EX_RATE).toFixed(2)} USD`;
-    }
-
-    function toggleFaq(el) {
-        const ans = el.nextElementSibling;
-        const icon = el.querySelector('i');
-        const isOpen = ans.style.display === 'block';
-        ans.style.display = isOpen ? 'none' : 'block';
-        icon.className = isOpen ? 'fa fa-chevron-up' : 'fa fa-chevron-down';
-    }
-
-    function book() {
-        const msg = `*Cool Comfort Booking*\n📍 Pickup: ${document.getElementById('pickup').value}\n🏁 Destination: ${document.getElementById('destination').value}\n📅 Date: ${document.getElementById('book-date').value}\n⏰ Time: ${document.getElementById('book-time').value}\n💰 Fare: $${document.getElementById('user-bid').value} JMD`;
+    function sendWhatsApp() {
+        const msg = `*Cool Comfort Booking Request*\n📍 From: ${document.getElementById('pickup').value}\n🏁 To: ${document.getElementById('destination').value}\n📅 Date: ${document.getElementById('book-date').value}\n⏰ Time: ${document.getElementById('book-time').value}\n💰 Fare: ${document.getElementById('jmd-price').innerText}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
-    window.onload = init;
+    window.onload = initMap;
 </script>
 </body>
 </html>
