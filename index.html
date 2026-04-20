@@ -31,7 +31,7 @@
             scroll-behavior: smooth;
         }
 
-        /* Hero Section */
+        /* Hero & Booking */
         .hero {
             position: relative;
             min-height: 100vh;
@@ -47,24 +47,9 @@
             padding: 40px 20px;
         }
 
-        h1 { 
-            font-family: 'Playfair Display', serif; 
-            font-size: clamp(2.5rem, 8vw, 4rem); 
-            margin: 0; 
-            letter-spacing: 4px;
-            color: var(--gold);
-        }
+        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 4rem); margin: 0; letter-spacing: 4px; color: var(--gold); }
+        .motto { text-transform: uppercase; letter-spacing: 5px; font-size: 0.9rem; margin-bottom: 30px; opacity: 0.8; }
 
-        .motto { 
-            text-transform: uppercase; 
-            letter-spacing: clamp(3px, 1vw, 8px); 
-            font-size: 0.9rem; 
-            margin-bottom: 30px;
-            opacity: 0.8;
-            font-weight: 400;
-        }
-
-        /* Glassmorphism Booking Card */
         .booking-card {
             background: var(--glass);
             backdrop-filter: blur(20px);
@@ -81,15 +66,28 @@
         input {
             width: 100%;
             padding: 16px;
+            padding-right: 45px;
             background: rgba(255,255,255,0.12);
             border: 1px solid rgba(255,255,255,0.2);
             border-radius: 14px;
             color: white;
             font-family: 'Montserrat', sans-serif;
             font-size: 1rem;
-            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        input:focus { outline: none; border-color: var(--gold); background: rgba(255,255,255,0.2); }
+        
+        .loc-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gold);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
+        .loc-btn:hover { transform: translateY(-50%) scale(1.2); color: white; }
 
         .price-box {
             background: rgba(212, 175, 55, 0.15);
@@ -98,9 +96,7 @@
             margin: 25px 0;
             border: 1px solid var(--gold);
             display: none;
-            animation: fadeIn 0.5s ease;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .btn-book {
             background: var(--gold);
@@ -117,47 +113,58 @@
             justify-content: center;
             align-items: center;
             gap: 12px;
-            font-size: 1rem;
-            letter-spacing: 1px;
         }
-        .btn-book:hover { background: #f1c40f; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(212,175,55,0.3); }
 
-        /* Section Layouts */
-        .section-padding { padding: 100px 20px; max-width: 1150px; margin: 0 auto; }
-        h2 { font-family: 'Playfair Display', serif; font-size: 2.8rem; text-align: center; margin-bottom: 60px; color: var(--gold); font-style: italic; }
-
-        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
-        .feature-box {
-            background: rgba(255,255,255,0.04);
-            padding: 50px 30px;
-            border-radius: 24px;
-            text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
+        /* FAQ Styling */
+        .faq-container { max-width: 800px; margin: 0 auto; padding: 0 20px; }
+        .faq-item {
+            background: rgba(255,255,255,0.05);
+            margin-bottom: 15px;
+            border-radius: 15px;
+            border: 1px solid rgba(255,255,255,0.1);
+            overflow: hidden;
+        }
+        .faq-header {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
             transition: 0.3s;
         }
-        .feature-box:hover { background: rgba(255,255,255,0.07); transform: translateY(-5px); }
-        .feature-box i { font-size: 3rem; color: var(--gold); margin-bottom: 25px; }
+        .faq-header:hover { background: rgba(255,255,255,0.08); color: var(--gold); }
+        .faq-content {
+            padding: 0 20px 20px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            display: none;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 15px;
+        }
+
+        /* Layout */
+        .section-padding { padding: 100px 20px; max-width: 1150px; margin: 0 auto; }
+        h2 { font-family: 'Playfair Display', serif; font-size: 2.8rem; text-align: center; margin-bottom: 60px; color: var(--gold); font-style: italic; }
 
         .operator-card {
             display: flex;
             align-items: center;
-            gap: 50px;
+            gap: 40px;
             background: linear-gradient(145deg, var(--teal), var(--navy));
             padding: 50px;
             border-radius: 35px;
             border: 1px solid rgba(255,255,255,0.08);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
-        .profile-img { width: 160px; height: 160px; border-radius: 50%; border: 5px solid var(--gold); object-fit: cover; }
+        .profile-img { width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--gold); object-fit: cover; }
 
-        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .car-img { width: 100%; height: 400px; object-fit: cover; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); }
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-top: 20px; }
+        .car-img { width: 100%; height: 380px; object-fit: cover; border-radius: 24px; border: 1px solid rgba(255,255,255,0.1); }
 
         @media (max-width: 768px) {
-            .operator-card { flex-direction: column; text-align: center; padding: 30px; }
+            .operator-card { flex-direction: column; text-align: center; }
             .gallery { grid-template-columns: 1fr; }
             h2 { font-size: 2rem; }
-            .car-img { height: 280px; }
         }
     </style>
 </head>
@@ -169,10 +176,11 @@
     
     <div class="booking-card">
         <div class="input-group">
-            <input type="text" id="pickup" placeholder="Enter Pickup Point">
+            <input type="text" id="pickup" placeholder="Pickup Point">
+            <button class="loc-btn" onclick="useMyLocation()" title="Use My Location"><i class="fa-solid fa-location-crosshairs"></i></button>
         </div>
         <div class="input-group">
-            <input type="text" id="destination" placeholder="Enter Destination">
+            <input type="text" id="destination" placeholder="Destination">
         </div>
         <div class="input-group">
             <input type="tel" id="user-phone" placeholder="WhatsApp Number" oninput="calcFare()">
@@ -183,10 +191,9 @@
         </div>
 
         <div id="price-box" class="price-box">
-            <small style="color:var(--gold); letter-spacing:2px; font-weight:bold; text-transform:uppercase;">Live Fare Analysis</small>
-            <div id="jmd-price" style="font-size: 2.2rem; font-weight: 700; margin: 8px 0; color:white;">$0 JMD</div>
-            <div id="usd-price" style="opacity:0.8; font-weight: 300;">≈ $0.00 USD</div>
-            <div id="paypal-button-container" style="margin-top:25px;"></div>
+            <div id="jmd-price" style="font-size: 2.2rem; font-weight: 700; color:white;">$0 JMD</div>
+            <div id="usd-price" style="opacity:0.8;">≈ $0.00 USD</div>
+            <div id="paypal-button-container" style="margin-top:20px;"></div>
         </div>
 
         <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> SECURE YOUR JOURNEY</button>
@@ -194,98 +201,95 @@
 </section>
 
 <section class="section-padding">
-    <div class="feature-grid">
-        <div class="feature-box">
-            <i class="fa-solid fa-chart-line"></i>
-            <h3>Fair Value Logic</h3>
-            <p>Our intelligent system monitors fuel fluctuations to ensure your fare remains equitable and transparent.</p>
-        </div>
-        <div class="feature-box">
-            <i class="fa-solid fa-snowflake"></i>
-            <h3>Tailored Cabin</h3>
-            <p>Enjoy a climate-controlled environment in our pristine 2018 Toyota Fielder, designed for the discerning traveler.</p>
-        </div>
-        <div class="feature-box">
-            <i class="fa-solid fa-crown"></i>
-            <h3>The Gold Standard</h3>
-            <p>With 80+ successful transfers, we maintain a reputation for discretion, safety, and absolute punctuality.</p>
-        </div>
-    </div>
-</section>
-
-<section class="section-padding" style="background: rgba(0,0,0,0.25);">
     <h2>The Standard</h2>
     <div class="operator-card">
         <img src="Cover Photo.jpg" alt="Pierce I." class="profile-img">
         <div style="flex: 1;">
             <h3 style="margin:0; font-size: 2rem; font-family: 'Playfair Display', serif;">Pierce I.</h3>
-            <p style="color: var(--gold); font-weight: bold; letter-spacing: 2px; text-transform: uppercase; font-size: 0.8rem;">Lead Operator</p>
-            <p style="font-weight: 300; opacity: 0.9;">
-                Dedicated to the art of seamless travel. We provide a tailored transport experience where safety and 
-                punctuality are the foundation of every mile driven across Jamaica.
-            </p>
-            <div style="margin-top:20px; font-weight:bold; font-size: 1.1rem;">
-                <i class="fa-solid fa-phone" style="color:var(--gold); margin-right:10px;"></i> +1 (876) 393-3246
-            </div>
+            <p style="color: var(--gold); font-weight: bold; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px;">Lead Operator</p>
+            <p>Dedicated to the art of seamless travel. We provide a tailored transport experience where safety and punctuality are the foundation of every mile driven across Jamaica.</p>
+            <div style="margin-top:15px; font-weight:bold;"><i class="fa-solid fa-star" style="color:var(--gold);"></i> 80+ Premium Pickups Completed</div>
         </div>
-        <img src="qr-code.png" alt="Scan to Contact" style="width:120px; height:120px; border-radius:15px; background:white; padding:8px; box-shadow: 0 10px 20px rgba(0,0,0,0.2);">
+        <img src="qr-code.png" alt="Contact QR" style="width:110px; border-radius:12px; background:white; padding:8px;">
     </div>
 </section>
 
 <section class="section-padding">
     <h2>Meet the Car</h2>
     <div class="gallery">
-        <img src="Front Fielder.jpg" alt="Toyota Fielder Front Profile" class="car-img">
-        <img src="Rear Fielder.jpg" alt="Toyota Fielder Rear Profile" class="car-img">
+        <img src="Front Fielder.jpg" alt="Front Profile" class="car-img">
+        <img src="Rear Fielder.jpg" alt="Rear Profile" class="car-img">
     </div>
 </section>
 
-<footer style="padding: 80px 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
-    <p style="letter-spacing: 5px; font-weight: 700; color: var(--gold); margin-bottom: 10px;">COOL COMFORT JAMAICA</p>
-    <p style="opacity: 0.5; font-size: 0.75rem;">EST. 2026 | ST. JAMES | ALL-ISLAND SERVICE</p>
+<section class="section-padding" style="background: rgba(0,0,0,0.15);">
+    <h2>Travel Insights</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">Accepted Payment Methods <i class="fa fa-chevron-down"></i></div>
+            <div class="faq-content">We accept Cash (JMD/USD), Lynk transfers, and PayPal. Secure PayPal transactions can be initiated directly via the booking engine above.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">Luggage & Capacity <i class="fa fa-chevron-down"></i></div>
+            <div class="faq-content">Our premium 2018 Toyota Fielder comfortably accommodates up to 4 passengers with generous space for standard travel luggage.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">Airport Transfers <i class="fa fa-chevron-down"></i></div>
+            <div class="faq-content">We provide dedicated service to and from NMIA (Kingston) and Sangster International (Montego Bay) with flight monitoring to ensure on-time service.</div>
+        </div>
+    </div>
+</section>
+
+<footer style="padding: 60px; text-align: center; opacity: 0.5; font-size: 0.7rem; letter-spacing: 3px;">
+    COOL COMFORT JAMAICA &copy; 2026 | ST. JAMES | ALL-ISLAND SERVICE
 </footer>
 
 <script>
-    let ds, dr;
+    let ds, geo;
     const EX_RATE = 156;
-    const GAS_PRICE = 185; 
+    const GAS_PRICE = 185;
 
     function initMap() {
         const opts = { componentRestrictions: { country: "jm" } };
         new google.maps.places.Autocomplete(document.getElementById('pickup'), opts).addListener('place_changed', calcFare);
         new google.maps.places.Autocomplete(document.getElementById('destination'), opts).addListener('place_changed', calcFare);
         ds = new google.maps.DirectionsService();
+        geo = new google.maps.Geocoder();
         
         paypal.Buttons({
-            style: { layout: 'horizontal', color: 'gold', shape: 'rect', label: 'pay' },
             createOrder: (data, actions) => {
-                const amount = document.getElementById('usd-price').innerText.replace('≈ $', '').replace(' USD', '');
-                return actions.order.create({ purchase_units: [{ amount: { value: amount } }] });
+                const amt = document.getElementById('usd-price').innerText.replace('≈ $', '').replace(' USD', '');
+                return actions.order.create({ purchase_units: [{ amount: { value: amt } }] });
             },
-            onApprove: (data, actions) => {
-                return actions.order.capture().then(() => alert('Payment Secured. Please confirm your pickup via WhatsApp.'));
-            }
+            onApprove: (data, actions) => { return actions.order.capture().then(() => alert('Payment Secured. Please confirm your pickup via WhatsApp.')); }
         }).render('#paypal-button-container');
+    }
+
+    function useMyLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const latlng = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                geo.geocode({ location: latlng }, (results, status) => {
+                    if (status === "OK" && results[0]) {
+                        document.getElementById('pickup').value = results[0].formatted_address;
+                        calcFare();
+                    }
+                });
+            });
+        }
     }
 
     function calcFare() {
         const origin = document.getElementById('pickup').value;
         const dest = document.getElementById('destination').value;
         const phone = document.getElementById('user-phone').value;
-
         if (!origin || !dest || phone.length < 7) return;
 
         ds.route({ origin, destination: dest, travelMode: 'DRIVING' }, (res, stat) => {
             if (stat === 'OK') {
                 const km = res.routes[0].legs[0].distance.value / 1000;
-                const gasImpact = (GAS_PRICE / 180); 
-                
-                let base = 500, rate = 95 * gasImpact;
-                // International rate logic
-                if (!phone.startsWith('876') && !phone.startsWith('1876')) { 
-                    base = 850; rate = 185 * gasImpact; 
-                }
-
+                let base = 500, rate = 95 * (GAS_PRICE / 180);
+                if (!phone.startsWith('876') && !phone.startsWith('1876')) { base = 850; rate = 185; }
                 let total = Math.round((base + (km * rate)) / 10) * 10;
                 document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
                 document.getElementById('usd-price').innerText = `≈ $${(total / EX_RATE).toFixed(2)} USD`;
@@ -294,8 +298,16 @@
         });
     }
 
+    function toggleFaq(el) {
+        const content = el.nextElementSibling;
+        const icon = el.querySelector('i');
+        const isOpen = content.style.display === 'block';
+        content.style.display = isOpen ? 'none' : 'block';
+        icon.className = isOpen ? 'fa fa-chevron-down' : 'fa fa-chevron-up';
+    }
+
     function sendWhatsApp() {
-        const msg = `*Cool Comfort Luxury Transport*\n----------------------------\n📍 Pickup: ${document.getElementById('pickup').value}\n🏁 Destination: ${document.getElementById('destination').value}\n📅 Scheduled: ${document.getElementById('book-date').value} at ${document.getElementById('book-time').value}\n💰 Estimated Fare: ${document.getElementById('jmd-price').innerText}`;
+        const msg = `*Cool Comfort Luxury Request*\n📍 Pickup: ${document.getElementById('pickup').value}\n🏁 Destination: ${document.getElementById('destination').value}\n📅 Date: ${document.getElementById('book-date').value} at ${document.getElementById('book-time').value}\n💰 Estimated Fare: ${document.getElementById('jmd-price').innerText}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
