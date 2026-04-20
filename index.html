@@ -12,53 +12,182 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
     
     <style>
-        :root { --gold: #d4af37; --navy: #001f26; --teal: #004d4d; --glass: rgba(255, 255, 255, 0.08); --white: #ffffff; }
+        :root {
+            --gold: #d4af37;
+            --navy: #001f26;
+            --teal: #004d4d;
+            --glass: rgba(255, 255, 255, 0.08);
+            --white: #ffffff;
+        }
+
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
+        body { 
+            margin: 0; 
+            font-family: 'Montserrat', sans-serif; 
+            background: var(--navy); 
+            color: var(--white);
+            line-height: 1.6;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
 
-        .hero { position: relative; min-height: 100vh; width: 100%; background: linear-gradient(rgba(0,31,38,0.7), rgba(0,31,38,0.9)), url('Cover Photo.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+        /* Hero & Booking Section */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            width: 100%;
+            background: linear-gradient(rgba(0,31,38,0.7), rgba(0,31,38,0.9)), url('Cover Photo.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 40px 20px;
+        }
+
+        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 6vw, 3.5rem); margin: 0; letter-spacing: 4px; color: var(--gold); text-align: center; }
+        .motto { text-transform: uppercase; letter-spacing: 5px; font-size: 0.8rem; margin-bottom: 30px; opacity: 0.8; text-align: center; }
+
+        .booking-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: clamp(20px, 5vw, 40px);
+            border-radius: 28px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+        }
+
+        /* Interactive Map */
+        #map { 
+            width: 100%; 
+            height: 300px; 
+            border-radius: 18px; 
+            margin-bottom: 20px; 
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .input-group { margin-bottom: 15px; position: relative; }
+        input {
+            width: 100%;
+            padding: 16px;
+            padding-right: 45px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 14px;
+            color: white;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+        }
         
-        .booking-card { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: clamp(20px, 4vw, 40px); border-radius: 28px; width: 100%; max-width: 600px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
-        
-        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3rem); margin: 0; color: var(--gold); text-align: center; }
-        .motto { text-transform: uppercase; letter-spacing: 5px; font-size: 0.8rem; margin-bottom: 25px; opacity: 0.8; text-align: center; }
+        .loc-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--gold);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: 0.3s;
+        }
 
-        /* Map Styling */
-        #map { width: 100%; height: 300px; border-radius: 18px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); display: block; }
+        .price-box {
+            background: rgba(212, 175, 55, 0.15);
+            padding: 20px;
+            border-radius: 18px;
+            margin: 20px 0;
+            border: 1px solid var(--gold);
+            text-align: center;
+            display: none;
+        }
 
-        .input-group { margin-bottom: 12px; position: relative; }
-        input { width: 100%; padding: 14px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-family: 'Montserrat', sans-serif; }
-        
-        .price-box { background: rgba(212, 175, 55, 0.15); padding: 20px; border-radius: 18px; margin: 20px 0; border: 1px solid var(--gold); text-align: center; }
+        .btn-book {
+            background: var(--gold);
+            color: var(--navy);
+            padding: 18px;
+            border: none;
+            width: 100%;
+            border-radius: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+        }
 
-        .btn-book { background: var(--gold); color: var(--navy); padding: 18px; border: none; width: 100%; border-radius: 12px; font-weight: 700; text-transform: uppercase; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; }
-        .btn-book:hover { background: #f1c40f; transform: translateY(-3px); }
+        /* Features */
+        .section-padding { padding: 80px 20px; max-width: 1150px; margin: 0 auto; }
+        h2 { font-family: 'Playfair Display', serif; font-size: 2.5rem; text-align: center; margin-bottom: 50px; color: var(--gold); font-style: italic; }
 
-        .section-padding { padding: 80px 20px; max-width: 1100px; margin: 0 auto; }
-        .operator-card { display: flex; align-items: center; gap: 30px; background: linear-gradient(145deg, var(--teal), var(--navy)); padding: 40px; border-radius: 30px; }
-        .profile-img { width: 120px; height: 120px; border-radius: 50%; border: 3px solid var(--gold); object-fit: cover; }
+        .feature-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; }
+        .feature-box {
+            background: rgba(255,255,255,0.03);
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            border-bottom: 3px solid var(--gold);
+        }
+        .feature-box i { font-size: 2.5rem; color: var(--gold); margin-bottom: 20px; }
 
-        @media (max-width: 768px) { .operator-card { flex-direction: column; text-align: center; } }
+        /* Operator & FAQ */
+        .operator-card {
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            background: linear-gradient(145deg, var(--teal), var(--navy));
+            padding: 45px;
+            border-radius: 35px;
+        }
+        .profile-img { width: 140px; height: 140px; border-radius: 50%; border: 4px solid var(--gold); object-fit: cover; }
+
+        .faq-item { background: rgba(255,255,255,0.05); margin-bottom: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden; }
+        .faq-header { padding: 20px; cursor: pointer; display: flex; justify-content: space-between; font-weight: 700; }
+        .faq-content { padding: 0 20px 20px; font-size: 0.9rem; opacity: 0.8; display: none; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
+
+        .gallery { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px; }
+        .car-img { width: 100%; height: 350px; object-fit: cover; border-radius: 20px; }
+
+        @media (max-width: 768px) {
+            .operator-card { flex-direction: column; text-align: center; }
+            .gallery { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
 
 <section class="hero">
+    <h1>COOL COMFORT</h1>
+    <div class="motto">Arrive Refined. Travel Defined.</div>
+    
     <div class="booking-card">
-        <h1>COOL COMFORT</h1>
-        <div class="motto">Arrive Refined. Travel Defined.</div>
-
         <div id="map"></div>
-        <p style="font-size: 0.75rem; text-align: center; opacity: 0.6; margin-bottom: 15px;">Tip: Drag the markers or click the map to pinpoint locations.</p>
+        <div class="input-group">
+            <input type="text" id="pickup" placeholder="Pickup Point">
+            <button class="loc-btn" onclick="useMyLocation()"><i class="fa-solid fa-location-crosshairs"></i></button>
+        </div>
+        <div class="input-group">
+            <input type="text" id="destination" placeholder="Destination">
+        </div>
+        <div class="input-group">
+            <input type="tel" id="user-phone" placeholder="WhatsApp Number" oninput="calcFare()">
+        </div>
+        <div style="display:flex; gap:12px; margin-bottom:15px;">
+            <input type="date" id="book-date">
+            <input type="time" id="book-time">
+        </div>
 
-        <div class="input-group"><input type="text" id="pickup" placeholder="Pickup Point"></div>
-        <div class="input-group"><input type="text" id="destination" placeholder="Destination"></div>
-        <div class="input-group"><input type="tel" id="user-phone" placeholder="WhatsApp Number" oninput="calcFare()"></div>
-        
-        <div id="price-box" class="price-box" style="display:none;">
-            <div id="jmd-price" style="font-size: 1.8rem; font-weight: 700;">$0 JMD</div>
+        <div id="price-box" class="price-box">
+            <div id="jmd-price" style="font-size: 2rem; font-weight: 700; color:white;">$0 JMD</div>
             <div id="usd-price" style="opacity:0.8;">≈ $0.00 USD</div>
-            <div id="paypal-button-container" style="margin-top:15px;"></div>
+            <div id="paypal-button-container" style="margin-top:20px;"></div>
         </div>
 
         <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> SECURE YOUR JOURNEY</button>
@@ -66,92 +195,123 @@
 </section>
 
 <section class="section-padding">
-    <div class="operator-card">
-        <img src="Cover Photo.jpg" alt="Pierce I." class="profile-img">
-        <div style="flex: 1;">
-            <h3 style="margin:0; color: var(--gold);">Pierce I.</h3>
-            <p>Dedicated to the art of seamless travel. We provide a tailored transport experience where safety and punctuality are the foundation of every mile driven across Jamaica.</p>
+    <div class="feature-grid">
+        <div class="feature-box">
+            <i class="fa-solid fa-chart-line"></i>
+            <h3>Fair Value Logic</h3>
+            <p>Our system monitors fuel fluctuations to ensure your fare remains equitable and transparent.</p>
+        </div>
+        <div class="feature-box">
+            <i class="fa-solid fa-snowflake"></i>
+            <h3>Tailored Cabin</h3>
+            <p>Enjoy a climate-controlled environment in our pristine 2018 Toyota Fielder.</p>
+        </div>
+        <div class="feature-box">
+            <i class="fa-solid fa-crown"></i>
+            <h3>The Standard</h3>
+            <p>Over 80 successful transfers with a reputation for discretion and absolute punctuality.</p>
         </div>
     </div>
 </section>
 
+<section class="section-padding" style="background: rgba(0,0,0,0.2);">
+    <h2>The Standard</h2>
+    <div class="operator-card">
+        <img src="Cover Photo.jpg" alt="Pierce I." class="profile-img">
+        <div style="flex: 1;">
+            <h3 style="margin:0; font-size: 1.8rem; color:var(--gold);">Pierce I.</h3>
+            <p style="font-weight:bold; font-size: 0.8rem; letter-spacing: 2px;">FOUNDER & LEAD OPERATOR</p>
+            <p>Dedicated to the art of seamless travel. We provide a tailored transport experience where safety and punctuality are the foundation of every mile driven across Jamaica.</p>
+        </div>
+        <img src="qr-code.png" alt="Contact" style="width:100px; border-radius:10px; background:white; padding:5px;">
+    </div>
+</section>
+
+<section class="section-padding">
+    <h2>Meet the Car</h2>
+    <div class="gallery">
+        <img src="Front Fielder.jpg" alt="Front Profile" class="car-img">
+        <img src="Rear Fielder.jpg" alt="Rear Profile" class="car-img">
+    </div>
+</section>
+
+<section class="section-padding">
+    <h2>Travel Insights</h2>
+    <div class="faq-container">
+        <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">Accepted Payments <i class="fa fa-chevron-down"></i></div>
+            <div class="faq-content">We accept Cash (JMD/USD), Lynk, and PayPal. Transactions can be initiated via the booking engine.</div>
+        </div>
+        <div class="faq-item">
+            <div class="faq-header" onclick="toggleFaq(this)">Capacity <i class="fa fa-chevron-down"></i></div>
+            <div class="faq-content">Our 2018 Toyota Fielder comfortably accommodates up to 4 passengers with generous luggage space.</div>
+        </div>
+    </div>
+</section>
+
+<footer style="padding: 50px; text-align: center; opacity: 0.5; font-size: 0.7rem;">
+    COOL COMFORT JAMAICA &copy; 2026 | ALL-ISLAND SERVICE
+</footer>
+
 <script>
-    let map, ds, dr, geo;
-    let markerP, markerD;
+    let map, ds, dr, geo, markerP, markerD;
     const EX_RATE = 156;
 
     function initMap() {
-        const jamaica = { lat: 18.1096, lng: -77.2975 };
-        map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 8,
-            center: jamaica,
-            styles: [/* Optional: Add Dark Mode Map Styles Here */],
-            disableDefaultUI: true,
-            zoomControl: true
-        });
-
+        const jm = { lat: 18.1096, lng: -77.2975 };
+        map = new google.maps.Map(document.getElementById("map"), { zoom: 8, center: jm, disableDefaultUI: true, zoomControl: true });
         ds = new google.maps.DirectionsService();
-        dr = new google.maps.DirectionsRenderer({ map: map, suppressMarkers: true });
+        dr = new google.maps.DirectionsRenderer({ map, suppressMarkers: true });
         geo = new google.maps.Geocoder();
 
-        // Initialize Markers
-        markerP = new google.maps.Marker({ map, draggable: true, label: "A", title: "Pickup" });
-        markerD = new google.maps.Marker({ map, draggable: true, label: "B", title: "Destination" });
+        markerP = new google.maps.Marker({ map, draggable: true, label: "A" });
+        markerD = new google.maps.Marker({ map, draggable: true, label: "B" });
 
-        // Autocomplete
-        const opts = { componentRestrictions: { country: "jm" } };
-        const acP = new google.maps.places.Autocomplete(document.getElementById('pickup'), opts);
-        const acD = new google.maps.places.Autocomplete(document.getElementById('destination'), opts);
+        const acP = new google.maps.places.Autocomplete(document.getElementById('pickup'), { componentRestrictions: { country: "jm" } });
+        const acD = new google.maps.places.Autocomplete(document.getElementById('destination'), { componentRestrictions: { country: "jm" } });
 
-        acP.addListener('place_changed', () => {
-            const place = acP.getPlace();
-            if (place.geometry) {
-                markerP.setPosition(place.geometry.location);
-                map.panTo(place.geometry.location);
-                calcFare();
-            }
+        acP.addListener('place_changed', () => { 
+            const p = acP.getPlace(); 
+            if(p.geometry) { markerP.setPosition(p.geometry.location); map.panTo(p.geometry.location); calcFare(); }
+        });
+        acD.addListener('place_changed', () => { 
+            const p = acD.getPlace(); 
+            if(p.geometry) { markerD.setPosition(p.geometry.location); calcFare(); }
         });
 
-        acD.addListener('place_changed', () => {
-            const place = acD.getPlace();
-            if (place.geometry) {
-                markerD.setPosition(place.geometry.location);
-                calcFare();
-            }
-        });
-
-        // Drag events
         markerP.addListener('dragend', () => reverseGeocode(markerP.getPosition(), 'pickup'));
         markerD.addListener('dragend', () => reverseGeocode(markerD.getPosition(), 'destination'));
 
-        // Map Click event
         map.addListener('click', (e) => {
-            if (!markerP.getPosition()) {
-                markerP.setPosition(e.latLng);
-                reverseGeocode(e.latLng, 'pickup');
-            } else {
-                markerD.setPosition(e.latLng);
-                reverseGeocode(e.latLng, 'destination');
-            }
+            if (!markerP.getPosition()) { markerP.setPosition(e.latLng); reverseGeocode(e.latLng, 'pickup'); }
+            else { markerD.setPosition(e.latLng); reverseGeocode(e.latLng, 'destination'); }
         });
 
         initPayPal();
     }
 
-    function reverseGeocode(latlng, targetId) {
-        geo.geocode({ location: latlng }, (results, status) => {
-            if (status === "OK" && results[0]) {
-                document.getElementById(targetId).value = results[0].formatted_address;
-                calcFare();
-            }
+    function reverseGeocode(latlng, id) {
+        geo.geocode({ location: latlng }, (res, stat) => {
+            if (stat === "OK" && res[0]) { document.getElementById(id).value = res[0].formatted_address; calcFare(); }
         });
+    }
+
+    function useMyLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const ll = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+                markerP.setPosition(ll);
+                map.setZoom(15);
+                map.panTo(ll);
+                reverseGeocode(ll, 'pickup');
+            });
+        }
     }
 
     function calcFare() {
         const p = markerP.getPosition();
         const d = markerD.getPosition();
         const phone = document.getElementById('user-phone').value;
-
         if (!p || !d || phone.length < 7) return;
 
         ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
@@ -160,7 +320,6 @@
                 const km = res.routes[0].legs[0].distance.value / 1000;
                 let base = 500, rate = 95;
                 if (!phone.startsWith('876')) { base = 850; rate = 185; }
-                
                 let total = Math.round((base + (km * rate)) / 10) * 10;
                 document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
                 document.getElementById('usd-price').innerText = `≈ $${(total / EX_RATE).toFixed(2)} USD`;
@@ -174,13 +333,17 @@
             createOrder: (data, actions) => {
                 const amt = document.getElementById('usd-price').innerText.replace('≈ $', '').replace(' USD', '');
                 return actions.order.create({ purchase_units: [{ amount: { value: amt } }] });
-            },
-            onApprove: (data, actions) => { return actions.order.capture().then(() => alert('Payment Secured.')); }
+            }
         }).render('#paypal-button-container');
     }
 
+    function toggleFaq(el) {
+        const content = el.nextElementSibling;
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+
     function sendWhatsApp() {
-        const msg = `*Cool Comfort Booking*\n📍 Pickup: ${document.getElementById('pickup').value}\n🏁 Destination: ${document.getElementById('destination').value}\n💰 Fare: ${document.getElementById('jmd-price').innerText}`;
+        const msg = `*Cool Comfort Luxury Booking*\n📍 From: ${document.getElementById('pickup').value}\n🏁 To: ${document.getElementById('destination').value}\n💰 Fare: ${document.getElementById('jmd-price').innerText}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
