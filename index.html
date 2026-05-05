@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Replace API_KEY with your actual Google Maps Key -->
+    <!-- Intelligence APIs -->
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
     
     <style>
@@ -102,45 +102,45 @@
         
         <!-- STEP 1: DURATION -->
         <div class="step active">
-            <span class="section-label">01. Mission Duration</span>
-            <div class="menu-item" onclick="setVal('days', 1, this)"><b>1 Day Mission</b><i class="fa-solid fa-calendar-day"></i></div>
-            <div class="menu-item" onclick="setVal('days', 3, this)"><b>3 Day Deployment</b><i class="fa-solid fa-calendar-week"></i></div>
+            <span class="section-label">01. Choose Your Duration</span>
+            <div class="menu-item" onclick="setVal('days', 1, this)"><b>1 Day Experience</b><i class="fa-solid fa-calendar-day"></i></div>
+            <div class="menu-item" onclick="setVal('days', 3, this)"><b>3 Day Escape</b><i class="fa-solid fa-calendar-week"></i></div>
             <div class="menu-item" onclick="setVal('days', 7, this)"><b>7 Day Island Tour</b><i class="fa-solid fa-map-location-dot"></i></div>
-            <div class="menu-item" onclick="setVal('days', 14, this)"><b>14 Day Immersion</b><i class="fa-solid fa-infinity"></i></div>
+            <div class="menu-item" onclick="setVal('days', 14, this)"><b>14 Day Grand Tour</b><i class="fa-solid fa-infinity"></i></div>
         </div>
 
         <!-- STEP 2: FLEET -->
         <div class="step">
-            <span class="section-label">02. Select Your Fleet</span>
+            <span class="section-label">02. Select Your Vehicle</span>
             <div class="menu-item" onclick="setVal('fleet', 155, this, 'Executive Sedan')"><b>Executive Sedan</b><i class="fa-solid fa-car"></i></div>
             <div class="menu-item" onclick="setVal('fleet', 230, this, 'Luxury SUV')"><b>Luxury SUV</b><i class="fa-solid fa-suv"></i></div>
             <div class="menu-item" onclick="setVal('fleet', 350, this, 'Private Van')"><b>Private Van</b><i class="fa-solid fa-van-shuttle"></i></div>
             <div class="menu-item" onclick="setVal('fleet', 550, this, 'VIP Coaster')"><b>VIP Coaster</b><i class="fa-solid fa-bus"></i></div>
         </div>
 
-        <!-- STEP 3: OBJECTIVES (WITH MENUS) -->
+        <!-- STEP 3: OBJECTIVES -->
         <div class="step">
-            <span class="section-label">03. Jamaica Objectives</span>
+            <span class="section-label">03. Custom Itinerary</span>
             
             <div id="main-menu">
-                <div class="menu-item" onclick="openSub('food')"><b>Food & Gastronomy</b><i class="fa-solid fa-utensils"></i></div>
-                <div class="menu-item" onclick="openSub('beaches')"><b>Beaches & Coves</b><i class="fa-solid fa-umbrella-beach"></i></div>
-                <div class="menu-item" onclick="openSub('culture')"><b>Museums & Culture</b><i class="fa-solid fa-landmark"></i></div>
-                <div class="menu-item" onclick="openSub('nature')"><b>Nature & Falls</b><i class="fa-solid fa-mountain-sun"></i></div>
+                <div class="menu-item" onclick="openSub('food')"><b>Fine Dining & Local Eats</b><i class="fa-solid fa-utensils"></i></div>
+                <div class="menu-item" onclick="openSub('beaches')"><b>Beaches & Coastal Gems</b><i class="fa-solid fa-umbrella-beach"></i></div>
+                <div class="menu-item" onclick="openSub('culture')"><b>Museums & Heritage</b><i class="fa-solid fa-landmark"></i></div>
+                <div class="menu-item" onclick="openSub('nature')"><b>Nature & Adventure</b><i class="fa-solid fa-mountain-sun"></i></div>
             </div>
 
             <div id="sub-menu" class="detail-view">
-                <span class="back-to-menu" onclick="closeSub()"><i class="fa-solid fa-chevron-left"></i> BACK TO CATEGORIES</span>
+                <span class="back-to-menu" onclick="closeSub()"><i class="fa-solid fa-chevron-left"></i> RETURN TO CATEGORIES</span>
                 <div id="poi-items"></div>
             </div>
         </div>
 
         <!-- STEP 4: PRECISE LOGISTICS -->
         <div class="step">
-            <span class="section-label">04. Precise Logistics</span>
+            <span class="section-label">04. Arrival Details</span>
             <div id="map"></div>
-            <input type="text" id="pickup" placeholder="Precise Pickup (Street, Hotel, Airport)">
-            <input type="text" id="destination" placeholder="Final Destination Objective">
+            <input type="text" id="pickup" placeholder="Enter Pickup Address or Hotel">
+            <input type="text" id="destination" placeholder="Enter Destination or Resort">
             
             <div style="text-align: center; padding: 20px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold); border-radius: 20px;">
                 <div id="jmd-price" style="font-size: 1.8rem; font-weight: 700; color: var(--gold);">$0 JMD</div>
@@ -205,7 +205,7 @@
         for (let i = 0; i < dots.length; i++) dots[i].classList.toggle('active', i <= currentStep);
         
         document.getElementById('backBtn').style.display = currentStep === 0 ? 'none' : 'block';
-        document.getElementById('nextBtn').innerText = currentStep === 3 ? "Deploy Mission" : "Continue";
+        document.getElementById('nextBtn').innerText = currentStep === 3 ? "Confirm Reservation" : "Continue";
 
         if (currentStep === 3) initPreciseMap();
     }
@@ -265,11 +265,11 @@
         ac.addListener('place_changed', () => {
             const p = document.getElementById('pickup').value;
             const d = document.getElementById('destination').value;
-            if (p && d) calculateMissionFare(p, d);
+            if (p && d) calculateFare(p, d);
         });
     }
 
-    function calculateMissionFare(origin, destination) {
+    function calculateFare(origin, destination) {
         ds.route({ origin, destination, travelMode: 'DRIVING' }, (res, stat) => {
             if (stat === "OK") {
                 dr.setDirections(res);
@@ -282,12 +282,12 @@
     }
 
     function sendToWhatsApp() {
-        const text = `*COOL COMFORT MISSION DEPLOYED*\n\n` +
-                     `Fleet: ${fleet}\n` +
+        const text = `*NEW RESERVATION INQUIRY*\n\n` +
+                     `Vehicle: ${fleet}\n` +
                      `Duration: ${days} Days\n` +
-                     `Objectives: ${selectedPois.join(', ') || 'Custom Route'}\n` +
-                     `Pickup: ${document.getElementById('pickup').value}\n` +
-                     `Fare: ${document.getElementById('jmd-price').innerText}`;
+                     `Places of Interest: ${selectedPois.join(', ') || 'Custom Route'}\n` +
+                     `Pickup Point: ${document.getElementById('pickup').value}\n` +
+                     `Estimated Fare: ${document.getElementById('jmd-price').innerText}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(text)}`);
     }
 </script>
