@@ -3,244 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort | Precision Fixed</title>
+    <title>Cool Comfort | The Gold Standard</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- IMPORTANT: Replace YOUR_API_KEY with your actual Google Maps API Key -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places,geometry"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=BAA8P6X3C7B5W&merchant-id=26SBN3BDG55FQ&currency=USD"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
     
     <style>
-        :root { --gold: #d4af37; --navy: #001f26; --white: #ffffff; --glass: rgba(255, 255, 255, 0.12); }
+        :root { --gold: #d4af37; --navy: #001f26; --glass: rgba(255, 255, 255, 0.1); --white: #ffffff; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); overflow-x: hidden; }
+
+        .hero { min-height: 100vh; background: linear-gradient(rgba(0,31,38,0.8), rgba(0,31,38,0.95)), url('Cover Photo.jpg'); background-size: cover; display: flex; align-items: center; justify-content: center; padding: 20px; }
         
-        body { 
-            margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); 
-            display: flex; justify-content: center; align-items: center; min-height: 100vh; overflow: hidden;
+        .booking-card { width: 100%; max-width: 500px; background: rgba(255,255,255,0.05); backdrop-filter: blur(25px); border-radius: 35px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 50px 100px rgba(0,0,0,0.8); }
+
+        .section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); margin: 20px 0 10px 0; display: block; }
+
+        /* Scrolling Decks */
+        .scrolling-wrapper { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; scrollbar-width: none; }
+        .scrolling-wrapper::-webkit-scrollbar { display: none; }
+
+        /* Selection Cards */
+        .selection-card { 
+            flex: 0 0 110px; background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 15px; 
+            text-align: center; transition: 0.3s; cursor: pointer;
         }
+        .selection-card.active { background: var(--gold); border-color: var(--gold); }
+        .selection-card i { font-size: 1.5rem; color: var(--gold); margin-bottom: 8px; display: block; }
+        .selection-card.active i, .selection-card.active span { color: var(--navy); }
+        .selection-card span { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
 
-        .hero-bg { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0,31,38,0.85), rgba(0,31,38,0.95)), url('Cover Photo.jpg');
-            background-size: cover; background-position: center; z-index: -1;
+        /* Experience Cards */
+        .exp-card { 
+            flex: 0 0 180px; height: 110px; border-radius: 20px; position: relative; overflow: hidden; 
+            border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
         }
-        
-        .booking-card { 
-            width: 92%; max-width: 450px; height: 88vh; max-height: 780px;
-            background: var(--glass); backdrop-filter: blur(50px); 
-            border-radius: 40px; border: 1px solid rgba(255,255,255,0.15); 
-            display: flex; flex-direction: column; position: relative;
-        }
+        .exp-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: 0.3s; }
+        .exp-card.selected { border: 2px solid var(--gold); }
+        .exp-card.selected img { opacity: 0.9; }
+        .exp-info { position: absolute; bottom: 10px; left: 10px; z-index: 2; }
+        .exp-info b { font-size: 0.75rem; display: block; }
+        .exp-info span { font-size: 0.55rem; text-transform: uppercase; color: var(--gold); }
+        .check-mark { position: absolute; top: 10px; right: 10px; color: var(--gold); display: none; font-size: 1.2rem; }
+        .exp-card.selected .check-mark { display: block; }
 
-        .card-header { padding: 30px 30px 10px 30px; }
-        .progress-bar-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 25px; }
-        .line-bg { position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 1; }
-        .line-fill { position: absolute; top: 50%; left: 0; width: 0%; height: 1px; background: var(--gold); z-index: 2; transition: 0.6s; }
-        .dot { width: 10px; height: 10px; background: #111; border-radius: 50%; z-index: 3; transition: 0.4s; }
-        .dot.active { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
+        /* Day Selector */
+        .day-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+        .day-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
+        .day-btn.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
 
-        .card-content { flex-grow: 1; overflow-y: auto; padding: 0 30px; scrollbar-width: none; }
-        .card-content::-webkit-scrollbar { display: none; }
+        #map { width: 100%; height: 200px; border-radius: 25px; margin: 20px 0; border: 1px solid rgba(212,175,55,0.2); }
+        input { width: 100%; padding: 16px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; margin-bottom: 10px; }
 
-        .step { display: none; animation: slideUp 0.4s ease-out; }
-        .step.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-
-        .section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 4px; color: var(--gold); margin-bottom: 25px; display: block; text-align: center; }
-
-        /* Map Fixes */
-        #map { 
-            width: 100%; height: 200px; border-radius: 25px; margin-bottom: 20px; 
-            border: 1px solid rgba(255,255,255,0.15); background: #000;
-        }
-
-        /* Input Styling */
-        input, select { 
-            width: 100%; padding: 18px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 18px; color: white; font-family: inherit; font-size: 0.95rem; margin-bottom: 15px;
-        }
-        input:focus { border-color: var(--gold); outline: none; }
-
-        /* Google Autocomplete List Fix */
-        .pac-container { 
-            background: #001f26 !important; border: 1px solid var(--gold) !important; 
-            border-radius: 15px !important; margin-top: 5px; z-index: 10000 !important; 
-        }
-        .pac-item { color: white !important; border-top: 1px solid rgba(255,255,255,0.1) !important; padding: 10px !important; }
-        .pac-item:hover { background: rgba(212,175,55,0.1) !important; }
-        .pac-item-query { color: var(--gold) !important; font-weight: 700 !important; }
-
-        .card-footer { padding: 25px 30px 40px 30px; display: flex; gap: 12px; }
-        .btn-primary { background: var(--gold); color: var(--navy); border: none; padding: 20px; border-radius: 18px; flex: 2; font-weight: 700; text-transform: uppercase; cursor: pointer; }
-        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: none; padding: 20px; border-radius: 18px; flex: 1; font-weight: 700; cursor: pointer; }
+        .itinerary-summary { background: rgba(212,175,55,0.05); border-radius: 15px; padding: 15px; margin-bottom: 15px; display: none; font-size: 0.75rem; }
+        .price-box { text-align: center; margin-bottom: 20px; padding: 20px; border-radius: 20px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold); display: none; }
+        .btn-deploy { background: var(--gold); color: var(--navy); width: 100%; padding: 20px; border-radius: 18px; border: none; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; }
     </style>
 </head>
 <body>
 
-<div class="hero-bg"></div>
-
-<div class="booking-card">
-    <div class="card-header">
-        <div class="progress-bar-container">
-            <div class="line-bg"></div>
-            <div class="line-fill" id="line-fill"></div>
-            <div class="dot active"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
-    </div>
-
-    <div class="card-content" id="scroll-area">
-        
-        <!-- STEP 1: LOGISTICS -->
-        <div class="step active">
-            <span class="section-label">01. Arrival Logistics</span>
-            <div id="map"></div>
-            <input type="text" id="pickup" placeholder="Pickup (Hotel, Airport, Port)">
-            <input type="text" id="destination" placeholder="Destination (Resort, Villa)">
-            <input type="date" id="date">
-            <input type="time" id="time">
+<section class="hero">
+    <div class="booking-card">
+        <span class="section-label" style="margin-top:0;">1. Mission Duration</span>
+        <div class="day-grid">
+            <div class="day-btn active" onclick="setDays(1, this)">1 Day</div>
+            <div class="day-btn" onclick="setDays(2, this)">2 Days</div>
+            <div class="day-btn" onclick="setDays(3, this)">3 Days</div>
+            <div class="day-btn" onclick="setDays(5, this)">5 Days</div>
+            <div class="day-btn" onclick="setDays(7, this)">7 Days</div>
         </div>
 
-        <!-- STEP 2: FLEET -->
-        <div class="step">
-            <span class="section-label">02. Elite Fleet</span>
-            <!-- Fleet Selection Logic -->
-            <select id="vehicle" onchange="updateFare()">
-                <option value="155">Executive Sedan</option>
-                <option value="230">Luxury SUV</option>
-                <option value="350">Private Van</option>
-            </select>
-        </div>
-
-        <!-- STEP 3: PRICE -->
-        <div class="step">
-            <span class="section-label">03. Review & Fare</span>
-            <div style="text-align: center; padding: 30px; background: rgba(212,175,55,0.1); border-radius: 25px; border: 1px solid var(--gold);">
-                <span id="fare-jmd" style="font-size: 2rem; font-weight: 700; color: var(--gold); display: block;">$0 JMD</span>
-                <span id="fare-usd" style="opacity: 0.6;">≈ $0.00 USD</span>
+        <span class="section-label">2. Fleet Class</span>
+        <div class="scrolling-wrapper">
+            <div class="selection-card active" onclick="setFleet('Executive Sedan', 155, this)">
+                <i class="fa-solid fa-car"></i><span>Sedan</span>
+            </div>
+            <div class="selection-card" onclick="setFleet('Premium SUV', 230, this)">
+                <i class="fa-solid fa-suv"></i><span>SUV</span>
+            </div>
+            <div class="selection-card" onclick="setFleet('Private Van', 350, this)">
+                <i class="fa-solid fa-van-shuttle"></i><span>Van</span>
             </div>
         </div>
 
-    </div>
+        <span class="section-label">3. Select All Objectives</span>
+        <div class="scrolling-wrapper">
+            <div class="exp-card" onclick="togglePOI('Blue Hole', 'Blue Hole, Ocho Rios', this)">
+                <i class="fa-solid fa-circle-check check-mark"></i>
+                <img src="https://images.unsplash.com/photo-1543731068-7e0f5beff43a?auto=format&fit=crop&w=400">
+                <div class="exp-info"><span>Nature</span><b>Blue Hole</b></div>
+            </div>
+            <div class="exp-card" onclick="togglePOI('Rose Hall', 'Rose Hall Great House', this)">
+                <i class="fa-solid fa-circle-check check-mark"></i>
+                <img src="https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=400">
+                <div class="exp-info"><span>History</span><b>Rose Hall</b></div>
+            </div>
+            <div class="exp-card" onclick="togglePOI('Scotchies', 'Scotchies, Montego Bay', this)">
+                <i class="fa-solid fa-circle-check check-mark"></i>
+                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400">
+                <div class="exp-info"><span>Foodie</span><b>Scotchies</b></div>
+            </div>
+            <div class="exp-card" onclick="togglePOI('Rick\'s Cafe', 'Ricks Cafe, Negril', this)">
+                <i class="fa-solid fa-circle-check check-mark"></i>
+                <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=400">
+                <div class="exp-info"><span>Views</span><b>Rick's Cafe</b></div>
+            </div>
+        </div>
 
-    <div class="card-footer">
-        <button class="btn-secondary" id="backBtn" onclick="move(-1)" style="display:none;">Back</button>
-        <button class="btn-primary" id="nextBtn" onclick="move(1)">Continue</button>
+        <div id="itinerary-summary" class="itinerary-summary"></div>
+
+        <div id="map"></div>
+
+        <input type="text" id="pickup" placeholder="Pickup Location">
+        <input type="text" id="destination" placeholder="Final Objective (Last Stop)">
+
+        <div id="price-box" class="price-box">
+            <div id="jmd-price" style="font-size: 2.2rem; font-weight: 700; color: var(--gold);">$0 JMD</div>
+            <div id="usd-price" style="opacity:0.7;">≈ $0.00 USD</div>
+        </div>
+
+        <button class="btn-deploy" onclick="sendWhatsApp()">Deploy Mission</button>
     </div>
-</div>
+</section>
 
 <script>
-    let currentStep = 0;
-    let map, directionsService, directionsRenderer;
-    let pickupLoc = null, destLoc = null;
+    let map, ds, dr, kmRate = 155, missionDays = 1;
+    let selectedPOIs = [];
 
-    function move(n) {
-        const steps = document.querySelectorAll('.step');
-        steps[currentStep].classList.remove('active');
-        currentStep += n;
-
-        if (currentStep >= steps.length) {
-            sendWhatsApp();
-            currentStep = steps.length - 1;
-        }
-
-        steps[currentStep].classList.add('active');
-        document.getElementById('backBtn').style.display = currentStep === 0 ? 'none' : 'block';
-        document.getElementById('nextBtn').innerText = currentStep === steps.length - 1 ? "Confirm" : "Continue";
-        
-        const dots = document.querySelectorAll('.dot');
-        document.getElementById('line-fill').style.width = (currentStep / (dots.length - 1)) * 100 + "%";
-        dots.forEach((d, i) => d.classList.toggle('active', i <= currentStep));
-        
-        if (currentStep === 0) {
-            // Trigger map resize if hidden previously
-            google.maps.event.trigger(map, "resize");
-        }
-    }
-
-    // MAP INITIALIZATION
     function initMap() {
-        // Center on Jamaica
-        const jamaica = { lat: 18.1096, lng: -77.2975 };
         map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 8,
-            center: jamaica,
-            disableDefaultUI: true,
-            styles: [
-                { "elementType": "geometry", "stylers": [{ "color": "#212121" }] },
-                { "elementType": "labels.text.fill", "stylers": [{ "color": "#757575" }] },
-                { "featureType": "road", "elementType": "geometry", "stylers": [{ "color": "#303030" }] },
-                { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#000000" }] }
-            ]
+            zoom: 12, center: { lat: 18.4762, lng: -77.8938 }, 
+            mapTypeId: 'satellite', disableDefaultUI: true
         });
-
-        directionsService = new google.maps.DirectionsService();
-        directionsRenderer = new google.maps.DirectionsRenderer({
-            map: map,
-            polylineOptions: { strokeColor: "#d4af37", strokeWeight: 5 }
-        });
-
-        // AUTOCOMPLETE SETUP
-        const options = { 
-            componentRestrictions: { country: "jm" }, 
-            fields: ["formatted_address", "geometry"] 
-        };
-        
-        const acPickup = new google.maps.places.Autocomplete(document.getElementById('pickup'), options);
-        const acDest = new google.maps.places.Autocomplete(document.getElementById('destination'), options);
-
-        acPickup.addListener('place_changed', () => {
-            const place = acPickup.getPlace();
-            if (place.geometry) {
-                pickupLoc = place.formatted_address;
-                updateFare();
-            }
-        });
-
-        acDest.addListener('place_changed', () => {
-            const place = acDest.getPlace();
-            if (place.geometry) {
-                destLoc = place.formatted_address;
-                updateFare();
-            }
-        });
+        ds = new google.maps.DirectionsService();
+        dr = new google.maps.DirectionsRenderer({ map: map, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 5 } });
+        setupAutocomplete(document.getElementById('pickup'));
+        setupAutocomplete(document.getElementById('destination'));
     }
 
-    function updateFare() {
-        if (!pickupLoc || !destLoc) return;
+    function setupAutocomplete(input) {
+        const ac = new google.maps.places.Autocomplete(input, { componentRestrictions: { country: "jm" } });
+        ac.addListener('place_changed', calcFare);
+    }
 
-        directionsService.route({
-            origin: pickupLoc,
-            destination: destLoc,
-            travelMode: google.maps.TravelMode.DRIVING
-        }, (response, status) => {
-            if (status === "OK") {
-                directionsRenderer.setDirections(response);
-                const distanceKm = response.routes[0].legs[0].distance.value / 1000;
-                const rate = document.getElementById('vehicle').value;
-                
-                // Base 2500 + (Rate per km * distance)
-                const totalJMD = Math.round((2500 + (distanceKm * rate)) / 100) * 100;
-                document.getElementById('fare-jmd').innerText = `$${totalJMD.toLocaleString()} JMD`;
-                document.getElementById('fare-usd').innerText = `≈ $${(totalJMD / 156).toFixed(2)} USD`;
+    function setDays(days, el) {
+        missionDays = days;
+        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+        calcFare();
+    }
+
+    function setFleet(name, rate, el) {
+        kmRate = rate;
+        document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        calcFare();
+    }
+
+    function togglePOI(name, loc, el) {
+        const index = selectedPOIs.findIndex(p => p.name === name);
+        if (index > -1) {
+            selectedPOIs.splice(index, 1);
+            el.classList.remove('selected');
+        } else {
+            selectedPOIs.push({name, loc});
+            el.classList.add('selected');
+        }
+        updateItinerarySummary();
+        calcFare();
+    }
+
+    function updateItinerarySummary() {
+        const summary = document.getElementById('itinerary-summary');
+        if (selectedPOIs.length > 0) {
+            summary.style.display = 'block';
+            summary.innerHTML = `<b>Planned Stops:</b> ` + selectedPOIs.map(p => p.name).join(', ');
+        } else {
+            summary.style.display = 'none';
+        }
+    }
+
+    function calcFare() {
+        const p = document.getElementById('pickup').value;
+        const d = document.getElementById('destination').value;
+        if (!p || !d) return;
+
+        ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
+            if (stat === 'OK') {
+                dr.setDirections(res);
+                const km = res.routes[0].legs[0].distance.value / 1000;
+                // Price = (Base + KM Cost) * Days
+                const total = Math.round(((1000 + (km * kmRate)) * missionDays) / 10) * 10;
+                document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
+                document.getElementById('usd-price').innerText = `≈ $${(total / 156).toFixed(2)} USD`;
+                document.getElementById('price-box').style.display = 'block';
             }
         });
     }
 
     function sendWhatsApp() {
-        const msg = `*NEW RESERVATION*\n\n` +
-                    `Date: ${document.getElementById('date').value}\n` +
-                    `Time: ${document.getElementById('time').value}\n` +
-                    `Pickup: ${pickupLoc}\n` +
-                    `Dest: ${destLoc}\n` +
-                    `Fare: ${document.getElementById('fare-jmd').innerText}`;
+        const stops = selectedPOIs.map(p => p.name).join(', ') || 'None';
+        const msg = `*COOL COMFORT MISSION*\nDays: ${missionDays}\nStops: ${stops}\nFrom: ${document.getElementById('pickup').value}\nTo: ${document.getElementById('destination').value}\nFare: ${document.getElementById('jmd-price').innerText}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
-    // Call init on load
     window.onload = initMap;
 </script>
 </body>
