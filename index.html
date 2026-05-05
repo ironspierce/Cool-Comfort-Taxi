@@ -22,7 +22,7 @@
 
         .booking-card { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 30px; width: 100%; max-width: 550px; box-shadow: 0 40px 80px rgba(0,0,0,0.6); position: relative; }
         
-        /* Mission Status */
+        /* Service Status */
         .status-bar { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; color: #4caf50; }
         .status-dot { width: 8px; height: 8px; background: #4caf50; border-radius: 50%; box-shadow: 0 0 10px #4caf50; animation: pulse 2s infinite; }
 
@@ -52,7 +52,7 @@
     <div class="motto">The Gold Standard of Jamaican Transit</div>
     
     <div class="booking-card">
-        <div class="status-bar"><div class="status-dot"></div> Mission Ready: Montego Bay Base</div>
+        <div class="status-bar"><div class="status-dot"></div> Luxury Service Available: Montego Bay</div>
 
         <div class="fleet-selector">
             <div class="car-option active" onclick="setFleet('Executive Sedan', 155, this)">
@@ -72,27 +72,27 @@
         <div id="map"></div>
         
         <div class="input-group">
-            <input type="text" id="pickup" placeholder="Current Location / Pickup">
+            <input type="text" id="pickup" placeholder="Pickup Location">
         </div>
         <div class="input-group">
-            <input type="text" id="destination" placeholder="Operational Objective / Destination">
+            <input type="text" id="destination" placeholder="Destination">
         </div>
 
         <div class="input-group">
             <select id="payment-method" onchange="updateUI()">
-                <option value="cash">Payment: Cash (JMD/USD)</option>
-                <option value="paypal">Payment: PayPal / Digital</option>
+                <option value="cash">Payment Preference: Cash</option>
+                <option value="paypal">Payment Preference: PayPal / Digital</option>
             </select>
         </div>
 
         <div id="price-box" class="price-box">
-            <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; margin-bottom: 5px;">Mission Estimate</div>
+            <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; margin-bottom: 5px;">Estimated Fare</div>
             <div id="jmd-price" style="font-size: 2.2rem; font-weight: 700; color: var(--gold);">$0 JMD</div>
             <div id="usd-price" style="opacity:0.8; display: none;">≈ $0.00 USD</div>
             <div id="paypal-button-container" style="display: none; margin-top: 15px;"></div>
         </div>
 
-        <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Deploy Vehicle</button>
+        <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Reserve Your Vehicle</button>
     </div>
 </section>
 
@@ -104,7 +104,7 @@
 
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 12, center: { lat: 18.4762, lng: -77.8938 }, mapTypeId: 'satellite', tilt: 45,
+            zoom: 12, center: { lat: 18.4762, lng: -77.8938 }, mapTypeId: 'roadmap', tilt: 45,
             styles: [{"featureType":"all","elementType":"labels","stylers":[{"visibility":"on"}]}]
         });
         ds = new google.maps.DirectionsService();
@@ -167,7 +167,7 @@
 
     function sendWhatsApp() {
         const method = document.getElementById('payment-method').value.toUpperCase();
-        const msg = `*COOL COMFORT DEPLOYMENT*\n--------------------------\n🛸 FLEET: ${currentFleet}\n📍 PICKUP: ${document.getElementById('pickup').value}\n🏁 DEST: ${document.getElementById('destination').value}\n💰 FARE: ${document.getElementById('jmd-price').innerText}\n💳 PAYMENT: ${method}`;
+        const msg = `*COOL COMFORT RESERVATION*\n--------------------------\n✨ FLEET: ${currentFleet}\n📍 PICKUP: ${document.getElementById('pickup').value}\n🏁 DESTINATION: ${document.getElementById('destination').value}\n💰 ESTIMATED FARE: ${document.getElementById('jmd-price').innerText}\n💳 PAYMENT PREFERENCE: ${method}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
