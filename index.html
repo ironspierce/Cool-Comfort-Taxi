@@ -25,18 +25,25 @@
         .tracking-status { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); border-radius: 12px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; color: var(--gold); }
         .pulse-icon { width: 10px; height: 10px; background: #4caf50; border-radius: 50%; box-shadow: 0 0 8px #4caf50; animation: pulse 1.5s infinite; }
 
-        #map { width: 100%; height: 250px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        #map { width: 100%; height: 200px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
 
         .input-group { margin-bottom: 12px; position: relative; }
-        input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: white; font-family: inherit; }
+        input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: white; font-family: inherit; font-size: 0.85rem; }
         
         .locate-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); cursor: pointer; font-size: 1.2rem; }
 
         .fleet-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .car-option { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.3s; font-size: 0.65rem; font-weight: 700; }
+        .car-option { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.3s; font-size: 0.6rem; font-weight: 700; }
         .car-option.active { border-color: var(--gold); background: rgba(212, 175, 55, 0.15); }
 
-        .btn-book { background: var(--gold); color: var(--navy); padding: 18px; border: none; width: 100%; border-radius: 14px; font-weight: 700; text-transform: uppercase; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
+        /* Fee Display Box */
+        .fee-display { background: rgba(0,0,0,0.4); border: 1px solid var(--gold); border-radius: 18px; padding: 15px; margin-bottom: 15px; text-align: center; display: none; }
+        .fee-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); margin-bottom: 5px; opacity: 0.8; }
+        .fee-amount { font-size: 1.8rem; font-weight: 700; color: #fff; margin: 0; }
+        .fee-usd { font-size: 0.8rem; opacity: 0.6; margin-top: 2px; }
+
+        .btn-book { background: var(--gold); color: var(--navy); padding: 18px; border: none; width: 100%; border-radius: 14px; font-weight: 700; text-transform: uppercase; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; transition: 0.3s; }
+        .btn-book:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3); }
 
         @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
     </style>
@@ -69,6 +76,13 @@
             <div class="car-option" onclick="updateFleet('Private Van', 350, this)">VAN</div>
         </div>
 
+        <!-- Proposed Fee Display -->
+        <div id="fee-box" class="fee-display">
+            <div class="fee-label">Proposed Fee</div>
+            <div id="jmd-price" class="fee-amount">$0 JMD</div>
+            <div id="usd-price" class="fee-usd">≈ $0.00 USD</div>
+        </div>
+
         <button class="btn-book" onclick="sendWhatsApp()">
             <i class="fab fa-whatsapp"></i> RESERVE NOW
         </button>
@@ -79,26 +93,46 @@
     let map, ds, dr, geocoder, userMarker;
     let currentFleet = "2018 Toyota Fielder";
     let kmRate = 155;
+    const BASE_FARE = 600; // Updated Base Fare
+    const EX_RATE = 156;
 
     function initMap() {
         const defaultPos = { lat: 18.4762, lng: -77.8938 };
-        
-        // Updated mapTypeId to HYBRID for satellite view with labels
         map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 14, 
-            center: defaultPos, 
-            disableDefaultUI: true,
-            mapTypeId: 'hybrid' 
+            zoom: 14, center: defaultPos, disableDefaultUI: true, mapTypeId: 'hybrid' 
         });
         
         ds = new google.maps.DirectionsService();
         dr = new google.maps.DirectionsRenderer({ map: map, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 5 } });
         geocoder = new google.maps.Geocoder();
 
-        new google.maps.places.Autocomplete(document.getElementById('pickup'), { componentRestrictions: { country: "jm" } });
-        new google.maps.places.Autocomplete(document.getElementById('destination'), { componentRestrictions: { country: "jm" } });
+        const acP = new google.maps.places.Autocomplete(document.getElementById('pickup'), { componentRestrictions: { country: "jm" } });
+        const acD = new google.maps.places.Autocomplete(document.getElementById('destination'), { componentRestrictions: { country: "jm" } });
+
+        acP.addListener('place_changed', calculateProposedFee);
+        acD.addListener('place_changed', calculateProposedFee);
 
         getPrecisionLocation();
+    }
+
+    function calculateProposedFee() {
+        const pickup = document.getElementById('pickup').value;
+        const dest = document.getElementById('destination').value;
+        if (!pickup || !dest) return;
+
+        ds.route({ origin: pickup, destination: dest, travelMode: 'DRIVING' }, (res, stat) => {
+            if (stat === 'OK') {
+                dr.setDirections(res);
+                const km = res.routes[0].legs[0].distance.value / 1000;
+                
+                // Logic: Base Fare (600) + (Rate per km * Distance)
+                const total = Math.round((BASE_FARE + (km * kmRate)) / 10) * 10;
+                
+                document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
+                document.getElementById('usd-price').innerText = `≈ $${(total / EX_RATE).toFixed(2)} USD`;
+                document.getElementById('fee-box').style.display = 'block';
+            }
+        });
     }
 
     function getPrecisionLocation() {
@@ -106,19 +140,18 @@
             navigator.geolocation.getCurrentPosition((position) => {
                 const pos = { lat: position.coords.latitude, lng: position.coords.longitude };
                 map.setCenter(pos);
-                map.setZoom(18);
+                map.setZoom(17);
 
                 if (userMarker) userMarker.setMap(null);
                 userMarker = new google.maps.Marker({
-                    position: pos,
-                    map: map,
-                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 10, fillColor: '#4caf50', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 }
+                    position: pos, map: map,
+                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 8, fillColor: '#4caf50', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 }
                 });
 
                 geocoder.geocode({ location: pos }, (results, status) => {
                     if (status === "OK" && results[0]) {
                         document.getElementById('pickup').value = results[0].formatted_address;
-                        document.getElementById('location-text').innerText = "LOCATION VERIFIED & SHARED";
+                        calculateProposedFee();
                     }
                 });
             }, null, { enableHighAccuracy: true });
@@ -130,12 +163,14 @@
         kmRate = rate;
         document.querySelectorAll('.car-option').forEach(opt => opt.classList.remove('active'));
         el.classList.add('active');
+        calculateProposedFee();
     }
 
     function sendWhatsApp() {
         const pickup = document.getElementById('pickup').value;
         const dest = document.getElementById('destination').value;
-        const msg = `*COOL COMFORT LUXURY RESERVATION*\n\n✨ VEHICLE: ${currentFleet}\n📍 PRECISE PICKUP: ${pickup}\n🏁 DESTINATION: ${dest}\n🛰️ STATUS: Satellite Verified Location`;
+        const fee = document.getElementById('jmd-price').innerText;
+        const msg = `*COOL COMFORT LUXURY RESERVATION*\n--------------------------\n✨ VEHICLE: ${currentFleet}\n📍 PICKUP: ${pickup}\n🏁 DESTINATION: ${dest}\n💰 PROPOSED FEE: ${fee}\n🛰️ STATUS: Satellite Verified`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
