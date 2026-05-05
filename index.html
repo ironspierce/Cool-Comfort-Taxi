@@ -12,137 +12,110 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
     
     <style>
-        :root { --gold: #d4af37; --navy: #001f26; --glass: rgba(255, 255, 255, 0.1); --white: #ffffff; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); overflow-x: hidden; }
+        :root { --gold: #d4af37; --navy: #001f26; --teal: #004d4d; --glass: rgba(255, 255, 255, 0.08); --white: #ffffff; }
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
 
-        .hero { min-height: 100vh; background: linear-gradient(rgba(0,31,38,0.8), rgba(0,31,38,0.95)), url('Cover Photo.jpg'); background-size: cover; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .hero { position: relative; min-height: 100vh; width: 100%; background: linear-gradient(rgba(0,31,38,0.7), rgba(0,31,38,0.9)), url('Cover Photo.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px 20px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); margin: 0; letter-spacing: 4px; color: var(--gold); text-align: center; text-transform: uppercase; }
+        .motto { text-transform: uppercase; letter-spacing: 4px; font-size: 0.8rem; margin: 10px 0 20px 0; font-weight: 400; color: var(--white); opacity: 0.9; text-align: center; border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 5px 15px; }
+
+        .booking-card { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 30px; width: 100%; max-width: 550px; box-shadow: 0 40px 80px rgba(0,0,0,0.6); position: relative; }
         
-        .booking-card { width: 100%; max-width: 500px; background: rgba(255,255,255,0.05); backdrop-filter: blur(25px); border-radius: 35px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 50px 100px rgba(0,0,0,0.8); }
+        /* Mission Status */
+        .status-bar { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; color: #4caf50; }
+        .status-dot { width: 8px; height: 8px; background: #4caf50; border-radius: 50%; box-shadow: 0 0 10px #4caf50; animation: pulse 2s infinite; }
 
-        .section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); margin: 20px 0 10px 0; display: block; }
+        /* Fleet Selector */
+        .fleet-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .car-option { border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; cursor: pointer; transition: 0.3s; text-align: center; background: rgba(255,255,255,0.03); }
+        .car-option.active { border-color: var(--gold); background: rgba(212, 175, 55, 0.15); transform: scale(1.05); }
+        .car-option i { font-size: 1.4rem; color: var(--gold); display: block; margin-bottom: 6px; }
+        .car-option span { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Scrolling Decks */
-        .scrolling-wrapper { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; scrollbar-width: none; }
-        .scrolling-wrapper::-webkit-scrollbar { display: none; }
+        #map { width: 100%; height: 280px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
 
-        /* Selection Cards */
-        .selection-card { 
-            flex: 0 0 110px; background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 15px; 
-            text-align: center; transition: 0.3s; cursor: pointer;
-        }
-        .selection-card.active { background: var(--gold); border-color: var(--gold); }
-        .selection-card i { font-size: 1.5rem; color: var(--gold); margin-bottom: 8px; display: block; }
-        .selection-card.active i, .selection-card.active span { color: var(--navy); }
-        .selection-card span { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
+        .input-group { margin-bottom: 10px; position: relative; }
+        input, select { width: 100%; padding: 14px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: white; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; transition: 0.3s; }
+        input:focus { border-color: var(--gold); outline: none; background: rgba(255,255,255,0.12); }
 
-        /* Experience Cards */
-        .exp-card { 
-            flex: 0 0 180px; height: 110px; border-radius: 20px; position: relative; overflow: hidden; 
-            border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
-        }
-        .exp-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: 0.3s; }
-        .exp-card.selected { border: 2px solid var(--gold); }
-        .exp-card.selected img { opacity: 0.9; }
-        .exp-info { position: absolute; bottom: 10px; left: 10px; z-index: 2; }
-        .exp-info b { font-size: 0.75rem; display: block; }
-        .exp-info span { font-size: 0.55rem; text-transform: uppercase; color: var(--gold); }
-        .check-mark { position: absolute; top: 10px; right: 10px; color: var(--gold); display: none; font-size: 1.2rem; }
-        .exp-card.selected .check-mark { display: block; }
+        .price-box { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 20px; margin: 15px 0; border: 1px solid var(--gold); text-align: center; display: none; border-left-width: 6px; }
+        .btn-book { background: var(--gold); color: var(--navy); padding: 22px; border: none; width: 100%; border-radius: 16px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 12px; letter-spacing: 2px; }
 
-        /* Day Selector */
-        .day-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .day-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
-        .day-btn.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
-
-        #map { width: 100%; height: 200px; border-radius: 25px; margin: 20px 0; border: 1px solid rgba(212,175,55,0.2); }
-        input { width: 100%; padding: 16px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; margin-bottom: 10px; }
-
-        .itinerary-summary { background: rgba(212,175,55,0.05); border-radius: 15px; padding: 15px; margin-bottom: 15px; display: none; font-size: 0.75rem; }
-        .price-box { text-align: center; margin-bottom: 20px; padding: 20px; border-radius: 20px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold); display: none; }
-        .btn-deploy { background: var(--gold); color: var(--navy); width: 100%; padding: 20px; border-radius: 18px; border: none; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <section class="hero">
+    <h1>Cool Comfort</h1>
+    <div class="motto">The Gold Standard of Jamaican Transit</div>
+    
     <div class="booking-card">
-        <span class="section-label" style="margin-top:0;">1. Mission Duration</span>
-        <div class="day-grid">
-            <div class="day-btn active" onclick="setDays(1, this)">1 Day</div>
-            <div class="day-btn" onclick="setDays(2, this)">2 Days</div>
-            <div class="day-btn" onclick="setDays(3, this)">3 Days</div>
-            <div class="day-btn" onclick="setDays(5, this)">5 Days</div>
-            <div class="day-btn" onclick="setDays(7, this)">7 Days</div>
-        </div>
+        <div class="status-bar"><div class="status-dot"></div> Mission Ready: Montego Bay Base</div>
 
-        <span class="section-label">2. Fleet Class</span>
-        <div class="scrolling-wrapper">
-            <div class="selection-card active" onclick="setFleet('Executive Sedan', 155, this)">
-                <i class="fa-solid fa-car"></i><span>Sedan</span>
+        <div class="fleet-selector">
+            <div class="car-option active" onclick="setFleet('Executive Sedan', 155, this)">
+                <i class="fa-solid fa-car-side"></i>
+                <span>Sedan</span>
             </div>
-            <div class="selection-card" onclick="setFleet('Premium SUV', 230, this)">
-                <i class="fa-solid fa-suv"></i><span>SUV</span>
+            <div class="car-option" onclick="setFleet('Premium SUV', 230, this)">
+                <i class="fa-solid fa-suv"></i>
+                <span>SUV</span>
             </div>
-            <div class="selection-card" onclick="setFleet('Private Van', 350, this)">
-                <i class="fa-solid fa-van-shuttle"></i><span>Van</span>
+            <div class="car-option" onclick="setFleet('Private Van', 350, this)">
+                <i class="fa-solid fa-van-shuttle"></i>
+                <span>Van</span>
             </div>
         </div>
-
-        <span class="section-label">3. Select All Objectives</span>
-        <div class="scrolling-wrapper">
-            <div class="exp-card" onclick="togglePOI('Blue Hole', 'Blue Hole, Ocho Rios', this)">
-                <i class="fa-solid fa-circle-check check-mark"></i>
-                <img src="https://images.unsplash.com/photo-1543731068-7e0f5beff43a?auto=format&fit=crop&w=400">
-                <div class="exp-info"><span>Nature</span><b>Blue Hole</b></div>
-            </div>
-            <div class="exp-card" onclick="togglePOI('Rose Hall', 'Rose Hall Great House', this)">
-                <i class="fa-solid fa-circle-check check-mark"></i>
-                <img src="https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=400">
-                <div class="exp-info"><span>History</span><b>Rose Hall</b></div>
-            </div>
-            <div class="exp-card" onclick="togglePOI('Scotchies', 'Scotchies, Montego Bay', this)">
-                <i class="fa-solid fa-circle-check check-mark"></i>
-                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400">
-                <div class="exp-info"><span>Foodie</span><b>Scotchies</b></div>
-            </div>
-            <div class="exp-card" onclick="togglePOI('Rick\'s Cafe', 'Ricks Cafe, Negril', this)">
-                <i class="fa-solid fa-circle-check check-mark"></i>
-                <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=400">
-                <div class="exp-info"><span>Views</span><b>Rick's Cafe</b></div>
-            </div>
-        </div>
-
-        <div id="itinerary-summary" class="itinerary-summary"></div>
 
         <div id="map"></div>
-
-        <input type="text" id="pickup" placeholder="Pickup Location">
-        <input type="text" id="destination" placeholder="Final Objective (Last Stop)">
-
-        <div id="price-box" class="price-box">
-            <div id="jmd-price" style="font-size: 2.2rem; font-weight: 700; color: var(--gold);">$0 JMD</div>
-            <div id="usd-price" style="opacity:0.7;">≈ $0.00 USD</div>
+        
+        <div class="input-group">
+            <input type="text" id="pickup" placeholder="Current Location / Pickup">
+        </div>
+        <div class="input-group">
+            <input type="text" id="destination" placeholder="Operational Objective / Destination">
         </div>
 
-        <button class="btn-deploy" onclick="sendWhatsApp()">Deploy Mission</button>
+        <div class="input-group">
+            <select id="payment-method" onchange="updateUI()">
+                <option value="cash">Payment: Cash (JMD/USD)</option>
+                <option value="paypal">Payment: PayPal / Digital</option>
+            </select>
+        </div>
+
+        <div id="price-box" class="price-box">
+            <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; margin-bottom: 5px;">Mission Estimate</div>
+            <div id="jmd-price" style="font-size: 2.2rem; font-weight: 700; color: var(--gold);">$0 JMD</div>
+            <div id="usd-price" style="opacity:0.8; display: none;">≈ $0.00 USD</div>
+            <div id="paypal-button-container" style="display: none; margin-top: 15px;"></div>
+        </div>
+
+        <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Deploy Vehicle</button>
     </div>
 </section>
 
 <script>
-    let map, ds, dr, kmRate = 155, missionDays = 1;
-    let selectedPOIs = [];
+    let map, ds, dr;
+    let kmRate = 155;
+    let currentFleet = "Executive Sedan";
+    const EX_RATE = 156;
 
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 12, center: { lat: 18.4762, lng: -77.8938 }, 
-            mapTypeId: 'satellite', disableDefaultUI: true
+            zoom: 12, center: { lat: 18.4762, lng: -77.8938 }, mapTypeId: 'satellite', tilt: 45,
+            styles: [{"featureType":"all","elementType":"labels","stylers":[{"visibility":"on"}]}]
         });
         ds = new google.maps.DirectionsService();
-        dr = new google.maps.DirectionsRenderer({ map: map, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 5 } });
+        dr = new google.maps.DirectionsRenderer({ 
+            map: map, 
+            polylineOptions: { strokeColor: "#d4af37", strokeWeight: 6, strokeOpacity: 0.9 }
+        });
+
         setupAutocomplete(document.getElementById('pickup'));
         setupAutocomplete(document.getElementById('destination'));
+        initPayPal();
     }
 
     function setupAutocomplete(input) {
@@ -150,64 +123,51 @@
         ac.addListener('place_changed', calcFare);
     }
 
-    function setDays(days, el) {
-        missionDays = days;
-        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-        calcFare();
-    }
-
     function setFleet(name, rate, el) {
         kmRate = rate;
-        document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('active'));
+        currentFleet = name;
+        document.querySelectorAll('.car-option').forEach(opt => opt.classList.remove('active'));
         el.classList.add('active');
         calcFare();
-    }
-
-    function togglePOI(name, loc, el) {
-        const index = selectedPOIs.findIndex(p => p.name === name);
-        if (index > -1) {
-            selectedPOIs.splice(index, 1);
-            el.classList.remove('selected');
-        } else {
-            selectedPOIs.push({name, loc});
-            el.classList.add('selected');
-        }
-        updateItinerarySummary();
-        calcFare();
-    }
-
-    function updateItinerarySummary() {
-        const summary = document.getElementById('itinerary-summary');
-        if (selectedPOIs.length > 0) {
-            summary.style.display = 'block';
-            summary.innerHTML = `<b>Planned Stops:</b> ` + selectedPOIs.map(p => p.name).join(', ');
-        } else {
-            summary.style.display = 'none';
-        }
     }
 
     function calcFare() {
-        const p = document.getElementById('pickup').value;
-        const d = document.getElementById('destination').value;
-        if (!p || !d) return;
+        const pickup = document.getElementById('pickup').value;
+        const dest = document.getElementById('destination').value;
+        if (!pickup || !dest) return;
 
-        ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
+        ds.route({ origin: pickup, destination: dest, travelMode: 'DRIVING' }, (res, stat) => {
             if (stat === 'OK') {
                 dr.setDirections(res);
                 const km = res.routes[0].legs[0].distance.value / 1000;
-                // Price = (Base + KM Cost) * Days
-                const total = Math.round(((1000 + (km * kmRate)) * missionDays) / 10) * 10;
+                const total = Math.round((1000 + (km * kmRate)) / 10) * 10;
+                
                 document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
-                document.getElementById('usd-price').innerText = `≈ $${(total / 156).toFixed(2)} USD`;
+                document.getElementById('usd-price').innerText = `≈ $${(total / EX_RATE).toFixed(2)} USD`;
                 document.getElementById('price-box').style.display = 'block';
+                updateUI();
             }
         });
     }
 
+    function updateUI() {
+        const method = document.getElementById('payment-method').value;
+        document.getElementById('paypal-button-container').style.display = (method === 'paypal') ? 'block' : 'none';
+        document.getElementById('usd-price').style.display = (method === 'paypal') ? 'block' : 'none';
+    }
+
+    function initPayPal() {
+        paypal.Buttons({
+            createOrder: (data, actions) => {
+                const amt = document.getElementById('usd-price').innerText.replace('≈ $', '').replace(' USD', '');
+                return actions.order.create({ purchase_units: [{ amount: { value: amt } }] });
+            }
+        }).render('#paypal-button-container');
+    }
+
     function sendWhatsApp() {
-        const stops = selectedPOIs.map(p => p.name).join(', ') || 'None';
-        const msg = `*COOL COMFORT MISSION*\nDays: ${missionDays}\nStops: ${stops}\nFrom: ${document.getElementById('pickup').value}\nTo: ${document.getElementById('destination').value}\nFare: ${document.getElementById('jmd-price').innerText}`;
+        const method = document.getElementById('payment-method').value.toUpperCase();
+        const msg = `*COOL COMFORT DEPLOYMENT*\n--------------------------\n🛸 FLEET: ${currentFleet}\n📍 PICKUP: ${document.getElementById('pickup').value}\n🏁 DEST: ${document.getElementById('destination').value}\n💰 FARE: ${document.getElementById('jmd-price').innerText}\n💳 PAYMENT: ${method}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
