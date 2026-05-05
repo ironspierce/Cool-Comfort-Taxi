@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort | The Gold Standard</title>
+    <title>Cool Comfort | Precision Luxury</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -12,194 +12,140 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
     
     <style>
-        :root { --gold: #d4af37; --navy: #001f26; --teal: #004d4d; --glass: rgba(255, 255, 255, 0.08); --white: #ffffff; }
+        :root { --gold: #d4af37; --navy: #001f26; --glass: rgba(255, 255, 255, 0.08); --white: #ffffff; }
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); overflow-x: hidden; }
 
-        .hero { position: relative; min-height: 100vh; width: 100%; background: linear-gradient(rgba(0,31,38,0.7), rgba(0,31,38,0.9)), url('Cover Photo.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px 20px; }
-        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); margin: 0; letter-spacing: 4px; color: var(--gold); text-align: center; text-transform: uppercase; }
-        .motto { text-transform: uppercase; letter-spacing: 4px; font-size: 0.8rem; margin: 10px 0 20px 0; font-weight: 400; color: var(--white); opacity: 0.9; text-align: center; border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 5px 15px; }
-
-        .booking-card { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 30px; width: 100%; max-width: 550px; box-shadow: 0 40px 80px rgba(0,0,0,0.6); position: relative; }
+        .hero { position: relative; min-height: 100vh; width: 100%; background: linear-gradient(rgba(0,31,38,0.7), rgba(0,31,38,0.9)), url('Cover Photo.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
         
-        .status-bar { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; color: #4caf50; }
-        .status-dot { width: 8px; height: 8px; background: #4caf50; border-radius: 50%; box-shadow: 0 0 10px #4caf50; animation: pulse 2s infinite; }
+        .booking-card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 30px; width: 100%; max-width: 500px; box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
+        
+        h1 { font-family: 'Playfair Display', serif; font-size: 2.2rem; color: var(--gold); text-align: center; margin: 0 0 10px 0; text-transform: uppercase; letter-spacing: 2px; }
 
-        .fleet-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-        .car-option { border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; cursor: pointer; transition: 0.3s; text-align: center; background: rgba(255,255,255,0.03); display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100px; }
-        .car-option.active { border-color: var(--gold); background: rgba(212, 175, 55, 0.15); transform: scale(1.05); }
-        .car-option i { font-size: 1.4rem; color: var(--gold); display: block; margin-bottom: 6px; }
-        .car-option span { font-size: 0.55rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; }
+        /* Real-Time Tracking UI */
+        .tracking-status { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); border-radius: 12px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; color: var(--gold); }
+        .pulse-icon { width: 10px; height: 10px; background: #4caf50; border-radius: 50%; box-shadow: 0 0 8px #4caf50; animation: pulse 1.5s infinite; }
 
-        #map { width: 100%; height: 280px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        #map { width: 100%; height: 250px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
 
-        .input-group { margin-bottom: 10px; position: relative; }
-        input, select { width: 100%; padding: 14px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: white; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; transition: 0.3s; padding-right: 45px; }
-        input:focus { border-color: var(--gold); outline: none; background: rgba(255,255,255,0.12); }
+        .input-group { margin-bottom: 12px; position: relative; }
+        input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: white; font-family: inherit; }
+        
+        .locate-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); cursor: pointer; font-size: 1.2rem; }
 
-        /* Locate Button Style */
-        .locate-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); cursor: pointer; font-size: 1.1rem; transition: 0.2s; z-index: 5; }
-        .locate-btn:hover { color: #fff; text-shadow: 0 0 10px var(--gold); }
+        .fleet-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .car-option { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.3s; font-size: 0.65rem; font-weight: 700; }
+        .car-option.active { border-color: var(--gold); background: rgba(212, 175, 55, 0.15); }
 
-        .price-box { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 20px; margin: 15px 0; border: 1px solid var(--gold); text-align: center; display: none; border-left-width: 6px; }
-        .btn-book { background: var(--gold); color: var(--navy); padding: 22px; border: none; width: 100%; border-radius: 16px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 12px; letter-spacing: 2px; }
+        .btn-book { background: var(--gold); color: var(--navy); padding: 18px; border: none; width: 100%; border-radius: 14px; font-weight: 700; text-transform: uppercase; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
     </style>
 </head>
 <body>
 
 <section class="hero">
-    <h1>Cool Comfort</h1>
-    <div class="motto">The Gold Standard of Jamaican Transit</div>
-    
     <div class="booking-card">
-        <div class="status-bar"><div class="status-dot"></div> Luxury Service Available: Montego Bay</div>
-
-        <div class="fleet-selector">
-            <div class="car-option active" onclick="setFleet('2018 Toyota Fielder', 155, this)">
-                <i class="fa-solid fa-car-side"></i>
-                <span>2018 Toyota Fielder</span>
-            </div>
-            <div class="car-option" onclick="setFleet('Premium SUV', 230, this)">
-                <i class="fa-solid fa-suv"></i>
-                <span>Premium SUV</span>
-            </div>
-            <div class="car-option" onclick="setFleet('Private Van', 350, this)">
-                <i class="fa-solid fa-van-shuttle"></i>
-                <span>Private Van</span>
-            </div>
+        <h1>Cool Comfort</h1>
+        
+        <!-- Live Location Notification for Passenger -->
+        <div class="tracking-status">
+            <div class="pulse-icon"></div>
+            <span id="location-text">ENHANCED GPS ACTIVE: JAMAICA</span>
         </div>
 
         <div id="map"></div>
         
         <div class="input-group">
-            <input type="text" id="pickup" placeholder="Pickup Location">
-            <i class="fa-solid fa-location-crosshairs locate-btn" title="Use My Location" onclick="useMyLocation()"></i>
-        </div>
-        <div class="input-group">
-            <input type="text" id="destination" placeholder="Destination">
+            <input type="text" id="pickup" placeholder="Fetching your precise location...">
+            <i class="fa-solid fa-location-arrow locate-btn" onclick="getPrecisionLocation()"></i>
         </div>
 
         <div class="input-group">
-            <select id="payment-method" onchange="updateUI()">
-                <option value="cash">Payment Preference: Cash</option>
-                <option value="paypal">Payment Preference: PayPal / Digital</option>
-            </select>
+            <input type="text" id="destination" placeholder="Enter Destination">
         </div>
 
-        <div id="price-box" class="price-box">
-            <div style="font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.7; margin-bottom: 5px;">Estimated Fare</div>
-            <div id="jmd-price" style="font-size: 2.2rem; font-weight: 700; color: var(--gold);">$0 JMD</div>
-            <div id="usd-price" style="opacity:0.8; display: none;">≈ $0.00 USD</div>
-            <div id="paypal-button-container" style="display: none; margin-top: 15px;"></div>
+        <div class="fleet-selector">
+            <div class="car-option active" onclick="updateFleet('2018 Toyota Fielder', 155, this)">2018 FIELDER</div>
+            <div class="car-option" onclick="updateFleet('Premium SUV', 230, this)">LUXURY SUV</div>
+            <div class="car-option" onclick="updateFleet('Private Van', 350, this)">VAN</div>
         </div>
 
-        <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Reserve Your Vehicle</button>
+        <button class="btn-book" onclick="sendWhatsApp()">
+            <i class="fab fa-whatsapp"></i> RESERVE NOW
+        </button>
     </div>
 </section>
 
 <script>
-    let map, ds, dr, geocoder;
-    let kmRate = 155;
+    let map, ds, dr, geocoder, userMarker;
     let currentFleet = "2018 Toyota Fielder";
-    const EX_RATE = 156;
+    let kmRate = 155;
 
     function initMap() {
+        const defaultPos = { lat: 18.4762, lng: -77.8938 };
         map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 12, center: { lat: 18.4762, lng: -77.8938 }, mapTypeId: 'roadmap', tilt: 45,
-            styles: [{"featureType":"all","elementType":"labels","stylers":[{"visibility":"on"}]}]
+            zoom: 14, center: defaultPos, disableDefaultUI: true,
+            styles: [{ featureType: "all", elementType: "labels", stylers: [{ visibility: "on" }] }]
         });
+        
         ds = new google.maps.DirectionsService();
-        dr = new google.maps.DirectionsRenderer({ 
-            map: map, 
-            polylineOptions: { strokeColor: "#d4af37", strokeWeight: 6, strokeOpacity: 0.9 }
-        });
+        dr = new google.maps.DirectionsRenderer({ map: map, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 5 } });
         geocoder = new google.maps.Geocoder();
 
-        setupAutocomplete(document.getElementById('pickup'));
-        setupAutocomplete(document.getElementById('destination'));
-        initPayPal();
+        new google.maps.places.Autocomplete(document.getElementById('pickup'), { componentRestrictions: { country: "jm" } });
+        new google.maps.places.Autocomplete(document.getElementById('destination'), { componentRestrictions: { country: "jm" } });
+
+        // Run precision check on load
+        getPrecisionLocation();
     }
 
-    function setupAutocomplete(input) {
-        const ac = new google.maps.places.Autocomplete(input, { componentRestrictions: { country: "jm" } });
-        ac.addListener('place_changed', calcFare);
-    }
-
-    // Geolocation Feature
-    function useMyLocation() {
+    function getPrecisionLocation() {
         if (navigator.geolocation) {
+            document.getElementById('location-text').innerText = "CALIBRATING PRECISION GPS...";
+            
             navigator.geolocation.getCurrentPosition((position) => {
-                const pos = {
-                    lat: position.coords.latitude,
-                    lng: position.coords.longitude
-                };
+                const pos = { lat: position.coords.latitude, lng: position.coords.longitude };
                 
+                // Set precise center
+                map.setCenter(pos);
+                map.setZoom(17);
+
+                if (userMarker) userMarker.setMap(null);
+                userMarker = new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    icon: { path: google.maps.SymbolPath.CIRCLE, scale: 10, fillColor: '#4caf50', fillOpacity: 1, strokeColor: 'white', strokeWeight: 2 }
+                });
+
                 geocoder.geocode({ location: pos }, (results, status) => {
                     if (status === "OK" && results[0]) {
                         document.getElementById('pickup').value = results[0].formatted_address;
-                        calcFare();
+                        document.getElementById('location-text').innerText = "LOCATION VERIFIED & SHARED";
                     }
                 });
             }, () => {
-                alert("Please enable location permissions in your browser.");
-            }, { enableHighAccuracy: true });
-        } else {
-            alert("Your browser does not support location services.");
+                document.getElementById('location-text').innerText = "GPS BLOCKED - ENTER MANUALLY";
+            }, { enableHighAccuracy: true, timeout: 10000 });
         }
     }
 
-    function setFleet(name, rate, el) {
-        kmRate = rate;
+    function updateFleet(name, rate, el) {
         currentFleet = name;
+        kmRate = rate;
         document.querySelectorAll('.car-option').forEach(opt => opt.classList.remove('active'));
         el.classList.add('active');
-        calcFare();
-    }
-
-    function calcFare() {
-        const pickup = document.getElementById('pickup').value;
-        const dest = document.getElementById('destination').value;
-        if (!pickup || !dest) return;
-
-        ds.route({ origin: pickup, destination: dest, travelMode: 'DRIVING' }, (res, stat) => {
-            if (stat === 'OK') {
-                dr.setDirections(res);
-                const km = res.routes[0].legs[0].distance.value / 1000;
-                const total = Math.round((1000 + (km * kmRate)) / 10) * 10;
-                
-                document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
-                document.getElementById('usd-price').innerText = `≈ $${(total / EX_RATE).toFixed(2)} USD`;
-                document.getElementById('price-box').style.display = 'block';
-                updateUI();
-            }
-        });
-    }
-
-    function updateUI() {
-        const method = document.getElementById('payment-method').value;
-        document.getElementById('paypal-button-container').style.display = (method === 'paypal') ? 'block' : 'none';
-        document.getElementById('usd-price').style.display = (method === 'paypal') ? 'block' : 'none';
-    }
-
-    function initPayPal() {
-        paypal.Buttons({
-            createOrder: (data, actions) => {
-                const amtString = document.getElementById('usd-price').innerText;
-                const amt = amtString.replace('≈ $', '').replace(' USD', '');
-                return actions.order.create({ purchase_units: [{ amount: { value: amt } }] });
-            }
-        }).render('#paypal-button-container');
     }
 
     function sendWhatsApp() {
-        const method = document.getElementById('payment-method').value.toUpperCase();
-        const msg = `*COOL COMFORT RESERVATION*\n--------------------------\n✨ FLEET: ${currentFleet}\n📍 PICKUP: ${document.getElementById('pickup').value}\n🏁 DESTINATION: ${document.getElementById('destination').value}\n💰 ESTIMATED FARE: ${document.getElementById('jmd-price').innerText}\n💳 PAYMENT PREFERENCE: ${method}`;
+        const pickup = document.getElementById('pickup').value;
+        const dest = document.getElementById('destination').value;
+        const msg = `*COOL COMFORT LUXURY RESERVATION*\n\n✨ VEHICLE: ${currentFleet}\n📍 PRECISE PICKUP: ${pickup}\n🏁 DESTINATION: ${dest}\n🛰️ STATUS: GPS Location Shared with Driver`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
     window.onload = initMap;
 </script>
+
 </body>
 </html>
