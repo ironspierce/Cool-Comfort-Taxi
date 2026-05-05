@@ -21,35 +21,21 @@
         .motto { text-transform: uppercase; letter-spacing: 5px; font-size: 0.8rem; margin-bottom: 30px; opacity: 0.8; text-align: center; }
 
         .booking-card { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: clamp(20px, 5vw, 40px); border-radius: 28px; width: 100%; max-width: 600px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
-        #map { width: 100%; height: 320px; border-radius: 18px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.2); }
-
-        .quick-links { display: flex; gap: 10px; margin-bottom: 15px; overflow-x: auto; padding-bottom: 5px; }
-        .btn-quick { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); color: var(--gold); padding: 8px 15px; border-radius: 20px; font-size: 0.75rem; white-space: nowrap; cursor: pointer; transition: 0.3s; }
-        .btn-quick:hover { background: var(--gold); color: var(--navy); }
+        #map { width: 100%; height: 350px; border-radius: 18px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.2); }
 
         .input-group { margin-bottom: 12px; position: relative; display: flex; align-items: center; gap: 8px; }
-        input { flex: 1; padding: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; }
-        
-        .btn-action { background: none; border: 1px solid var(--gold); color: var(--gold); padding: 10px 15px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; transition: 0.3s; margin-bottom: 15px; width: 100%; }
+        input, select { flex: 1; padding: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-family: 'Montserrat', sans-serif; }
+        select option { background: var(--navy); color: white; }
 
-        /* Badge Grid */
+        /* Route Selector Styling */
+        .route-info { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--gold); font-size: 0.85rem; display: none; }
+        
+        .price-box { background: rgba(212, 175, 55, 0.15); padding: 25px; border-radius: 18px; margin: 20px 0; border: 1px solid var(--gold); text-align: center; display: none; }
+        .btn-book { background: var(--gold); color: var(--navy); padding: 20px; border: none; width: 100%; border-radius: 14px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 12px; }
+
         .badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; text-align: center; }
         .badge { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
         .badge i { display: block; font-size: 1.2rem; color: var(--gold); margin-bottom: 5px; }
-
-        .price-box { background: rgba(212, 175, 55, 0.15); padding: 25px; border-radius: 18px; margin: 20px 0; border: 1px solid var(--gold); text-align: center; display: none; }
-        .btn-book { background: var(--gold); color: var(--navy); padding: 20px; border: none; width: 100%; border-radius: 14px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 10px; }
-
-        .section-padding { padding: 80px 20px; max-width: 1150px; margin: 0 auto; }
-        h2 { font-family: 'Playfair Display', serif; font-size: 2.2rem; text-align: center; margin-bottom: 40px; color: var(--gold); }
-        
-        .transparency-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; }
-        .price-breakdown li { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
-
-        .operator-card { display: flex; align-items: center; gap: 40px; background: linear-gradient(145deg, var(--teal), var(--navy)); padding: 45px; border-radius: 35px; }
-        .profile-img { width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--gold); object-fit: cover; }
-
-        @media (max-width: 768px) { .operator-card { flex-direction: column; text-align: center; } }
     </style>
 </head>
 <body>
@@ -67,86 +53,46 @@
 
         <div id="map"></div>
 
-        <div class="quick-links">
-            <button class="btn-quick" onclick="setQuickDest('Sangster International Airport, MBJ')">Airport (MBJ)</button>
-            <button class="btn-quick" onclick="setQuickDest('Half Way Tree, Kingston')">Kingston Central</button>
-            <button class="btn-quick" onclick="setQuickDest('Negril Seven Mile Beach')">Negril</button>
-        </div>
+        <div id="route-display" class="route-info"></div>
         
         <div id="location-fields">
             <div class="input-group">
                 <input type="text" id="pickup" placeholder="Pickup Point">
-                <i class="fa-solid fa-location-dot" style="color: var(--gold)"></i>
             </div>
-            <div class="input-group destination-group">
+            <div class="input-group">
                 <input type="text" class="dest-input" placeholder="Primary Destination">
-                <i class="fa-solid fa-flag-checkered"></i>
             </div>
         </div>
 
-        <button class="btn-action" onclick="addStop()"><i class="fa fa-plus"></i> Add Stop (+$500 JMD)</button>
-
         <div class="input-group">
-            <input type="text" id="flight-num" placeholder="Flight Number (Optional)">
-            <i class="fa-solid fa-plane-arrival"></i>
+            <select id="payment-method" onchange="updateUI()">
+                <option value="cash">Payment: Cash in Hand</option>
+                <option value="paypal">Payment: PayPal (Secure Digital)</option>
+            </select>
         </div>
 
         <div id="price-box" class="price-box">
-            <div id="jmd-price" style="font-size: 2.5rem; font-weight: 700; color: white;">$0 JMD</div>
-            <div id="usd-price" style="opacity:0.8; margin-bottom: 15px;">≈ $0.00 USD</div>
-            <div id="paypal-button-container"></div>
-            <button class="btn-action" style="margin-top:15px; font-size:0.7rem; border-color: rgba(255,255,255,0.3); color:white;" onclick="copyQuote()">Copy Detailed Quote</button>
+            <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8;">Premium Chauffeur Fare</div>
+            <div id="jmd-price" style="font-size: 2.5rem; font-weight: 700;">$0 JMD</div>
+            <div id="usd-price" style="opacity:0.8; margin-bottom: 15px; display: none;">≈ $0.00 USD</div>
+            <div id="paypal-button-container" style="display: none;"></div>
         </div>
 
         <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> SECURE YOUR JOURNEY</button>
     </div>
 </section>
 
-<section class="section-padding">
-    <h2>Fair Value Transparency</h2>
-    <div class="transparency-card">
-        <ul style="list-style: none; padding: 0;" class="price-breakdown">
-            <li><span>Executive Base Rate</span> <strong>$1,000 JMD</strong></li>
-            <li><span>Distance Coverage (per KM)</span> <strong>$155 JMD</strong></li>
-            <li><span>Additional Stop/Wait Fee</span> <strong>$500 JMD</strong></li>
-        </ul>
-    </div>
-</section>
-
-<section class="section-padding">
-    <h2>Travel Insights (FAQ)</h2>
-    <div class="faq-container" style="max-width: 800px; margin: 0 auto;">
-        <div style="background: rgba(255,255,255,0.05); margin-bottom: 10px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); overflow: hidden;">
-            <div style="padding: 20px; cursor: pointer; color: var(--gold); font-weight: 700;" onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'block' ? 'none' : 'block'">
-                What makes this service "Premium"?
-            </div>
-            <div style="padding: 0 20px 20px; display: none; color: rgba(255,255,255,0.8);">
-                Every trip is managed by a military-trained professional, ensuring absolute punctuality, security-conscious route planning, and a pristine vehicle environment.
-            </div>
-        </div>
-    </div>
-</section>
-
-<section class="section-padding" style="background: rgba(0,0,0,0.2);">
-    <div class="operator-card">
-        <img src="image_16.png" alt="Pierce I." class="profile-img">
-        <div style="flex: 1;">
-            <h3 style="margin:0; font-size: 1.8rem; color:var(--gold);">Pierce I.</h3>
-            <p style="font-weight:bold; font-size: 0.8rem; letter-spacing: 2px;">FOUNDER & LEAD OPERATOR</p>
-            <p>Military-trained discipline applied to luxury island transport. Your safety and comfort are the primary mission objectives of every journey.</p>
-        </div>
-    </div>
-</section>
-
 <script>
-    let map, ds, dr;
+    let map, ds, directionsRenderers = [];
     const EX_RATE = 156;
 
     function initMap() {
         const jm = { lat: 18.1096, lng: -77.2975 };
-        map = new google.maps.Map(document.getElementById("map"), { zoom: 9, center: jm, mapTypeId: 'satellite', tilt: 45 });
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 9, center: jm, mapTypeId: 'satellite', tilt: 45, gestureHandling: "greedy"
+        });
         ds = new google.maps.DirectionsService();
-        dr = new google.maps.DirectionsRenderer({ map: map, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 6 } });
+
         setupAutocomplete(document.getElementById('pickup'));
         setupAutocomplete(document.querySelector('.dest-input'));
         initPayPal();
@@ -157,56 +103,67 @@
         ac.addListener('place_changed', calcFare);
     }
 
-    function setQuickDest(dest) {
-        const input = document.querySelector('.dest-input');
-        input.value = dest;
-        google.maps.event.trigger(input, 'focus');
-        calcFare();
-    }
-
-    function addStop() {
-        const container = document.getElementById('location-fields');
-        const div = document.createElement('div');
-        div.className = 'input-group destination-group';
-        div.innerHTML = `<input type="text" class="dest-input" placeholder="Stop Location"><i class="fa-solid fa-trash" style="color:#ff6b6b;cursor:pointer;" onclick="this.parentElement.remove(); calcFare();"></i>`;
-        container.appendChild(div);
-        setupAutocomplete(div.querySelector('.dest-input'));
+    function clearRoutes() {
+        directionsRenderers.forEach(r => r.setMap(null));
+        directionsRenderers = [];
     }
 
     function calcFare() {
         const pickup = document.getElementById('pickup').value;
-        const destInputs = document.querySelectorAll('.dest-input');
-        const waypoints = [];
-        let finalDest = "";
-        let stopsCount = 0;
+        const dest = document.querySelector('.dest-input').value;
+        if (!pickup || !dest) return;
 
-        destInputs.forEach((input, index) => {
-            if (input.value) {
-                if (index === destInputs.length - 1) finalDest = input.value;
-                else { waypoints.push({ location: input.value, stopover: true }); stopsCount++; }
-            }
-        });
+        clearRoutes();
 
-        if (!pickup || !finalDest) return;
-
-        ds.route({ origin: pickup, destination: finalDest, waypoints: waypoints, travelMode: 'DRIVING' }, (res, stat) => {
+        ds.route({
+            origin: pickup,
+            destination: dest,
+            travelMode: 'DRIVING',
+            provideRouteAlternatives: true
+        }, (res, stat) => {
             if (stat === 'OK') {
-                dr.setDirections(res);
-                let totalMeters = 0;
-                res.routes[0].legs.forEach(leg => totalMeters += leg.distance.value);
-                const km = totalMeters / 1000;
-                const total = Math.round((1000 + (km * 155) + (stopsCount * 500)) / 10) * 10;
+                const routeInfo = document.getElementById('route-display');
+                let infoHTML = `<strong>Route Analysis:</strong><br>`;
+
+                res.routes.forEach((route, index) => {
+                    const isBest = index === 0;
+                    const renderer = new google.maps.DirectionsRenderer({
+                        map: map,
+                        directions: res,
+                        routeIndex: index,
+                        polylineOptions: {
+                            strokeColor: isBest ? "#d4af37" : "#808080",
+                            strokeOpacity: isBest ? 1.0 : 0.6,
+                            strokeWeight: isBest ? 7 : 4,
+                            zIndex: isBest ? 10 : 1
+                        }
+                    });
+                    directionsRenderers.push(renderer);
+
+                    const dist = route.legs[0].distance.text;
+                    const time = route.legs[0].duration.text;
+                    infoHTML += `${isBest ? '⭐ Best' : 'Alt'} Route: ${dist} (${time})<br>`;
+                });
+
+                routeInfo.innerHTML = infoHTML;
+                routeInfo.style.display = 'block';
+
+                // Price based on Best Route (Route 0)
+                const km = res.routes[0].legs[0].distance.value / 1000;
+                const total = Math.round((1000 + (km * 155)) / 10) * 10;
+                
                 document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
                 document.getElementById('usd-price').innerText = `≈ $${(total / EX_RATE).toFixed(2)} USD`;
                 document.getElementById('price-box').style.display = 'block';
+                updateUI();
             }
         });
     }
 
-    function copyQuote() {
-        const text = `COOL COMFORT QUOTE\nFrom: ${document.getElementById('pickup').value}\nRoute: ${Array.from(document.querySelectorAll('.dest-input')).map(i=>i.value).join(' > ')}\nTotal: ${document.getElementById('jmd-price').innerText}`;
-        navigator.clipboard.writeText(text);
-        alert("Quote copied to clipboard.");
+    function updateUI() {
+        const method = document.getElementById('payment-method').value;
+        document.getElementById('paypal-button-container').style.display = (method === 'paypal') ? 'block' : 'none';
+        document.getElementById('usd-price').style.display = (method === 'paypal') ? 'block' : 'none';
     }
 
     function initPayPal() {
@@ -219,8 +176,9 @@
     }
 
     function sendWhatsApp() {
-        const flight = document.getElementById('flight-num').value;
-        const msg = `*Cool Comfort Luxury Booking*\n📍 From: ${document.getElementById('pickup').value}\n🗺️ Route: ${Array.from(document.querySelectorAll('.dest-input')).map(i=>i.value).join(' > ')}\n✈️ Flight: ${flight || 'N/A'}\n💰 Fare: ${document.getElementById('jmd-price').innerText}`;
+        const method = document.getElementById('payment-method').value.toUpperCase();
+        const routeData = document.getElementById('route-display').innerText.split('\n')[1]; // Get best route summary
+        const msg = `*Cool Comfort Luxury Booking Request*\n📍 Pickup: ${document.getElementById('pickup').value}\n🗺️ Dest: ${document.querySelector('.dest-input').value}\n🛣️ ${routeData}\n💰 Fare: ${document.getElementById('jmd-price').innerText}\n💳 Payment: ${method}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
