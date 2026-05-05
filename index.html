@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort | Final Precision</title>
+    <title>Cool Comfort | Precision Fixed</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Load Places and Geometry libraries -->
+    <!-- IMPORTANT: Replace YOUR_API_KEY with your actual Google Maps API Key -->
     <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places,geometry"></script>
     
     <style>
@@ -33,15 +33,13 @@
             display: flex; flex-direction: column; position: relative;
         }
 
-        /* Header & Progress */
         .card-header { padding: 30px 30px 10px 30px; }
         .progress-bar-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 25px; }
         .line-bg { position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 1; }
-        .line-fill { position: absolute; top: 50%; left: 0; width: 0%; height: 1px; background: var(--gold); z-index: 2; transition: 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .dot { width: 10px; height: 10px; background: #111; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; z-index: 3; transition: 0.4s; }
-        .dot.active { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 12px var(--gold); }
+        .line-fill { position: absolute; top: 50%; left: 0; width: 0%; height: 1px; background: var(--gold); z-index: 2; transition: 0.6s; }
+        .dot { width: 10px; height: 10px; background: #111; border-radius: 50%; z-index: 3; transition: 0.4s; }
+        .dot.active { background: var(--gold); box-shadow: 0 0 10px var(--gold); }
 
-        /* Scrollable Content */
         .card-content { flex-grow: 1; overflow-y: auto; padding: 0 30px; scrollbar-width: none; }
         .card-content::-webkit-scrollbar { display: none; }
 
@@ -51,42 +49,31 @@
 
         .section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 4px; color: var(--gold); margin-bottom: 25px; display: block; text-align: center; }
 
-        /* Menu Grid */
-        .menu-item { 
-            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
-            padding: 20px; border-radius: 20px; margin-bottom: 12px; cursor: pointer;
-            display: flex; justify-content: space-between; align-items: center; transition: 0.2s;
+        /* Map Fixes */
+        #map { 
+            width: 100%; height: 200px; border-radius: 25px; margin-bottom: 20px; 
+            border: 1px solid rgba(255,255,255,0.15); background: #000;
         }
-        .menu-item:hover { border-color: var(--gold); background: rgba(255,255,255,0.08); }
-        .menu-item.selected { border-color: var(--gold); background: rgba(212,175,55,0.15); }
 
-        /* Inputs */
+        /* Input Styling */
         input, select { 
             width: 100%; padding: 18px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); 
             border-radius: 18px; color: white; font-family: inherit; font-size: 0.95rem; margin-bottom: 15px;
         }
         input:focus { border-color: var(--gold); outline: none; }
 
-        #map { width: 100%; height: 180px; border-radius: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.15); }
-
-        /* Price Section */
-        .price-display { 
-            text-align: center; padding: 25px; background: rgba(212,175,55,0.1); 
-            border: 1px solid var(--gold); border-radius: 25px; margin-top: 15px;
+        /* Google Autocomplete List Fix */
+        .pac-container { 
+            background: #001f26 !important; border: 1px solid var(--gold) !important; 
+            border-radius: 15px !important; margin-top: 5px; z-index: 10000 !important; 
         }
-        #jmd-price { font-size: 2rem; font-weight: 700; color: var(--gold); display: block; }
-        #usd-price { font-size: 0.8rem; opacity: 0.6; }
+        .pac-item { color: white !important; border-top: 1px solid rgba(255,255,255,0.1) !important; padding: 10px !important; }
+        .pac-item:hover { background: rgba(212,175,55,0.1) !important; }
+        .pac-item-query { color: var(--gold) !important; font-weight: 700 !important; }
 
-        /* Footer */
         .card-footer { padding: 25px 30px 40px 30px; display: flex; gap: 12px; }
         .btn-primary { background: var(--gold); color: var(--navy); border: none; padding: 20px; border-radius: 18px; flex: 2; font-weight: 700; text-transform: uppercase; cursor: pointer; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: none; padding: 20px; border-radius: 18px; flex: 1; font-weight: 700; cursor: pointer; }
-        
-        /* Dropdown z-index fix */
-        .pac-container { background: #001f26; border: 1px solid var(--gold); border-radius: 15px; color: white; font-family: 'Montserrat', sans-serif; z-index: 9999 !important; }
-        .pac-item { color: white; border-top: 1px solid rgba(255,255,255,0.1); padding: 10px; cursor: pointer; }
-        .pac-item:hover { background: rgba(212,175,55,0.1); }
-        .pac-item-query { color: var(--gold); font-weight: 700; }
     </style>
 </head>
 <body>
@@ -102,20 +89,17 @@
             <div class="dot"></div>
             <div class="dot"></div>
             <div class="dot"></div>
-            <div class="dot"></div>
         </div>
     </div>
 
     <div class="card-content" id="scroll-area">
         
-        <!-- STEP 1: JOURNEY DATA -->
+        <!-- STEP 1: LOGISTICS -->
         <div class="step active">
-            <span class="section-label">01. Journey Schedule</span>
-            <select id="duration" onchange="updateFare()">
-                <option value="1">1 Day Experience</option>
-                <option value="3">3 Day Escape</option>
-                <option value="7">7 Day Island Tour</option>
-            </select>
+            <span class="section-label">01. Arrival Logistics</span>
+            <div id="map"></div>
+            <input type="text" id="pickup" placeholder="Pickup (Hotel, Airport, Port)">
+            <input type="text" id="destination" placeholder="Destination (Resort, Villa)">
             <input type="date" id="date">
             <input type="time" id="time">
         </div>
@@ -123,43 +107,21 @@
         <!-- STEP 2: FLEET -->
         <div class="step">
             <span class="section-label">02. Elite Fleet</span>
-            <div class="menu-item" onclick="setVehicle(155, 'Executive Sedan', this)"><b>Executive Sedan</b><i class="fa-solid fa-car"></i></div>
-            <div class="menu-item" onclick="setVehicle(230, 'Luxury SUV', this)"><b>Luxury SUV</b><i class="fa-solid fa-suv"></i></div>
-            <div class="menu-item" onclick="setVehicle(350, 'Private Van', this)"><b>Private Van</b><i class="fa-solid fa-van-shuttle"></i></div>
+            <!-- Fleet Selection Logic -->
+            <select id="vehicle" onchange="updateFare()">
+                <option value="155">Executive Sedan</option>
+                <option value="230">Luxury SUV</option>
+                <option value="350">Private Van</option>
+            </select>
         </div>
 
-        <!-- STEP 3: ITINERARY (DRILL-DOWN) -->
+        <!-- STEP 3: PRICE -->
         <div class="step">
-            <span class="section-label">03. Custom Itinerary</span>
-            <div id="it-main">
-                <div class="menu-item" onclick="showPOI('food')"><b>Fine Dining</b><i class="fa-solid fa-utensils"></i></div>
-                <div class="menu-item" onclick="showPOI('beaches')"><b>Coastal Gems</b><i class="fa-solid fa-umbrella-beach"></i></div>
-                <div class="menu-item" onclick="showPOI('culture')"><b>Heritage Sites</b><i class="fa-solid fa-landmark"></i></div>
+            <span class="section-label">03. Review & Fare</span>
+            <div style="text-align: center; padding: 30px; background: rgba(212,175,55,0.1); border-radius: 25px; border: 1px solid var(--gold);">
+                <span id="fare-jmd" style="font-size: 2rem; font-weight: 700; color: var(--gold); display: block;">$0 JMD</span>
+                <span id="fare-usd" style="opacity: 0.6;">≈ $0.00 USD</span>
             </div>
-            <div id="it-sub" style="display:none;">
-                <span style="color:var(--gold); font-size:0.7rem; cursor:pointer; font-weight:700;" onclick="hidePOI()">
-                    <i class="fa-solid fa-chevron-left"></i> BACK TO CATEGORIES
-                </span>
-                <div id="poi-render" style="margin-top:20px;"></div>
-            </div>
-        </div>
-
-        <!-- STEP 4: PRECISION LOCATIONS -->
-        <div class="step">
-            <span class="section-label">04. Precise Logistics</span>
-            <div id="map"></div>
-            <input type="text" id="pickup" placeholder="Pickup (Hotel, Airport, Villa)">
-            <input type="text" id="dest" placeholder="Drop-off (Specific Location)">
-        </div>
-
-        <!-- STEP 5: FINAL CONFIRM -->
-        <div class="step">
-            <span class="section-label">05. Summary</span>
-            <div class="price-display">
-                <span id="jmd-price">$0 JMD</span>
-                <span id="usd-price">≈ $0.00 USD</span>
-            </div>
-            <p style="text-align:center; font-size:0.7rem; opacity:0.6; margin-top:20px;">Final fare is subject to chauffeur verification of itinerary routes.</p>
         </div>
 
     </div>
@@ -171,106 +133,115 @@
 </div>
 
 <script>
-    let step = 0;
-    let journey = { rate: 155, fleet: 'Sedan', pois: [], start: '', end: '' };
-    let map, ds, dr;
+    let currentStep = 0;
+    let map, directionsService, directionsRenderer;
+    let pickupLoc = null, destLoc = null;
 
-    const data = {
-        food: ["Scotchies Jerk Center", "Gloria's Seafood", "The Houseboat Grill"],
-        beaches: ["Frenchman's Cove", "Doctor's Cave", "Seven Mile Beach"],
-        culture: ["Bob Marley Museum", "Rose Hall Great House", "Devon House"]
-    };
-
-    function move(dir) {
+    function move(n) {
         const steps = document.querySelectorAll('.step');
-        steps[step].classList.remove('active');
-        step += dir;
+        steps[currentStep].classList.remove('active');
+        currentStep += n;
 
-        if (step >= steps.length) {
-            submit();
-            step = steps.length - 1;
+        if (currentStep >= steps.length) {
+            sendWhatsApp();
+            currentStep = steps.length - 1;
         }
 
-        steps[step].classList.add('active');
-        document.getElementById('backBtn').style.display = step === 0 ? 'none' : 'block';
-        document.getElementById('nextBtn').innerText = step === steps.length - 1 ? "Confirm" : "Continue";
+        steps[currentStep].classList.add('active');
+        document.getElementById('backBtn').style.display = currentStep === 0 ? 'none' : 'block';
+        document.getElementById('nextBtn').innerText = currentStep === steps.length - 1 ? "Confirm" : "Continue";
         
         const dots = document.querySelectorAll('.dot');
-        document.getElementById('line-fill').style.width = (step / (dots.length - 1)) * 100 + "%";
-        dots.forEach((d, i) => d.classList.toggle('active', i <= step));
-
-        if (step === 3) initMap();
-        document.getElementById('scroll-area').scrollTop = 0;
-    }
-
-    function setVehicle(r, name, el) {
-        journey.rate = r; journey.fleet = name;
-        el.parentElement.querySelectorAll('.menu-item').forEach(m => m.classList.remove('selected'));
-        el.classList.add('selected');
-        updateFare();
-    }
-
-    function showPOI(cat) {
-        document.getElementById('it-main').style.display = 'none';
-        document.getElementById('it-sub').style.display = 'block';
-        document.getElementById('poi-render').innerHTML = data[cat].map(p => `
-            <div class="menu-item ${journey.pois.includes(p) ? 'selected' : ''}" onclick="togglePoi('${p}', this)">
-                <b>${p}</b>
-            </div>
-        `).join('');
-    }
-
-    function hidePOI() {
-        document.getElementById('it-main').style.display = 'block';
-        document.getElementById('it-sub').style.display = 'none';
-    }
-
-    function togglePoi(p, el) {
-        if (journey.pois.includes(p)) {
-            journey.pois = journey.pois.filter(x => x !== p);
-            el.classList.remove('selected');
-        } else {
-            journey.pois.push(p);
-            el.classList.add('selected');
+        document.getElementById('line-fill').style.width = (currentStep / (dots.length - 1)) * 100 + "%";
+        dots.forEach((d, i) => d.classList.toggle('active', i <= currentStep));
+        
+        if (currentStep === 0) {
+            // Trigger map resize if hidden previously
+            google.maps.event.trigger(map, "resize");
         }
     }
 
+    // MAP INITIALIZATION
     function initMap() {
-        if (map) return;
-        map = new google.maps.Map(document.getElementById("map"), { zoom: 9, center: { lat: 18.1, lng: -77.3 }, disableDefaultUI: true });
-        ds = new google.maps.DirectionsService();
-        dr = new google.maps.DirectionsRenderer({ map, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 4 } });
+        // Center on Jamaica
+        const jamaica = { lat: 18.1096, lng: -77.2975 };
+        map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 8,
+            center: jamaica,
+            disableDefaultUI: true,
+            styles: [
+                { "elementType": "geometry", "stylers": [{ "color": "#212121" }] },
+                { "elementType": "labels.text.fill", "stylers": [{ "color": "#757575" }] },
+                { "featureType": "road", "elementType": "geometry", "stylers": [{ "color": "#303030" }] },
+                { "featureType": "water", "elementType": "geometry", "stylers": [{ "color": "#000000" }] }
+            ]
+        });
 
-        const opts = { componentRestrictions: { country: "jm" }, fields: ["formatted_address", "geometry"] };
-        const acP = new google.maps.places.Autocomplete(document.getElementById('pickup'), opts);
-        const acD = new google.maps.places.Autocomplete(document.getElementById('dest'), opts);
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer({
+            map: map,
+            polylineOptions: { strokeColor: "#d4af37", strokeWeight: 5 }
+        });
 
-        acP.addListener('place_changed', () => { journey.start = acP.getPlace().formatted_address; updateFare(); });
-        acD.addListener('place_changed', () => { journey.end = acD.getPlace().formatted_address; updateFare(); });
-    }
+        // AUTOCOMPLETE SETUP
+        const options = { 
+            componentRestrictions: { country: "jm" }, 
+            fields: ["formatted_address", "geometry"] 
+        };
+        
+        const acPickup = new google.maps.places.Autocomplete(document.getElementById('pickup'), options);
+        const acDest = new google.maps.places.Autocomplete(document.getElementById('destination'), options);
 
-    function updateFare() {
-        if (!journey.start || !journey.end) return;
-        ds.route({ origin: journey.start, destination: journey.end, travelMode: 'DRIVING' }, (res, stat) => {
-            if (stat === "OK") {
-                dr.setDirections(res);
-                const km = res.routes[0].legs[0].distance.value / 1000;
-                const total = Math.round(((2500 + (km * journey.rate)) * document.getElementById('duration').value) / 100) * 100;
-                document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
-                document.getElementById('usd-price').innerText = `≈ $${(total / 156).toFixed(2)} USD`;
+        acPickup.addListener('place_changed', () => {
+            const place = acPickup.getPlace();
+            if (place.geometry) {
+                pickupLoc = place.formatted_address;
+                updateFare();
+            }
+        });
+
+        acDest.addListener('place_changed', () => {
+            const place = acDest.getPlace();
+            if (place.geometry) {
+                destLoc = place.formatted_address;
+                updateFare();
             }
         });
     }
 
-    function submit() {
-        const msg = `*LUXURY RESERVATION REQUEST*\n\n` +
-                    `Date: ${document.getElementById('date').value} @ ${document.getElementById('time').value}\n` +
-                    `Vehicle: ${journey.fleet}\nDuration: ${document.getElementById('duration').value} Day(s)\n` +
-                    `Itinerary: ${journey.pois.join(', ')}\n` +
-                    `Pickup: ${journey.start}\n` +
-                    `Fare: ${document.getElementById('jmd-price').innerText}`;
+    function updateFare() {
+        if (!pickupLoc || !destLoc) return;
+
+        directionsService.route({
+            origin: pickupLoc,
+            destination: destLoc,
+            travelMode: google.maps.TravelMode.DRIVING
+        }, (response, status) => {
+            if (status === "OK") {
+                directionsRenderer.setDirections(response);
+                const distanceKm = response.routes[0].legs[0].distance.value / 1000;
+                const rate = document.getElementById('vehicle').value;
+                
+                // Base 2500 + (Rate per km * distance)
+                const totalJMD = Math.round((2500 + (distanceKm * rate)) / 100) * 100;
+                document.getElementById('fare-jmd').innerText = `$${totalJMD.toLocaleString()} JMD`;
+                document.getElementById('fare-usd').innerText = `≈ $${(totalJMD / 156).toFixed(2)} USD`;
+            }
+        });
+    }
+
+    function sendWhatsApp() {
+        const msg = `*NEW RESERVATION*\n\n` +
+                    `Date: ${document.getElementById('date').value}\n` +
+                    `Time: ${document.getElementById('time').value}\n` +
+                    `Pickup: ${pickupLoc}\n` +
+                    `Dest: ${destLoc}\n` +
+                    `Fare: ${document.getElementById('fare-jmd').innerText}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
+
+    // Call init on load
+    window.onload = initMap;
 </script>
 </body>
 </html>
