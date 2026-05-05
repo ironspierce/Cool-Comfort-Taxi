@@ -8,112 +8,105 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
+    <!-- API Integration -->
     <script src="https://www.paypal.com/sdk/js?client-id=BAA8P6X3C7B5W&merchant-id=26SBN3BDG55FQ&currency=USD"></script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
     
     <style>
-        :root { --gold: #d4af37; --navy: #001f26; --teal: #004d4d; --glass: rgba(255, 255, 255, 0.08); --white: #ffffff; }
+        :root { --gold: #d4af37; --navy: #001f26; --glass: rgba(255, 255, 255, 0.08); --white: #ffffff; }
         * { box-sizing: border-box; }
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; overflow-x: hidden; }
+        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
 
-        .hero { min-height: 100vh; width: 100%; background: linear-gradient(rgba(0,31,38,0.8), rgba(0,31,38,0.95)), url('Cover Photo.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 20px; }
+        .hero { position: relative; min-height: 100vh; width: 100%; background: linear-gradient(rgba(0,31,38,0.7), rgba(0,31,38,0.9)), url('Cover Photo.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px 20px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2rem, 5vw, 3.2rem); margin: 0; letter-spacing: 4px; color: var(--gold); text-align: center; text-transform: uppercase; }
+        .motto { text-transform: uppercase; letter-spacing: 4px; font-size: 0.8rem; margin: 10px 0 20px 0; font-weight: 400; color: var(--white); opacity: 0.9; text-align: center; border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 5px 15px; }
+
+        .booking-card { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 30px; width: 100%; max-width: 550px; box-shadow: 0 40px 80px rgba(0,0,0,0.6); }
         
-        /* Multi-Step Progress Bar */
-        .progress-container { width: 100%; max-width: 400px; display: flex; justify-content: space-between; margin-bottom: 30px; position: relative; }
-        .step-node { width: 35px; height: 35px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; border: 1px solid rgba(255,255,255,0.2); z-index: 2; transition: 0.4s; }
-        .step-node.active { background: var(--gold); color: var(--navy); border-color: var(--gold); box-shadow: 0 0 15px var(--gold); }
-        .progress-line { position: absolute; top: 17px; left: 0; height: 2px; background: rgba(255,255,255,0.1); width: 100%; z-index: 1; }
+        /* Mission Status */
+        .status-bar { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; color: #4caf50; }
+        .status-dot { width: 8px; height: 8px; background: #4caf50; border-radius: 50%; box-shadow: 0 0 10px #4caf50; animation: pulse 2s infinite; }
 
-        .booking-card { background: var(--glass); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 30px; width: 100%; max-width: 550px; min-height: 500px; display: flex; flex-direction: column; }
+        /* Fleet Selector */
+        .fleet-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
+        .car-option { border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; cursor: pointer; transition: 0.3s; text-align: center; background: rgba(255,255,255,0.03); }
+        .car-option.active { border-color: var(--gold); background: rgba(212, 175, 55, 0.15); transform: scale(1.05); }
+        .car-option i { font-size: 1.4rem; color: var(--gold); display: block; margin-bottom: 6px; }
+        .car-option span { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Itinerary Intelligence */
+        .pref-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 15px; }
+        .pref-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px; border-radius: 10px; color: white; cursor: pointer; font-size: 0.6rem; text-align: center; transition: 0.2s; }
+        .pref-btn:hover { border-color: var(--gold); }
+        .pref-btn i { display: block; font-size: 1rem; margin-bottom: 4px; color: var(--gold); }
         
-        .step-content { display: none; animation: fadeIn 0.5s ease; }
-        .step-content.active { display: block; }
+        .poi-list { display: none; background: rgba(0,0,0,0.3); border-radius: 15px; padding: 15px; margin-bottom: 15px; border: 1px solid var(--gold); }
+        .poi-item { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-size: 0.75rem; }
+        .add-poi { color: var(--gold); cursor: pointer; font-weight: 700; text-transform: uppercase; font-size: 0.65rem; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #map { width: 100%; height: 250px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        .input-group { margin-bottom: 10px; }
+        input, select { width: 100%; padding: 14px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: white; font-family: 'Montserrat', sans-serif; font-size: 0.9rem; }
 
-        /* Fleet Selection Styling */
-        .fleet-grid { display: grid; gap: 15px; margin-top: 20px; }
-        .fleet-item { display: flex; align-items: center; gap: 20px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 20px; cursor: pointer; border: 1px solid transparent; transition: 0.3s; }
-        .fleet-item:hover { background: rgba(255,255,255,0.1); }
-        .fleet-item.active { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); }
-        .fleet-item i { font-size: 2rem; color: var(--gold); }
-        .fleet-item .details h4 { margin: 0; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; }
-        .fleet-item .details p { margin: 0; font-size: 0.7rem; opacity: 0.7; }
+        .price-box { background: rgba(0,0,0,0.3); padding: 20px; border-radius: 20px; margin: 15px 0; border: 1px solid var(--gold); text-align: center; display: none; border-left-width: 6px; }
+        .btn-book { background: var(--gold); color: var(--navy); padding: 20px; border: none; width: 100%; border-radius: 16px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 12px; letter-spacing: 2px; }
 
-        /* Map & Route Styling */
-        #map { width: 100%; height: 250px; border-radius: 20px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.1); }
-        .route-card { background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; margin-bottom: 10px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1); }
-        .route-card.selected { border-color: var(--gold); background: rgba(212, 175, 55, 0.05); }
-
-        .btn-nav { background: var(--gold); color: var(--navy); padding: 18px; border: none; width: 100%; border-radius: 16px; font-weight: 700; text-transform: uppercase; cursor: pointer; margin-top: auto; letter-spacing: 2px; }
-        .btn-back { background: none; border: 1px solid rgba(255,255,255,0.3); color: white; margin-top: 10px; padding: 10px; border-radius: 12px; cursor: pointer; font-size: 0.7rem; }
-
-        .input-group { margin-bottom: 15px; position: relative; }
-        input { width: 100%; padding: 16px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; font-family: 'Montserrat'; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
 
 <section class="hero">
-    <div class="progress-container">
-        <div class="progress-line"></div>
-        <div class="step-node active" id="node-1">1</div>
-        <div class="step-node" id="node-2">2</div>
-        <div class="step-node" id="node-3">3</div>
-    </div>
-
+    <h1>Cool Comfort</h1>
+    <div class="motto">The Gold Standard of Jamaican Transit</div>
+    
     <div class="booking-card">
-        <!-- STEP 1: FLEET SELECTION -->
-        <div class="step-content active" id="step-1">
-            <h3 style="text-align: center; color: var(--gold);">Select Your Vehicle</h3>
-            <div class="fleet-grid">
-                <div class="fleet-item active" onclick="selectFleet('Executive Sedan', 155, this)">
-                    <i class="fa-solid fa-car-side"></i>
-                    <div class="details"><h4>Executive Sedan</h4><p>Up to 3 Passengers • 2 Suitcases</p></div>
-                </div>
-                <div class="fleet-item" onclick="selectFleet('Premium SUV', 230, this)">
-                    <i class="fa-solid fa-suv"></i>
-                    <div class="details"><h4>Premium SUV</h4><p>Up to 5 Passengers • 4 Suitcases</p></div>
-                </div>
-                <div class="fleet-item" onclick="selectFleet('Mission Van', 350, this)">
-                    <i class="fa-solid fa-van-shuttle"></i>
-                    <div class="details"><h4>Mission Van</h4><p>Up to 10 Passengers • Bulk Luggage</p></div>
-                </div>
+        <div class="status-bar"><div class="status-dot"></div> Mission Ready: Montego Bay Base</div>
+
+        <div class="fleet-selector">
+            <div class="car-option active" onclick="setFleet('Executive Sedan', 155, this)">
+                <i class="fa-solid fa-car-side"></i><span>Sedan</span>
             </div>
-            <button class="btn-nav" style="margin-top: 30px;" onclick="goToStep(2)">Continue to Route</button>
+            <div class="car-option" onclick="setFleet('Premium SUV', 230, this)">
+                <i class="fa-solid fa-suv"></i><span>SUV</span>
+            </div>
+            <div class="car-option" onclick="setFleet('Private Van', 350, this)">
+                <i class="fa-solid fa-van-shuttle"></i><span>Van</span>
+            </div>
         </div>
 
-        <!-- STEP 2: ROUTE INTELLIGENCE -->
-        <div class="step-content" id="step-2">
-            <h3 style="text-align: center; color: var(--gold);">Route Intelligence</h3>
-            <div class="input-group">
-                <input type="text" id="pickup" placeholder="Pickup Point">
-            </div>
-            <div class="input-group">
-                <input type="text" id="destination" placeholder="Destination">
-            </div>
-            <div id="map"></div>
-            <div id="route-options"></div>
-            <button class="btn-nav" id="route-next" onclick="goToStep(3)" disabled style="opacity: 0.5;">Secure Route</button>
-            <button class="btn-back" onclick="goToStep(1)">← Change Vehicle</button>
+        <div class="pref-grid">
+            <div class="pref-btn" onclick="showPOIs('nature')"><i class="fa-solid fa-leaf"></i>Nature</div>
+            <div class="pref-btn" onclick="showPOIs('history')"><i class="fa-solid fa-landmark"></i>History</div>
+            <div class="pref-btn" onclick="showPOIs('foodie')"><i class="fa-solid fa-utensils"></i>Foodie</div>
+            <div class="pref-btn" onclick="showPOIs('shopping')"><i class="fa-solid fa-bag-shopping"></i>Shop</div>
         </div>
 
-        <!-- STEP 3: FINAL DEPLOYMENT -->
-        <div class="step-content" id="step-3">
-            <h3 style="text-align: center; color: var(--gold);">Confirm Mission</h3>
-            <div id="summary-box" style="background: rgba(255,255,255,0.05); padding: 20px; border-radius: 20px; margin-bottom: 20px; border-left: 5px solid var(--gold);">
-                <!-- Dynamically filled -->
-            </div>
-            <div class="input-group">
-                <select id="payment-method" style="width:100%; padding:15px; border-radius:15px; background:rgba(255,255,255,0.1); color:white; border:none;" onchange="togglePaypal()">
-                    <option value="cash">Pay with Cash on Arrival</option>
-                    <option value="paypal">Pre-pay with PayPal/Card</option>
-                </select>
-            </div>
-            <div id="paypal-container" style="display:none; margin-bottom: 15px;"></div>
-            <button class="btn-nav" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Deploy Now</button>
-            <button class="btn-back" onclick="goToStep(2)">← Modify Route</button>
+        <div id="poi-container" class="poi-list"></div>
+
+        <div id="map"></div>
+        
+        <div class="input-group">
+            <input type="text" id="pickup" placeholder="Departure Point">
         </div>
+        <div class="input-group">
+            <input type="text" id="destination" placeholder="Primary Objective / Destination">
+        </div>
+
+        <div class="input-group">
+            <select id="payment-method" onchange="updateUI()">
+                <option value="cash">Payment: Cash in Hand</option>
+                <option value="paypal">Payment: PayPal / Digital</option>
+            </select>
+        </div>
+
+        <div id="price-box" class="price-box">
+            <div id="jmd-price" style="font-size: 2.2rem; font-weight: 700; color: var(--gold);">$0 JMD</div>
+            <div id="usd-price" style="opacity:0.8; display: none;">≈ $0.00 USD</div>
+            <div id="paypal-button-container" style="display: none; margin-top: 15px;"></div>
+        </div>
+
+        <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Initiate Mission</button>
     </div>
 </section>
 
@@ -121,106 +114,90 @@
     let map, ds, dr;
     let kmRate = 155;
     let currentFleet = "Executive Sedan";
-    let selectedRouteData = null;
     const EX_RATE = 156;
+
+    const poiData = {
+        nature: [{ name: "Blue Hole", loc: "Blue Hole, Ocho Rios" }, { name: "YS Falls", loc: "YS Falls, St. Elizabeth" }],
+        history: [{ name: "Rose Hall Great House", loc: "Rose Hall Great House" }, { name: "Bob Marley Museum", loc: "Bob Marley Museum, Kingston" }],
+        foodie: [{ name: "Scotchies Jerk Center", loc: "Scotchies, Montego Bay" }, { name: "Rick's Cafe", loc: "Rick's Cafe, Negril" }],
+        shopping: [{ name: "Main Street Jamaica", loc: "Main Street Jamaica" }, { name: "Whitter Village", loc: "Whitter Village, Montego Bay" }]
+    };
 
     function initMap() {
         map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 10, center: { lat: 18.4762, lng: -77.8938 }, mapTypeId: 'satellite',
-            disableDefaultUI: true
+            zoom: 12, center: { lat: 18.4762, lng: -77.8938 }, mapTypeId: 'satellite'
         });
         ds = new google.maps.DirectionsService();
         dr = new google.maps.DirectionsRenderer({ map: map, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 6 } });
-        
-        setupAutocomplete('pickup');
-        setupAutocomplete('destination');
+        setupAutocomplete(document.getElementById('pickup'));
+        setupAutocomplete(document.getElementById('destination'));
+        initPayPal();
     }
 
-    function setupAutocomplete(id) {
-        const ac = new google.maps.places.Autocomplete(document.getElementById(id), { componentRestrictions: { country: "jm" } });
-        ac.addListener('place_changed', calcRoutes);
+    function setupAutocomplete(input) {
+        const ac = new google.maps.places.Autocomplete(input, { componentRestrictions: { country: "jm" } });
+        ac.addListener('place_changed', calcFare);
     }
 
-    function selectFleet(name, rate, el) {
+    function showPOIs(cat) {
+        const container = document.getElementById('poi-container');
+        container.style.display = 'block';
+        let html = `<div style="font-size:0.6rem; color:var(--gold); margin-bottom:10px; font-weight:700;">SELECT OBJECTIVE:</div>`;
+        poiData[cat].forEach(poi => {
+            html += `<div class="poi-item"><span>${poi.name}</span><span class="add-poi" onclick="addToItinerary('${poi.loc}')">+ Add</span></div>`;
+        });
+        container.innerHTML = html;
+    }
+
+    function addToItinerary(loc) {
+        document.getElementById('destination').value = loc;
+        calcFare();
+        document.getElementById('poi-container').style.display = 'none';
+    }
+
+    function setFleet(name, rate, el) {
         kmRate = rate;
         currentFleet = name;
-        document.querySelectorAll('.fleet-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.car-option').forEach(opt => opt.classList.remove('active'));
         el.classList.add('active');
+        calcFare();
     }
 
-    function goToStep(step) {
-        document.querySelectorAll('.step-content').forEach(s => s.classList.remove('active'));
-        document.querySelectorAll('.step-node').forEach(n => n.classList.remove('active'));
-        
-        document.getElementById(`step-${step}`).classList.add('active');
-        for(let i=1; i<=step; i++) document.getElementById(`node-${i}`).classList.add('active');
-
-        if(step === 3) updateSummary();
-    }
-
-    function calcRoutes() {
-        const origin = document.getElementById('pickup').value;
+    function calcFare() {
+        const pickup = document.getElementById('pickup').value;
         const dest = document.getElementById('destination').value;
-        if(!origin || !dest) return;
-
-        ds.route({
-            origin: origin, destination: dest, travelMode: 'DRIVING', provideRouteAlternatives: true
-        }, (res, stat) => {
-            if(stat === 'OK') {
+        if (!pickup || !dest) return;
+        ds.route({ origin: pickup, destination: dest, travelMode: 'DRIVING' }, (res, stat) => {
+            if (stat === 'OK') {
                 dr.setDirections(res);
-                const optionsCont = document.getElementById('route-options');
-                optionsCont.innerHTML = "";
-                
-                res.routes.forEach((route, i) => {
-                    const km = route.legs[0].distance.value / 1000;
-                    const price = Math.round((1000 + (km * kmRate))/10)*10;
-                    const div = document.createElement('div');
-                    div.className = `route-card ${i===0?'selected':''}`;
-                    div.innerHTML = `<strong>${i===0?'⭐ Recommended':'Alternative'}</strong><br>${route.legs[0].distance.text} • ${route.legs[0].duration.text}<br><span style="color:var(--gold)">$${price.toLocaleString()} JMD</span>`;
-                    div.onclick = () => {
-                        dr.setRouteIndex(i);
-                        selectedRouteData = { price, dist: route.legs[0].distance.text, time: route.legs[0].duration.text };
-                        document.querySelectorAll('.route-card').forEach(c => c.classList.remove('selected'));
-                        div.classList.add('selected');
-                    };
-                    optionsCont.appendChild(div);
-                    if(i===0) selectedRouteData = { price, dist: route.legs[0].distance.text, time: route.legs[0].duration.text };
-                });
-                document.getElementById('route-next').disabled = false;
-                document.getElementById('route-next').style.opacity = 1;
+                const km = res.routes[0].legs[0].distance.value / 1000;
+                const total = Math.round((1000 + (km * kmRate)) / 10) * 10;
+                document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
+                document.getElementById('usd-price').innerText = `≈ $${(total / EX_RATE).toFixed(2)} USD`;
+                document.getElementById('price-box').style.display = 'block';
+                updateUI();
             }
         });
     }
 
-    function updateSummary() {
-        const box = document.getElementById('summary-box');
-        box.innerHTML = `
-            <p style="margin:5px 0"><strong>Vehicle:</strong> ${currentFleet}</p>
-            <p style="margin:5px 0"><strong>Pickup:</strong> ${document.getElementById('pickup').value}</p>
-            <p style="margin:5px 0"><strong>Destination:</strong> ${document.getElementById('destination').value}</p>
-            <p style="margin:5px 0"><strong>Travel Time:</strong> ${selectedRouteData.time}</p>
-            <hr style="border:0; border-top:1px solid rgba(255,255,255,0.1)">
-            <h2 style="color:var(--gold); margin:10px 0">$${selectedRouteData.price.toLocaleString()} JMD</h2>
-        `;
-        initPayPal();
-    }
-
-    function togglePaypal() {
-        document.getElementById('paypal-container').style.display = 
-            document.getElementById('payment-method').value === 'paypal' ? 'block' : 'none';
+    function updateUI() {
+        const isPaypal = document.getElementById('payment-method').value === 'paypal';
+        document.getElementById('paypal-button-container').style.display = isPaypal ? 'block' : 'none';
+        document.getElementById('usd-price').style.display = isPaypal ? 'block' : 'none';
     }
 
     function initPayPal() {
-        document.getElementById('paypal-container').innerHTML = "";
         paypal.Buttons({
             createOrder: (data, actions) => {
-                return actions.order.create({ purchase_units: [{ amount: { value: (selectedRouteData.price / EX_RATE).toFixed(2) } }] });
+                const amt = document.getElementById('usd-price').innerText.replace('≈ $', '').replace(' USD', '');
+                return actions.order.create({ purchase_units: [{ amount: { value: amt } }] });
             }
-        }).render('#paypal-container');
+        }).render('#paypal-button-container');
     }
 
     function sendWhatsApp() {
-        const msg = `*NEW MISSION DEPLOYMENT*\nVehicle: ${currentFleet}\nFrom: ${document.getElementById('pickup').value}\nTo: ${document.getElementById('destination').value}\nFare: $${selectedRouteData.price}\nPayment: ${document.getElementById('payment-method').value.toUpperCase()}`;
+        const method = document.getElementById('payment-method').value.toUpperCase();
+        const msg = `*COOL COMFORT MISSION*\n------------------\n🛸 FLEET: ${currentFleet}\n📍 FROM: ${document.getElementById('pickup').value}\n🏁 TO: ${document.getElementById('destination').value}\n💰 FARE: ${document.getElementById('jmd-price').innerText}\n💳 PAY: ${method}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
