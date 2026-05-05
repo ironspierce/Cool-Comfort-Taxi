@@ -22,16 +22,14 @@
 
         .booking-card { background: var(--glass); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.1); padding: 25px; border-radius: 30px; width: 100%; max-width: 550px; box-shadow: 0 40px 80px rgba(0,0,0,0.6); position: relative; }
         
-        /* Service Status */
         .status-bar { display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px; color: #4caf50; }
         .status-dot { width: 8px; height: 8px; background: #4caf50; border-radius: 50%; box-shadow: 0 0 10px #4caf50; animation: pulse 2s infinite; }
 
-        /* Fleet Selector */
         .fleet-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 20px; }
-        .car-option { border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; cursor: pointer; transition: 0.3s; text-align: center; background: rgba(255,255,255,0.03); }
+        .car-option { border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; padding: 12px; cursor: pointer; transition: 0.3s; text-align: center; background: rgba(255,255,255,0.03); display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100px; }
         .car-option.active { border-color: var(--gold); background: rgba(212, 175, 55, 0.15); transform: scale(1.05); }
         .car-option i { font-size: 1.4rem; color: var(--gold); display: block; margin-bottom: 6px; }
-        .car-option span { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .car-option span { font-size: 0.55rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; line-height: 1.2; }
 
         #map { width: 100%; height: 280px; border-radius: 20px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
 
@@ -55,17 +53,17 @@
         <div class="status-bar"><div class="status-dot"></div> Luxury Service Available: Montego Bay</div>
 
         <div class="fleet-selector">
-            <div class="car-option active" onclick="setFleet('Executive Sedan', 155, this)">
+            <div class="car-option active" onclick="setFleet('2018 Toyota Fielder', 155, this)">
                 <i class="fa-solid fa-car-side"></i>
-                <span>Sedan</span>
+                <span>2018 Toyota Fielder</span>
             </div>
             <div class="car-option" onclick="setFleet('Premium SUV', 230, this)">
                 <i class="fa-solid fa-suv"></i>
-                <span>SUV</span>
+                <span>Premium SUV</span>
             </div>
             <div class="car-option" onclick="setFleet('Private Van', 350, this)">
                 <i class="fa-solid fa-van-shuttle"></i>
-                <span>Van</span>
+                <span>Private Van</span>
             </div>
         </div>
 
@@ -99,7 +97,7 @@
 <script>
     let map, ds, dr;
     let kmRate = 155;
-    let currentFleet = "Executive Sedan";
+    let currentFleet = "2018 Toyota Fielder";
     const EX_RATE = 156;
 
     function initMap() {
@@ -159,7 +157,8 @@
     function initPayPal() {
         paypal.Buttons({
             createOrder: (data, actions) => {
-                const amt = document.getElementById('usd-price').innerText.replace('≈ $', '').replace(' USD', '');
+                const amtString = document.getElementById('usd-price').innerText;
+                const amt = amtString.replace('≈ $', '').replace(' USD', '');
                 return actions.order.create({ purchase_units: [{ amount: { value: amt } }] });
             }
         }).render('#paypal-button-container');
