@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort | Premium All-Island Transport</title>
+    <title>Cool Comfort | The Gold Standard</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -17,38 +17,41 @@
         body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); line-height: 1.6; overflow-x: hidden; scroll-behavior: smooth; }
 
         .hero { position: relative; min-height: 100vh; width: 100%; background: linear-gradient(rgba(0,31,38,0.7), rgba(0,31,38,0.9)), url('Cover Photo.jpg'); background-size: cover; background-position: center; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px 20px; }
-        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 6vw, 3.5rem); margin: 0; letter-spacing: 4px; color: var(--gold); text-align: center; }
-        .motto { text-transform: uppercase; letter-spacing: 5px; font-size: 0.8rem; margin-bottom: 30px; opacity: 0.8; text-align: center; }
+        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 6vw, 3.5rem); margin: 0; letter-spacing: 4px; color: var(--gold); text-align: center; text-transform: uppercase; }
+        .motto { text-transform: uppercase; letter-spacing: 4px; font-size: 0.9rem; margin: 10px 0 30px 0; font-weight: 400; color: var(--white); opacity: 0.9; text-align: center; border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 5px 15px; }
 
         .booking-card { background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.1); padding: clamp(20px, 5vw, 40px); border-radius: 28px; width: 100%; max-width: 600px; box-shadow: 0 30px 60px rgba(0,0,0,0.5); }
         #map { width: 100%; height: 350px; border-radius: 18px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.2); }
 
+        .badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; text-align: center; }
+        .badge { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; font-weight: 700; }
+        .badge i { display: block; font-size: 1.3rem; color: var(--gold); margin-bottom: 5px; }
+
         .input-group { margin-bottom: 12px; position: relative; display: flex; align-items: center; gap: 8px; }
-        input, select { flex: 1; padding: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-family: 'Montserrat', sans-serif; }
+        input, select { flex: 1; padding: 14px; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-family: 'Montserrat', sans-serif; font-size: 0.95rem; }
         select option { background: var(--navy); color: white; }
 
-        /* Route Selector Styling */
-        .route-info { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--gold); font-size: 0.85rem; display: none; }
+        .route-info { background: rgba(212, 175, 55, 0.1); padding: 15px; border-radius: 12px; margin-bottom: 15px; border-left: 4px solid var(--gold); font-size: 0.85rem; display: none; }
         
         .price-box { background: rgba(212, 175, 55, 0.15); padding: 25px; border-radius: 18px; margin: 20px 0; border: 1px solid var(--gold); text-align: center; display: none; }
-        .btn-book { background: var(--gold); color: var(--navy); padding: 20px; border: none; width: 100%; border-radius: 14px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 12px; }
+        .btn-book { background: var(--gold); color: var(--navy); padding: 20px; border: none; width: 100%; border-radius: 14px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; gap: 12px; letter-spacing: 1px; }
+        .btn-book:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); }
 
-        .badge-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; text-align: center; }
-        .badge { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 1px; opacity: 0.8; }
-        .badge i { display: block; font-size: 1.2rem; color: var(--gold); margin-bottom: 5px; }
+        .section-padding { padding: 80px 20px; max-width: 1150px; margin: 0 auto; }
+        .transparency-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 30px; }
     </style>
 </head>
 <body>
 
 <section class="hero">
-    <h1>COOL COMFORT</h1>
-    <div class="motto">Arrive Refined. Travel Defined.</div>
+    <h1>Cool Comfort</h1>
+    <div class="motto">The Gold Standard of Jamaican Transit</div>
     
     <div class="booking-card">
         <div class="badge-grid">
-            <div class="badge"><i class="fa-solid fa-shield-halved"></i> Military Trained</div>
-            <div class="badge"><i class="fa-solid fa-satellite"></i> GPS Tracked</div>
-            <div class="badge"><i class="fa-solid fa-id-card"></i> PPV Certified</div>
+            <div class="badge"><i class="fa-solid fa-shield-check"></i> Military Trained</div>
+            <div class="badge"><i class="fa-solid fa-crosshairs"></i> Precise Logistics</div>
+            <div class="badge"><i class="fa-solid fa-star"></i> Elite Service</div>
         </div>
 
         <div id="map"></div>
@@ -57,28 +60,27 @@
         
         <div id="location-fields">
             <div class="input-group">
-                <input type="text" id="pickup" placeholder="Pickup Point">
+                <input type="text" id="pickup" placeholder="Departure Point">
             </div>
             <div class="input-group">
-                <input type="text" class="dest-input" placeholder="Primary Destination">
+                <input type="text" class="dest-input" placeholder="Destination">
             </div>
         </div>
 
         <div class="input-group">
             <select id="payment-method" onchange="updateUI()">
                 <option value="cash">Payment: Cash in Hand</option>
-                <option value="paypal">Payment: PayPal (Secure Digital)</option>
+                <option value="paypal">Payment: PayPal / Credit Card</option>
             </select>
         </div>
 
         <div id="price-box" class="price-box">
-            <div style="font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; opacity: 0.8;">Premium Chauffeur Fare</div>
-            <div id="jmd-price" style="font-size: 2.5rem; font-weight: 700;">$0 JMD</div>
-            <div id="usd-price" style="opacity:0.8; margin-bottom: 15px; display: none;">≈ $0.00 USD</div>
+            <div id="jmd-price" style="font-size: 2.6rem; font-weight: 700; color: var(--gold);">$0 JMD</div>
+            <div id="usd-price" style="opacity:0.8; margin-bottom: 15px; display: none; font-weight: 300;">≈ $0.00 USD</div>
             <div id="paypal-button-container" style="display: none;"></div>
         </div>
 
-        <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> SECURE YOUR JOURNEY</button>
+        <button class="btn-book" onclick="sendWhatsApp()"><i class="fab fa-whatsapp"></i> Initiate Mission</button>
     </div>
 </section>
 
@@ -89,7 +91,8 @@
     function initMap() {
         const jm = { lat: 18.1096, lng: -77.2975 };
         map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 9, center: jm, mapTypeId: 'satellite', tilt: 45, gestureHandling: "greedy"
+            zoom: 9, center: jm, mapTypeId: 'satellite', tilt: 45,
+            styles: [{ "featureType": "all", "elementType": "labels", "stylers": [{ "visibility": "on" }] }]
         });
         ds = new google.maps.DirectionsService();
 
@@ -123,7 +126,7 @@
         }, (res, stat) => {
             if (stat === 'OK') {
                 const routeInfo = document.getElementById('route-display');
-                let infoHTML = `<strong>Route Analysis:</strong><br>`;
+                let infoHTML = `<strong>Route Intelligence:</strong><br>`;
 
                 res.routes.forEach((route, index) => {
                     const isBest = index === 0;
@@ -133,8 +136,8 @@
                         routeIndex: index,
                         polylineOptions: {
                             strokeColor: isBest ? "#d4af37" : "#808080",
-                            strokeOpacity: isBest ? 1.0 : 0.6,
-                            strokeWeight: isBest ? 7 : 4,
+                            strokeOpacity: isBest ? 1.0 : 0.5,
+                            strokeWeight: isBest ? 8 : 4,
                             zIndex: isBest ? 10 : 1
                         }
                     });
@@ -142,13 +145,12 @@
 
                     const dist = route.legs[0].distance.text;
                     const time = route.legs[0].duration.text;
-                    infoHTML += `${isBest ? '⭐ Best' : 'Alt'} Route: ${dist} (${time})<br>`;
+                    infoHTML += `${isBest ? '✔ Optimal' : 'Alt'} Route: ${dist} (${time})<br>`;
                 });
 
                 routeInfo.innerHTML = infoHTML;
                 routeInfo.style.display = 'block';
 
-                // Price based on Best Route (Route 0)
                 const km = res.routes[0].legs[0].distance.value / 1000;
                 const total = Math.round((1000 + (km * 155)) / 10) * 10;
                 
@@ -177,8 +179,8 @@
 
     function sendWhatsApp() {
         const method = document.getElementById('payment-method').value.toUpperCase();
-        const routeData = document.getElementById('route-display').innerText.split('\n')[1]; // Get best route summary
-        const msg = `*Cool Comfort Luxury Booking Request*\n📍 Pickup: ${document.getElementById('pickup').value}\n🗺️ Dest: ${document.querySelector('.dest-input').value}\n🛣️ ${routeData}\n💰 Fare: ${document.getElementById('jmd-price').innerText}\n💳 Payment: ${method}`;
+        const routeData = document.getElementById('route-display').innerText.split('\n')[1] || "Direct Route";
+        const msg = `*COOL COMFORT MISSION REQUEST*\n--------------------------\n📍 DEPARTURE: ${document.getElementById('pickup').value}\n🏁 DESTINATION: ${document.querySelector('.dest-input').value}\n🛣️ ${routeData}\n💰 FARE: ${document.getElementById('jmd-price').innerText}\n💳 PAYMENT: ${method}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
