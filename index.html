@@ -1,217 +1,96 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort | The Gold Standard</title>
+<!-- Add this CSS to your <style> -->
+<style>
+    .geo-btn {
+        background: rgba(212, 175, 55, 0.1);
+        border: 1px solid var(--gold);
+        color: var(--gold);
+        padding: 10px;
+        border-radius: 12px;
+        width: 100%;
+        margin-bottom: 15px;
+        cursor: pointer;
+        font-size: 0.75rem;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        transition: 0.3s;
+    }
+    .geo-btn:hover { background: var(--gold); color: var(--navy); }
+    .pulse-icon { animation: geo-pulse 2s infinite; }
+    @keyframes geo-pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
     
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    .loading-spinner { display: none; width: 15px; height: 15px; border: 2px solid var(--navy); border-top: 2px solid var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { 100% { transform: rotate(360deg); } }
+</style>
+
+<!-- Update STEP 4 HTML -->
+<div class="step" id="step-4">
+    <span class="section-label">Deployment Brief</span>
+    <div id="map"></div>
     
-    <script src="https://www.paypal.com/sdk/js?client-id=BAA8P6X3C7B5W&merchant-id=26SBN3BDG55FQ&currency=USD"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places"></script>
+    <!-- Auto Location Button -->
+    <button class="geo-btn" onclick="detectLocation()">
+        <i class="fa-solid fa-location-crosshairs pulse-icon"></i>
+        <span id="geo-text">AUTO-DETECT PICKUP</span>
+        <div class="loading-spinner" id="geo-loader"></div>
+    </button>
+
+    <input type="text" id="pickup" placeholder="Departure Point">
+    <input type="text" id="destination" placeholder="Primary Objective">
     
-    <style>
-        :root { --gold: #d4af37; --navy: #001f26; --glass: rgba(255, 255, 255, 0.1); --white: #ffffff; }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); overflow-x: hidden; }
-
-        .hero { min-height: 100vh; background: linear-gradient(rgba(0,31,38,0.8), rgba(0,31,38,0.95)), url('Cover Photo.jpg'); background-size: cover; display: flex; align-items: center; justify-content: center; padding: 20px; }
-        
-        .booking-card { width: 100%; max-width: 500px; background: rgba(255,255,255,0.05); backdrop-filter: blur(25px); border-radius: 35px; padding: 25px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 50px 100px rgba(0,0,0,0.8); }
-
-        .section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); margin: 20px 0 10px 0; display: block; }
-
-        /* Scrolling Decks */
-        .scrolling-wrapper { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 10px; scrollbar-width: none; }
-        .scrolling-wrapper::-webkit-scrollbar { display: none; }
-
-        /* Selection Cards */
-        .selection-card { 
-            flex: 0 0 110px; background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 15px; 
-            text-align: center; transition: 0.3s; cursor: pointer;
-        }
-        .selection-card.active { background: var(--gold); border-color: var(--gold); }
-        .selection-card i { font-size: 1.5rem; color: var(--gold); margin-bottom: 8px; display: block; }
-        .selection-card.active i, .selection-card.active span { color: var(--navy); }
-        .selection-card span { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; }
-
-        /* Experience Cards */
-        .exp-card { 
-            flex: 0 0 180px; height: 110px; border-radius: 20px; position: relative; overflow: hidden; 
-            border: 1px solid rgba(255,255,255,0.1); cursor: pointer;
-        }
-        .exp-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0.5; transition: 0.3s; }
-        .exp-card.selected { border: 2px solid var(--gold); }
-        .exp-card.selected img { opacity: 0.9; }
-        .exp-info { position: absolute; bottom: 10px; left: 10px; z-index: 2; }
-        .exp-info b { font-size: 0.75rem; display: block; }
-        .exp-info span { font-size: 0.55rem; text-transform: uppercase; color: var(--gold); }
-        .check-mark { position: absolute; top: 10px; right: 10px; color: var(--gold); display: none; font-size: 1.2rem; }
-        .exp-card.selected .check-mark { display: block; }
-
-        /* Day Selector */
-        .day-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
-        .day-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; font-weight: 700; font-size: 0.8rem; }
-        .day-btn.active { background: var(--gold); color: var(--navy); border-color: var(--gold); }
-
-        #map { width: 100%; height: 200px; border-radius: 25px; margin: 20px 0; border: 1px solid rgba(212,175,55,0.2); }
-        input { width: 100%; padding: 16px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; margin-bottom: 10px; }
-
-        .itinerary-summary { background: rgba(212,175,55,0.05); border-radius: 15px; padding: 15px; margin-bottom: 15px; display: none; font-size: 0.75rem; }
-        .price-box { text-align: center; margin-bottom: 20px; padding: 20px; border-radius: 20px; background: rgba(212,175,55,0.1); border: 1px solid var(--gold); display: none; }
-        .btn-deploy { background: var(--gold); color: var(--navy); width: 100%; padding: 20px; border-radius: 18px; border: none; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; }
-    </style>
-</head>
-<body>
-
-<section class="hero">
-    <div class="booking-card">
-        <span class="section-label" style="margin-top:0;">1. Mission Duration</span>
-        <div class="day-grid">
-            <div class="day-btn active" onclick="setDays(1, this)">1 Day</div>
-            <div class="day-btn" onclick="setDays(2, this)">2 Days</div>
-            <div class="day-btn" onclick="setDays(3, this)">3 Days</div>
-            <div class="day-btn" onclick="setDays(5, this)">5 Days</div>
-            <div class="day-btn" onclick="setDays(7, this)">7 Days</div>
-        </div>
-
-        <span class="section-label">2. Fleet Class</span>
-        <div class="scrolling-wrapper">
-            <div class="selection-card active" onclick="setFleet('Executive Sedan', 155, this)">
-                <i class="fa-solid fa-car"></i><span>Sedan</span>
-            </div>
-            <div class="selection-card" onclick="setFleet('Premium SUV', 230, this)">
-                <i class="fa-solid fa-suv"></i><span>SUV</span>
-            </div>
-            <div class="selection-card" onclick="setFleet('Private Van', 350, this)">
-                <i class="fa-solid fa-van-shuttle"></i><span>Van</span>
-            </div>
-        </div>
-
-        <span class="section-label">3. Select All Objectives</span>
-        <div class="scrolling-wrapper">
-            <div class="exp-card" onclick="togglePOI('Blue Hole', 'Blue Hole, Ocho Rios', this)">
-                <i class="fa-solid fa-circle-check check-mark"></i>
-                <img src="https://images.unsplash.com/photo-1543731068-7e0f5beff43a?auto=format&fit=crop&w=400">
-                <div class="exp-info"><span>Nature</span><b>Blue Hole</b></div>
-            </div>
-            <div class="exp-card" onclick="togglePOI('Rose Hall', 'Rose Hall Great House', this)">
-                <i class="fa-solid fa-circle-check check-mark"></i>
-                <img src="https://images.unsplash.com/photo-1590050752117-238cb0fb12b1?auto=format&fit=crop&w=400">
-                <div class="exp-info"><span>History</span><b>Rose Hall</b></div>
-            </div>
-            <div class="exp-card" onclick="togglePOI('Scotchies', 'Scotchies, Montego Bay', this)">
-                <i class="fa-solid fa-circle-check check-mark"></i>
-                <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400">
-                <div class="exp-info"><span>Foodie</span><b>Scotchies</b></div>
-            </div>
-            <div class="exp-card" onclick="togglePOI('Rick\'s Cafe', 'Ricks Cafe, Negril', this)">
-                <i class="fa-solid fa-circle-check check-mark"></i>
-                <img src="https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=400">
-                <div class="exp-info"><span>Views</span><b>Rick's Cafe</b></div>
-            </div>
-        </div>
-
-        <div id="itinerary-summary" class="itinerary-summary"></div>
-
-        <div id="map"></div>
-
-        <input type="text" id="pickup" placeholder="Pickup Location">
-        <input type="text" id="destination" placeholder="Final Objective (Last Stop)">
-
-        <div id="price-box" class="price-box">
-            <div id="jmd-price" style="font-size: 2.2rem; font-weight: 700; color: var(--gold);">$0 JMD</div>
-            <div id="usd-price" style="opacity:0.7;">≈ $0.00 USD</div>
-        </div>
-
-        <button class="btn-deploy" onclick="sendWhatsApp()">Deploy Mission</button>
+    <div style="text-align: center; background: rgba(212,175,55,0.1); padding: 15px; border-radius: 15px; border: 1px solid var(--gold);">
+        <div id="jmd-price" style="font-size: 1.8rem; font-weight: 700; color: var(--gold);">$0 JMD</div>
+        <small id="usd-price">≈ $0.00 USD</small>
     </div>
-</section>
+</div>
 
+<!-- Add this Logic to your <script> -->
 <script>
-    let map, ds, dr, kmRate = 155, missionDays = 1;
-    let selectedPOIs = [];
+    function detectLocation() {
+        const btnText = document.getElementById('geo-text');
+        const loader = document.getElementById('geo-loader');
+        const pickupInput = document.getElementById('pickup');
 
-    function initMap() {
-        map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 12, center: { lat: 18.4762, lng: -77.8938 }, 
-            mapTypeId: 'satellite', disableDefaultUI: true
-        });
-        ds = new google.maps.DirectionsService();
-        dr = new google.maps.DirectionsRenderer({ map: map, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 5 } });
-        setupAutocomplete(document.getElementById('pickup'));
-        setupAutocomplete(document.getElementById('destination'));
-    }
-
-    function setupAutocomplete(input) {
-        const ac = new google.maps.places.Autocomplete(input, { componentRestrictions: { country: "jm" } });
-        ac.addListener('place_changed', calcFare);
-    }
-
-    function setDays(days, el) {
-        missionDays = days;
-        document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('active'));
-        el.classList.add('active');
-        calcFare();
-    }
-
-    function setFleet(name, rate, el) {
-        kmRate = rate;
-        document.querySelectorAll('.selection-card').forEach(c => c.classList.remove('active'));
-        el.classList.add('active');
-        calcFare();
-    }
-
-    function togglePOI(name, loc, el) {
-        const index = selectedPOIs.findIndex(p => p.name === name);
-        if (index > -1) {
-            selectedPOIs.splice(index, 1);
-            el.classList.remove('selected');
-        } else {
-            selectedPOIs.push({name, loc});
-            el.classList.add('selected');
+        if (!navigator.geolocation) {
+            alert("Geolocation is not supported by your browser");
+            return;
         }
-        updateItinerarySummary();
-        calcFare();
-    }
 
-    function updateItinerarySummary() {
-        const summary = document.getElementById('itinerary-summary');
-        if (selectedPOIs.length > 0) {
-            summary.style.display = 'block';
-            summary.innerHTML = `<b>Planned Stops:</b> ` + selectedPOIs.map(p => p.name).join(', ');
-        } else {
-            summary.style.display = 'none';
-        }
-    }
+        btnText.innerText = "ACQUIRING INTEL...";
+        loader.style.display = "block";
 
-    function calcFare() {
-        const p = document.getElementById('pickup').value;
-        const d = document.getElementById('destination').value;
-        if (!p || !d) return;
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const latlng = { lat: parseFloat(lat), lng: parseFloat(lng) };
+                const geocoder = new google.maps.Geocoder();
 
-        ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
-            if (stat === 'OK') {
-                dr.setDirections(res);
-                const km = res.routes[0].legs[0].distance.value / 1000;
-                // Price = (Base + KM Cost) * Days
-                const total = Math.round(((1000 + (km * kmRate)) * missionDays) / 10) * 10;
-                document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
-                document.getElementById('usd-price').innerText = `≈ $${(total / 156).toFixed(2)} USD`;
-                document.getElementById('price-box').style.display = 'block';
+                geocoder.geocode({ location: latlng }, (results, status) => {
+                    loader.style.display = "none";
+                    if (status === "OK") {
+                        if (results[0]) {
+                            pickupInput.value = results[0].formatted_address;
+                            btnText.innerText = "LOCATION LOCKED";
+                            // Update map center
+                            map.setCenter(latlng);
+                            map.setZoom(15);
+                            new google.maps.Marker({ position: latlng, map: map, icon: 'https://maps.google.com/mapfiles/ms/icons/gold-dot.png' });
+                            calcFinal();
+                        }
+                    } else {
+                        btnText.innerText = "RETRY DETECTION";
+                        alert("Geocoder failed due to: " + status);
+                    }
+                });
+            },
+            () => {
+                loader.style.display = "none";
+                btnText.innerText = "DETECTION FAILED";
+                alert("Please enable location permissions in your browser settings.");
             }
-        });
+        );
     }
-
-    function sendWhatsApp() {
-        const stops = selectedPOIs.map(p => p.name).join(', ') || 'None';
-        const msg = `*COOL COMFORT MISSION*\nDays: ${missionDays}\nStops: ${stops}\nFrom: ${document.getElementById('pickup').value}\nTo: ${document.getElementById('destination').value}\nFare: ${document.getElementById('jmd-price').innerText}`;
-        window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
-    }
-
-    window.onload = initMap;
 </script>
-</body>
-</html>
