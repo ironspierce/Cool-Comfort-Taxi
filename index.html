@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort | Precision Luxury</title>
+    <title>Cool Comfort | Final Precision</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- LOAD GOOGLE PLACES LIBRARY FOR PRECISION -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places"></script>
+    <!-- Load Places and Geometry libraries -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places,geometry"></script>
     
     <style>
         :root { --gold: #d4af37; --navy: #001f26; --white: #ffffff; --glass: rgba(255, 255, 255, 0.12); }
@@ -27,13 +27,13 @@
         }
         
         .booking-card { 
-            width: 92%; max-width: 450px; height: 85vh; max-height: 750px;
+            width: 92%; max-width: 450px; height: 88vh; max-height: 780px;
             background: var(--glass); backdrop-filter: blur(50px); 
             border-radius: 40px; border: 1px solid rgba(255,255,255,0.15); 
-            display: flex; flex-direction: column; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            display: flex; flex-direction: column; position: relative;
         }
 
-        /* Progress Header */
+        /* Header & Progress */
         .card-header { padding: 30px 30px 10px 30px; }
         .progress-bar-container { display: flex; justify-content: space-between; position: relative; margin-bottom: 25px; }
         .line-bg { position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: rgba(255,255,255,0.1); z-index: 1; }
@@ -41,7 +41,7 @@
         .dot { width: 10px; height: 10px; background: #111; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; z-index: 3; transition: 0.4s; }
         .dot.active { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 12px var(--gold); }
 
-        /* Content Area */
+        /* Scrollable Content */
         .card-content { flex-grow: 1; overflow-y: auto; padding: 0 30px; scrollbar-width: none; }
         .card-content::-webkit-scrollbar { display: none; }
 
@@ -51,40 +51,42 @@
 
         .section-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 4px; color: var(--gold); margin-bottom: 25px; display: block; text-align: center; }
 
-        /* Menu & Selection Components */
+        /* Menu Grid */
         .menu-item { 
             background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
             padding: 20px; border-radius: 20px; margin-bottom: 12px; cursor: pointer;
             display: flex; justify-content: space-between; align-items: center; transition: 0.2s;
         }
-        .menu-item:hover { background: rgba(255,255,255,0.08); border-color: var(--gold); }
-        .menu-item.selected { border-color: var(--gold); background: rgba(212,175,55,0.1); }
-        .menu-item i { color: var(--gold); font-size: 1.1rem; }
+        .menu-item:hover { border-color: var(--gold); background: rgba(255,255,255,0.08); }
+        .menu-item.selected { border-color: var(--gold); background: rgba(212,175,55,0.15); }
 
         /* Inputs */
-        .input-block { margin-bottom: 20px; }
-        .input-block label { font-size: 0.6rem; font-weight: 700; color: var(--gold); letter-spacing: 1px; display: block; margin-bottom: 8px; text-transform: uppercase; }
         input, select { 
             width: 100%; padding: 18px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 18px; color: white; font-family: inherit; font-size: 0.9rem; transition: 0.3s;
+            border-radius: 18px; color: white; font-family: inherit; font-size: 0.95rem; margin-bottom: 15px;
         }
-        input:focus { border-color: var(--gold); outline: none; background: rgba(0,0,0,0.5); }
+        input:focus { border-color: var(--gold); outline: none; }
 
-        #map { width: 100%; height: 180px; border-radius: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.15); box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
+        #map { width: 100%; height: 180px; border-radius: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.15); }
 
-        /* Price Panel */
-        .price-panel { 
-            text-align: center; padding: 25px; background: rgba(212,175,55,0.08); 
-            border: 1px solid rgba(212,175,55,0.3); border-radius: 25px; margin-top: 10px;
+        /* Price Section */
+        .price-display { 
+            text-align: center; padding: 25px; background: rgba(212,175,55,0.1); 
+            border: 1px solid var(--gold); border-radius: 25px; margin-top: 15px;
         }
-        #jmd-price { font-size: 1.8rem; font-weight: 700; color: var(--gold); display: block; }
-        #usd-price { font-size: 0.8rem; opacity: 0.5; margin-top: 5px; display: block; }
+        #jmd-price { font-size: 2rem; font-weight: 700; color: var(--gold); display: block; }
+        #usd-price { font-size: 0.8rem; opacity: 0.6; }
 
-        /* Footer Navigation */
+        /* Footer */
         .card-footer { padding: 25px 30px 40px 30px; display: flex; gap: 12px; }
-        .btn-primary { background: var(--gold); color: var(--navy); border: none; padding: 20px; border-radius: 18px; flex: 2; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: 0.3s; }
+        .btn-primary { background: var(--gold); color: var(--navy); border: none; padding: 20px; border-radius: 18px; flex: 2; font-weight: 700; text-transform: uppercase; cursor: pointer; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: none; padding: 20px; border-radius: 18px; flex: 1; font-weight: 700; cursor: pointer; }
-        .btn-primary:active { transform: scale(0.98); }
+        
+        /* Dropdown z-index fix */
+        .pac-container { background: #001f26; border: 1px solid var(--gold); border-radius: 15px; color: white; font-family: 'Montserrat', sans-serif; z-index: 9999 !important; }
+        .pac-item { color: white; border-top: 1px solid rgba(255,255,255,0.1); padding: 10px; cursor: pointer; }
+        .pac-item:hover { background: rgba(212,175,55,0.1); }
+        .pac-item-query { color: var(--gold); font-weight: 700; }
     </style>
 </head>
 <body>
@@ -106,193 +108,167 @@
 
     <div class="card-content" id="scroll-area">
         
-        <!-- STEP 1: DATE & TIME -->
+        <!-- STEP 1: JOURNEY DATA -->
         <div class="step active">
-            <span class="section-label">01. Arrival Schedule</span>
-            <div class="input-block">
-                <label>Experience Duration</label>
-                <select id="res-duration" onchange="updateDuration(this.value)">
-                    <option value="1">1 Day Experience</option>
-                    <option value="3">3 Day Escape</option>
-                    <option value="7">7 Day Island Tour</option>
-                    <option value="14">14 Day Grand Tour</option>
-                </select>
-            </div>
-            <div class="input-block">
-                <label>Desired Date</label>
-                <input type="date" id="res-date">
-            </div>
-            <div class="input-block">
-                <label>Pickup Time</label>
-                <input type="time" id="res-time">
-            </div>
+            <span class="section-label">01. Journey Schedule</span>
+            <select id="duration" onchange="updateFare()">
+                <option value="1">1 Day Experience</option>
+                <option value="3">3 Day Escape</option>
+                <option value="7">7 Day Island Tour</option>
+            </select>
+            <input type="date" id="date">
+            <input type="time" id="time">
         </div>
 
-        <!-- STEP 2: VEHICLE -->
+        <!-- STEP 2: FLEET -->
         <div class="step">
-            <span class="section-label">02. Select Your Vehicle</span>
-            <div class="menu-item" onclick="setFleet(155, this, 'Executive Sedan')"><b>Executive Sedan</b><i class="fa-solid fa-car"></i></div>
-            <div class="menu-item" onclick="setFleet(230, this, 'Luxury SUV')"><b>Luxury SUV</b><i class="fa-solid fa-suv"></i></div>
-            <div class="menu-item" onclick="setFleet(350, this, 'Private Van')"><b>Private Van</b><i class="fa-solid fa-van-shuttle"></i></div>
-            <div class="menu-item" onclick="setFleet(550, this, 'VIP Coaster')"><b>VIP Coaster</b><i class="fa-solid fa-bus"></i></div>
+            <span class="section-label">02. Elite Fleet</span>
+            <div class="menu-item" onclick="setVehicle(155, 'Executive Sedan', this)"><b>Executive Sedan</b><i class="fa-solid fa-car"></i></div>
+            <div class="menu-item" onclick="setVehicle(230, 'Luxury SUV', this)"><b>Luxury SUV</b><i class="fa-solid fa-suv"></i></div>
+            <div class="menu-item" onclick="setVehicle(350, 'Private Van', this)"><b>Private Van</b><i class="fa-solid fa-van-shuttle"></i></div>
         </div>
 
-        <!-- STEP 3: ITINERARY MENU -->
+        <!-- STEP 3: ITINERARY (DRILL-DOWN) -->
         <div class="step">
             <span class="section-label">03. Custom Itinerary</span>
-            <div id="itinerary-main">
-                <div class="menu-item" onclick="showSub('food')"><b>Fine Dining & Local Eats</b><i class="fa-solid fa-utensils"></i></div>
-                <div class="menu-item" onclick="showSub('beaches')"><b>Beaches & Coastal Gems</b><i class="fa-solid fa-umbrella-beach"></i></div>
-                <div class="menu-item" onclick="showSub('culture')"><b>Museums & Heritage</b><i class="fa-solid fa-landmark"></i></div>
+            <div id="it-main">
+                <div class="menu-item" onclick="showPOI('food')"><b>Fine Dining</b><i class="fa-solid fa-utensils"></i></div>
+                <div class="menu-item" onclick="showPOI('beaches')"><b>Coastal Gems</b><i class="fa-solid fa-umbrella-beach"></i></div>
+                <div class="menu-item" onclick="showPOI('culture')"><b>Heritage Sites</b><i class="fa-solid fa-landmark"></i></div>
             </div>
-            <div id="itinerary-sub" style="display:none;">
-                <span style="color:var(--gold); font-size:0.7rem; cursor:pointer; font-weight:700;" onclick="hideSub()">
+            <div id="it-sub" style="display:none;">
+                <span style="color:var(--gold); font-size:0.7rem; cursor:pointer; font-weight:700;" onclick="hidePOI()">
                     <i class="fa-solid fa-chevron-left"></i> BACK TO CATEGORIES
                 </span>
-                <div id="poi-list" style="margin-top:20px;"></div>
+                <div id="poi-render" style="margin-top:20px;"></div>
             </div>
         </div>
 
-        <!-- STEP 4: PRECISE LOGISTICS -->
+        <!-- STEP 4: PRECISION LOCATIONS -->
         <div class="step">
             <span class="section-label">04. Precise Logistics</span>
             <div id="map"></div>
-            <div class="input-block">
-                <label>Pickup Location</label>
-                <input type="text" id="loc-pickup" placeholder="Hotel, Airport, or Villa Name">
-            </div>
-            <div class="input-block">
-                <label>Final Destination</label>
-                <input type="text" id="loc-dest" placeholder="Drop-off point">
-            </div>
+            <input type="text" id="pickup" placeholder="Pickup (Hotel, Airport, Villa)">
+            <input type="text" id="dest" placeholder="Drop-off (Specific Location)">
         </div>
 
-        <!-- STEP 5: FINAL REVIEW -->
+        <!-- STEP 5: FINAL CONFIRM -->
         <div class="step">
-            <span class="section-label">05. Reservation Review</span>
-            <div class="price-panel">
+            <span class="section-label">05. Summary</span>
+            <div class="price-display">
                 <span id="jmd-price">$0 JMD</span>
                 <span id="usd-price">≈ $0.00 USD</span>
             </div>
-            <p style="text-align:center; font-size:0.7rem; opacity:0.6; line-height:1.6; margin-top:20px;">
-                Your request will be sent to our concierge team for immediate verification. Our chauffeurs prioritize punctuality and discretion.
-            </p>
+            <p style="text-align:center; font-size:0.7rem; opacity:0.6; margin-top:20px;">Final fare is subject to chauffeur verification of itinerary routes.</p>
         </div>
 
     </div>
 
     <div class="card-footer">
-        <button class="btn-secondary" id="backBtn" onclick="navigate(-1)" style="display:none;">Back</button>
-        <button class="btn-primary" id="nextBtn" onclick="navigate(1)">Continue</button>
+        <button class="btn-secondary" id="backBtn" onclick="move(-1)" style="display:none;">Back</button>
+        <button class="btn-primary" id="nextBtn" onclick="move(1)">Continue</button>
     </div>
 </div>
 
 <script>
     let step = 0;
-    let config = { days: 1, rate: 155, fleet: 'Sedan', pois: [], pickup: '', dest: '' };
+    let journey = { rate: 155, fleet: 'Sedan', pois: [], start: '', end: '' };
     let map, ds, dr;
 
     const data = {
-        food: [{n:"Scotchies Jerk", d:"Authentic pimento-wood BBQ."}, {n:"Gloria's Seafood", d:"Port Royal fresh catch."}, {n:"The Houseboat Grill", d:"Unique waterfront dining."}],
-        beaches: [{n:"Frenchman's Cove", d:"River meets the Caribbean."}, {n:"Doctor's Cave", d:"Pristine white sand."}, {n:"Blue Lagoon", d:"Stunning deep waters."}],
-        culture: [{n:"Bob Marley Museum", d:"Reggae legend's home."}, {n:"Rose Hall Great House", d:"18th Century heritage."}, {n:"Devon House", d:"Historic mansion & ice cream."}]
+        food: ["Scotchies Jerk Center", "Gloria's Seafood", "The Houseboat Grill"],
+        beaches: ["Frenchman's Cove", "Doctor's Cave", "Seven Mile Beach"],
+        culture: ["Bob Marley Museum", "Rose Hall Great House", "Devon House"]
     };
 
-    function navigate(dir) {
+    function move(dir) {
         const steps = document.querySelectorAll('.step');
         steps[step].classList.remove('active');
         step += dir;
 
         if (step >= steps.length) {
-            finalize();
+            submit();
             step = steps.length - 1;
         }
 
         steps[step].classList.add('active');
         document.getElementById('backBtn').style.display = step === 0 ? 'none' : 'block';
-        document.getElementById('nextBtn').innerText = step === steps.length - 1 ? "Book Now" : "Continue";
+        document.getElementById('nextBtn').innerText = step === steps.length - 1 ? "Confirm" : "Continue";
         
-        // Progress UI
         const dots = document.querySelectorAll('.dot');
         document.getElementById('line-fill').style.width = (step / (dots.length - 1)) * 100 + "%";
         dots.forEach((d, i) => d.classList.toggle('active', i <= step));
 
-        if (step === 3) initMaps();
+        if (step === 3) initMap();
         document.getElementById('scroll-area').scrollTop = 0;
     }
 
-    function updateDuration(v) { config.days = parseInt(v); calculatePrice(); }
-
-    function setFleet(r, el, name) {
-        config.rate = r; config.fleet = name;
-        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('selected'));
+    function setVehicle(r, name, el) {
+        journey.rate = r; journey.fleet = name;
+        el.parentElement.querySelectorAll('.menu-item').forEach(m => m.classList.remove('selected'));
         el.classList.add('selected');
-        calculatePrice();
+        updateFare();
     }
 
-    function showSub(cat) {
-        document.getElementById('itinerary-main').style.display = 'none';
-        const container = document.getElementById('itinerary-sub');
-        container.style.display = 'block';
-        document.getElementById('poi-list').innerHTML = data[cat].map(item => `
-            <div class="menu-item ${config.pois.includes(item.n) ? 'selected' : ''}" onclick="togglePoi('${item.n}', this)">
-                <div><b>${item.n}</b><br><small style="opacity:0.6;font-size:0.7rem">${item.d}</small></div>
+    function showPOI(cat) {
+        document.getElementById('it-main').style.display = 'none';
+        document.getElementById('it-sub').style.display = 'block';
+        document.getElementById('poi-render').innerHTML = data[cat].map(p => `
+            <div class="menu-item ${journey.pois.includes(p) ? 'selected' : ''}" onclick="togglePoi('${p}', this)">
+                <b>${p}</b>
             </div>
         `).join('');
     }
 
-    function hideSub() {
-        document.getElementById('itinerary-main').style.display = 'block';
-        document.getElementById('itinerary-sub').style.display = 'none';
+    function hidePOI() {
+        document.getElementById('it-main').style.display = 'block';
+        document.getElementById('it-sub').style.display = 'none';
     }
 
-    function togglePoi(n, el) {
-        if (config.pois.includes(n)) {
-            config.pois = config.pois.filter(x => x !== n);
+    function togglePoi(p, el) {
+        if (journey.pois.includes(p)) {
+            journey.pois = journey.pois.filter(x => x !== p);
             el.classList.remove('selected');
         } else {
-            config.pois.push(n);
+            journey.pois.push(p);
             el.classList.add('selected');
         }
     }
 
-    function initMaps() {
+    function initMap() {
         if (map) return;
-        map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 9, center: { lat: 18.1096, lng: -77.2975 }, disableDefaultUI: true,
-            styles: [{ featureType: "all", elementType: "labels", stylers: [{ visibility: "on" }] }]
-        });
+        map = new google.maps.Map(document.getElementById("map"), { zoom: 9, center: { lat: 18.1, lng: -77.3 }, disableDefaultUI: true });
         ds = new google.maps.DirectionsService();
         dr = new google.maps.DirectionsRenderer({ map, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 4 } });
 
         const opts = { componentRestrictions: { country: "jm" }, fields: ["formatted_address", "geometry"] };
-        const acP = new google.maps.places.Autocomplete(document.getElementById('loc-pickup'), opts);
-        const acD = new google.maps.places.Autocomplete(document.getElementById('loc-dest'), opts);
+        const acP = new google.maps.places.Autocomplete(document.getElementById('pickup'), opts);
+        const acD = new google.maps.places.Autocomplete(document.getElementById('dest'), opts);
 
-        acP.addListener('place_changed', () => { config.pickup = acP.getPlace().formatted_address; calculatePrice(); });
-        acD.addListener('place_changed', () => { config.dest = acD.getPlace().formatted_address; calculatePrice(); });
+        acP.addListener('place_changed', () => { journey.start = acP.getPlace().formatted_address; updateFare(); });
+        acD.addListener('place_changed', () => { journey.end = acD.getPlace().formatted_address; updateFare(); });
     }
 
-    function calculatePrice() {
-        if (!config.pickup || !config.dest) return;
-        ds.route({ origin: config.pickup, destination: config.dest, travelMode: 'DRIVING' }, (res, stat) => {
+    function updateFare() {
+        if (!journey.start || !journey.end) return;
+        ds.route({ origin: journey.start, destination: journey.end, travelMode: 'DRIVING' }, (res, stat) => {
             if (stat === "OK") {
                 dr.setDirections(res);
                 const km = res.routes[0].legs[0].distance.value / 1000;
-                const total = Math.round(((2000 + (km * config.rate)) * config.days) / 100) * 100;
+                const total = Math.round(((2500 + (km * journey.rate)) * document.getElementById('duration').value) / 100) * 100;
                 document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
                 document.getElementById('usd-price').innerText = `≈ $${(total / 156).toFixed(2)} USD`;
             }
         });
     }
 
-    function finalize() {
-        const msg = `*NEW LUXURY RESERVATION*\n\n` +
-                    `Date: ${document.getElementById('res-date').value}\nTime: ${document.getElementById('res-time').value}\n` +
-                    `Vehicle: ${config.fleet}\nDuration: ${config.days} Day(s)\n` +
-                    `Destinations: ${config.pois.join(', ') || 'Custom Route'}\n` +
-                    `Pickup: ${config.pickup}\nDrop-off: ${config.dest}\n` +
-                    `Estimate: ${document.getElementById('jmd-price').innerText}`;
+    function submit() {
+        const msg = `*LUXURY RESERVATION REQUEST*\n\n` +
+                    `Date: ${document.getElementById('date').value} @ ${document.getElementById('time').value}\n` +
+                    `Vehicle: ${journey.fleet}\nDuration: ${document.getElementById('duration').value} Day(s)\n` +
+                    `Itinerary: ${journey.pois.join(', ')}\n` +
+                    `Pickup: ${journey.start}\n` +
+                    `Fare: ${document.getElementById('jmd-price').innerText}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 </script>
