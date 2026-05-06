@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.paypal.com/sdk/js?client-id=BAA8P6X3C7B5W&merchant-id=26SBN3BDG55FQ&currency=USD"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places,geometry"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places,geometry"></script>
     
     <style>
         :root { --gold: #d4af37; --navy: #001f26; --glass: rgba(255, 255, 255, 0.08); --white: #ffffff; }
@@ -18,7 +18,6 @@
 
         .hero { min-height: 100vh; background: linear-gradient(rgba(0,31,38,0.85), rgba(0,31,38,0.95)), url('Cover Photo.jpg'); background-size: cover; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px 20px; }
         
-        /* Portal & Cards */
         #portal { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 450px; text-align: center; }
         .portal-btn { background: var(--glass); border: 1px solid var(--gold); padding: 30px; border-radius: 30px; cursor: pointer; transition: 0.3s; backdrop-filter: blur(20px); }
         .portal-btn:hover { background: rgba(212,175,55,0.15); transform: translateY(-5px); }
@@ -28,26 +27,24 @@
         .active-card { display: block; animation: slideUp 0.5s ease; }
 
         #map-ins, #map-cha { width: 100%; height: 180px; border-radius: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        input, select { width: 100%; padding: 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; margin-bottom: 12px; font-family: inherit; font-size: 0.9rem; }
+        input, select { width: 100%; padding: 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; margin-bottom: 12px; font-family: inherit; font-size: 0.95rem; }
         
         .btn-main { background: var(--gold); color: var(--navy); border: none; padding: 20px; border-radius: 18px; width: 100%; font-weight: 700; text-transform: uppercase; cursor: pointer; letter-spacing: 2px; }
         .btn-back { background: none; border: none; color: var(--gold); cursor: pointer; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px; }
 
-        /* Discovery Listing with Images */
-        .discovery-area { max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 20px; padding: 10px; margin-bottom: 20px; }
-        .poi-card { background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; margin-bottom: 12px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05); }
-        .poi-card:hover { border-color: var(--gold); }
+        /* Listing UI */
+        .discovery-area { max-height: 400px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 20px; padding: 10px; margin-bottom: 20px; }
+        .poi-card { background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; margin-bottom: 15px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05); }
         .poi-card.active { border-color: var(--gold); background: rgba(212,175,55,0.1); }
-        .poi-img { width: 100%; height: 120px; background-size: cover; background-position: center; }
-        .poi-info { padding: 12px; }
-        .poi-info b { color: var(--gold); font-size: 0.9rem; display: block; }
-        .poi-info p { font-size: 0.7rem; opacity: 0.6; margin: 4px 0; }
-        .poi-price { font-weight: 700; font-size: 0.8rem; }
+        .poi-img { width: 100%; height: 140px; background-size: cover; background-position: center; position: relative; }
+        .poi-info { padding: 15px; }
+        .poi-info b { color: var(--gold); display: block; font-size: 1.1rem; }
+        .poi-info p { font-size: 0.75rem; opacity: 0.7; margin: 8px 0; line-height: 1.4; }
+        .badge-price { position: absolute; bottom: 10px; right: 10px; background: var(--gold); color: var(--navy); padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; }
 
-        /* Pricing & Return UI */
-        .price-panel { text-align: center; padding: 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--gold); border-radius: 20px; margin-bottom: 15px; }
+        /* Pricing UI */
+        .price-panel { text-align: center; padding: 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--gold); border-radius: 25px; margin-bottom: 15px; }
         .return-toggle { background: rgba(212,175,55,0.1); border: 1px solid var(--gold); padding: 15px; border-radius: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; }
-        .discount-badge { background: var(--gold); color: var(--navy); padding: 2px 8px; border-radius: 5px; font-weight: 700; font-size: 0.6rem; }
 
         @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
@@ -57,7 +54,8 @@
 <section class="hero">
     <div id="portal">
         <h1 style="font-family:'Playfair Display'; color:var(--gold); margin:0;">COOL COMFORT</h1>
-        <div class="portal-btn" onclick="openMode('instant')"><i class="fa-solid fa-bolt"></i><h2>Instant Taxi</h2><p>Immediate Pickup</p></div>
+        <p style="letter-spacing:5px; font-size:0.6rem; opacity:0.7; margin-bottom:40px;">LUXURY EXECUTIVE TRANSIT</p>
+        <div class="portal-btn" onclick="openMode('instant')"><i class="fa-solid fa-bolt"></i><h2>Instant Taxi</h2><p>Local & Airport Transfer</p></div>
         <div class="portal-btn" onclick="openMode('charter')"><i class="fa-solid fa-calendar-days"></i><h2>Appointment</h2><p>Curated Island Tours</p></div>
     </div>
 
@@ -65,20 +63,21 @@
         <button class="btn-back" onclick="reset()"><i class="fa-solid fa-chevron-left"></i> Menu</button>
         <div id="map-ins"></div>
         <input type="text" id="ins-p" placeholder="Detecting your location...">
-        <input type="text" id="ins-d" placeholder="Where to?">
+        <input type="text" id="ins-d" placeholder="Enter Destination">
         
         <div class="return-toggle">
-            <span>Include Return Trip <span class="discount-badge">SAVE 10%</span></span>
+            <span>Round Trip <span style="background:var(--gold); color:var(--navy); padding:2px 6px; border-radius:4px; font-size:0.6rem; font-weight:700;">SAVE 10%</span></span>
             <input type="checkbox" id="ins-ret" style="width:20px; margin:0;" onchange="calcIns()">
         </div>
 
         <select id="ins-pay" onchange="togglePP('ins')">
             <option value="cash">Cash on Destination</option>
-            <option value="paypal">PayPal / Credit Card</option>
+            <option value="paypal">PayPal / Digital Card</option>
         </select>
 
         <div class="price-panel" id="ins-price" style="display:none;">
             <div id="ins-jmd" style="font-size:1.8rem; font-weight:700; color:var(--gold);">$0 JMD</div>
+            <div id="ins-usd" style="font-size:0.9rem; opacity:0.6; margin-top:5px;">≈ $0.00 USD</div>
             <div id="ins-paypal-box" style="display:none; margin-top:15px;"></div>
         </div>
         <button class="btn-main" onclick="send('ins')">Request Ride</button>
@@ -88,9 +87,10 @@
         <button class="btn-back" onclick="reset()"><i class="fa-solid fa-chevron-left"></i> Menu</button>
         
         <div id="step-1">
-            <span style="font-size:0.6rem; color:var(--gold); text-align:center; display:block; margin-bottom:15px; letter-spacing:2px;">EXPLORE ST. JAMES, TRELAWNY & ST. ANN</span>
+            <span style="font-size:0.6rem; color:var(--gold); text-align:center; display:block; margin-bottom:15px; letter-spacing:2px;">SELECT OR SEARCH DESTINATION</span>
+            <input type="text" id="cha-custom" placeholder="Type a specific hotel or villa..." onkeyup="handleCustom(event)">
             <div class="discovery-area" id="cha-list"></div>
-            <button class="btn-main" onclick="nextStep(2)">Set Logistics</button>
+            <button class="btn-main" onclick="nextStep(2)">Confirm Selection</button>
         </div>
 
         <div id="step-2" style="display:none;">
@@ -99,17 +99,18 @@
             <input type="date" id="cha-date">
             
             <div class="return-toggle">
-                <span>Include Return Trip <span class="discount-badge">SAVE 10%</span></span>
+                <span>Round Trip <span style="background:var(--gold); color:var(--navy); padding:2px 6px; border-radius:4px; font-size:0.6rem; font-weight:700;">SAVE 10%</span></span>
                 <input type="checkbox" id="cha-ret" style="width:20px; margin:0;" onchange="updateChaPrice()">
             </div>
 
             <select id="cha-pay" onchange="togglePP('cha')">
                 <option value="cash">Cash on Destination</option>
-                <option value="paypal">PayPal / Credit Card</option>
+                <option value="paypal">PayPal / Digital Card</option>
             </select>
 
             <div class="price-panel">
                 <div id="cha-jmd" style="font-size:1.8rem; font-weight:700; color:var(--gold);">$0 JMD</div>
+                <div id="cha-usd" style="font-size:0.9rem; opacity:0.6; margin-top:5px;">≈ $0.00 USD</div>
                 <div id="cha-paypal-box" style="display:none; margin-top:15px;"></div>
             </div>
             <button class="btn-main" onclick="send('cha')">Confirm Appointment</button>
@@ -118,20 +119,22 @@
 </section>
 
 <script>
-    let mapI, mapC, ds, drI, drC, geo;
+    let mapI, mapC, ds, drI, drC, geo, userCoords = "";
     let chaTotal = 600, currentIns = 0, selected = [];
 
     const poiData = [
-        // ST JAMES
-        { n: "Doctor's Cave Beach", p: 4000, img: "https://images.unsplash.com/photo-1545532555-90141f021235?auto=format&fit=crop&w=400", m: "The most famous crystal-clear waters in Montego Bay." },
-        { n: "Rose Hall Great House", p: 5500, img: "https://images.unsplash.com/photo-1590483734724-38fa1f0e72c0?auto=format&fit=crop&w=400", m: "18th-century heritage and the chilling White Witch legend." },
-        // TRELAWNY
-        { n: "Luminous Lagoon", p: 7000, img: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=400", m: "Magical night-time glow in Falmouth's bioluminescent water." },
-        { n: "Glistening Waters", p: 6500, img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=400", m: "Premier dining and harbor tours in Trelawny." },
-        // ST ANN
-        { n: "Dunn's River Falls", p: 9500, img: "https://images.unsplash.com/photo-1596328546171-77e37b5e8b3d?auto=format&fit=crop&w=400", m: "Ocho Rios' iconic 600ft terraced waterfall climb." },
-        { n: "Mystic Mountain", p: 11000, img: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?auto=format&fit=crop&w=400", m: "Rainforest adventures: bobsledding and sky exploration." },
-        { n: "Blue Hole", p: 8500, img: "https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&w=400", m: "Turquoise limestone pools and hidden jumps in the hills." }
+
+http://googleusercontent.com/map_location_reference/1
+        { n: "Doctor's Cave Beach", p: 4000, img: "https://images.unsplash.com/photo-1545532555-90141f021235?auto=format&fit=crop&w=600", m: "[Doctor's Cave Beach](http://googleusercontent.com/map_location_reference/0) is the benchmark for clear Caribbean waters in St. James." },
+
+http://googleusercontent.com/map_location_reference/3
+        { n: "Rose Hall Great House", p: 5500, img: "https://images.unsplash.com/photo-1590483734724-38fa1f0e72c0?auto=format&fit=crop&w=600", m: "[Rose Hall Great House](http://googleusercontent.com/map_location_reference/2) offers 18th-century heritage and chilling North Coast legends." },
+
+http://googleusercontent.com/map_location_reference/5
+        { n: "Luminous Lagoon", p: 7000, img: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=600", m: "Experience the magical bioluminescent waters of Trelawny at [Luminous Lagoon Glistening Waters](http://googleusercontent.com/map_location_reference/4)." },
+
+http://googleusercontent.com/map_location_reference/7
+        { n: "Dunn's River Falls", p: 9500, img: "https://images.unsplash.com/photo-1596328546171-77e37b5e8b3d?auto=format&fit=crop&w=600", m: "Ocho Rios' most famous landmark, [The World Famous Dunn's River Falls & Park](http://googleusercontent.com/map_location_reference/6), is a St. Ann essential." }
     ];
 
     function openMode(t) {
@@ -146,11 +149,12 @@
     function renderList() {
         document.getElementById('cha-list').innerHTML = poiData.map(i => `
             <div class="poi-card" id="poi-${i.n.replace(/\s/g,'')}" onclick="tagPOI('${i.n}', ${i.p})">
-                <div class="poi-img" style="background-image:url('${i.img}')"></div>
+                <div class="poi-img" style="background-image:url('${i.img}')">
+                    <div class="badge-price">$${i.p.toLocaleString()} JMD</div>
+                </div>
                 <div class="poi-info">
                     <b>${i.n}</b>
-                    <p>${i.m}</p>
-                    <div class="poi-price">$${i.p.toLocaleString()} JMD</div>
+                    <p>${i.m.split(']')[0].replace('[','')}</p>
                 </div>
             </div>`).join('');
     }
@@ -167,6 +171,7 @@
         setupAC(document.getElementById('cha-p'), 'cha');
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(p => {
+                userCoords = `${p.coords.latitude},${p.coords.longitude}`;
                 const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
                 mapI.setCenter(pos);
                 geo.geocode({ location: pos }, (res, stat) => {
@@ -181,6 +186,15 @@
         ac.addListener('place_changed', () => type === 'ins' ? calcIns() : null);
     }
 
+    function handleCustom(e) {
+        if (e.key === 'Enter') {
+            const val = e.target.value.trim();
+            if (val && !selected.includes(val)) {
+                selected.push(val); chaTotal += 5000; updateChaPrice(); e.target.value = "";
+            }
+        }
+    }
+
     function calcIns() {
         const p = document.getElementById('ins-p').value, d = document.getElementById('ins-d').value;
         if (!p || !d) return;
@@ -189,9 +203,10 @@
                 drI.setDirections(res);
                 const km = res.routes[0].legs[0].distance.value / 1000;
                 let fare = 600 + (km * 155);
-                if (document.getElementById('ins-ret').checked) fare = fare + (fare * 0.9); // 10% discount on 2nd leg
+                if (document.getElementById('ins-ret').checked) fare = fare + (fare * 0.9);
                 currentIns = Math.round(fare / 10) * 10;
                 document.getElementById('ins-jmd').innerText = `$${currentIns.toLocaleString()} JMD`;
+                document.getElementById('ins-usd').innerText = `≈ $${(currentIns / 156).toFixed(2)} USD`;
                 document.getElementById('ins-price').style.display = 'block';
                 renderPay('ins', (currentIns / 156).toFixed(2));
             }
@@ -214,6 +229,7 @@
         if (document.getElementById('cha-ret').checked) finalPrice = finalPrice + (finalPrice * 0.9);
         const rounded = Math.round(finalPrice / 10) * 10;
         document.getElementById('cha-jmd').innerText = `$${rounded.toLocaleString()} JMD`;
+        document.getElementById('cha-usd').innerText = `≈ $${(rounded / 156).toFixed(2)} USD`;
         renderPay('cha', (rounded / 156).toFixed(2));
     }
 
@@ -235,10 +251,11 @@
     }
 
     function send(t) {
-        const ret = document.getElementById(t + '-ret').checked ? "YES (10% Discount applied)" : "NO";
+        const ret = document.getElementById(t + '-ret').checked ? "YES" : "NO";
+        const mapLink = userCoords ? `https://www.google.com/maps?q=${userCoords}` : "Location not shared";
         const msg = t === 'ins' ? 
-            `*INSTANT TAXI*\nPickup: ${document.getElementById('ins-p').value}\nDest: ${document.getElementById('ins-d').value}\nRound Trip: ${ret}\nFare: ${document.getElementById('ins-jmd').innerText}` :
-            `*CHARTER APPOINTMENT*\nDate: ${document.getElementById('cha-date').value}\nStops: ${selected.join(', ')}\nRound Trip: ${ret}\nTotal: ${document.getElementById('cha-jmd').innerText}`;
+            `*INSTANT TAXI REQUEST*\n\n📍 Pickup: ${document.getElementById('ins-p').value}\n📍 Map: ${mapLink}\n🏁 Dest: ${document.getElementById('ins-d').value}\n🔄 Round Trip: ${ret}\n💰 Total: ${document.getElementById('ins-jmd').innerText} (${document.getElementById('ins-usd').innerText})` :
+            `*CHARTER APPOINTMENT*\n\n📅 Date: ${document.getElementById('cha-date').value}\n📍 Pickup: ${document.getElementById('cha-p').value}\n📍 Map: ${mapLink}\n🏝️ Stops: ${selected.join(', ')}\n🔄 Round Trip: ${ret}\n💰 Total: ${document.getElementById('cha-jmd').innerText} (${document.getElementById('cha-usd').innerText})`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 </script>
