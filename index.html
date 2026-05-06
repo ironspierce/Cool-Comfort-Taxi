@@ -25,18 +25,18 @@
         .tracking-status { background: rgba(212, 175, 55, 0.1); border: 1px solid var(--gold); border-radius: 12px; padding: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.75rem; font-weight: 700; letter-spacing: 1px; color: var(--gold); }
         .pulse-icon { width: 10px; height: 10px; background: #4caf50; border-radius: 50%; box-shadow: 0 0 8px #4caf50; animation: pulse 1.5s infinite; }
 
-        #map { width: 100%; height: 200px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
+        #map { width: 100%; height: 220px; border-radius: 20px; margin-bottom: 15px; border: 1px solid rgba(255,255,255,0.1); }
 
         .input-group { margin-bottom: 12px; position: relative; }
         input { width: 100%; padding: 14px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; color: white; font-family: inherit; font-size: 0.85rem; }
         
         .locate-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gold); cursor: pointer; font-size: 1.2rem; }
 
-        .fleet-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
-        .car-option { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.3s; font-size: 0.6rem; font-weight: 700; }
-        .car-option.active { border-color: var(--gold); background: rgba(212, 175, 55, 0.15); }
+        /* Single Fleet Indicator */
+        .fleet-confirmed { background: rgba(212, 175, 55, 0.15); border: 1px solid var(--gold); border-radius: 14px; padding: 12px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; gap: 12px; }
+        .fleet-confirmed i { color: var(--gold); font-size: 1.2rem; }
+        .fleet-confirmed span { font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 
-        /* Fee Display Box */
         .fee-display { background: rgba(0,0,0,0.4); border: 1px solid var(--gold); border-radius: 18px; padding: 15px; margin-bottom: 15px; text-align: center; display: none; }
         .fee-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 2px; color: var(--gold); margin-bottom: 5px; opacity: 0.8; }
         .fee-amount { font-size: 1.8rem; font-weight: 700; color: #fff; margin: 0; }
@@ -70,13 +70,11 @@
             <input type="text" id="destination" placeholder="Enter Destination">
         </div>
 
-        <div class="fleet-selector">
-            <div class="car-option active" onclick="updateFleet('2018 Toyota Fielder', 155, this)">2018 FIELDER</div>
-            <div class="car-option" onclick="updateFleet('Premium SUV', 230, this)">LUXURY SUV</div>
-            <div class="car-option" onclick="updateFleet('Private Van', 350, this)">VAN</div>
+        <div class="fleet-confirmed">
+            <i class="fa-solid fa-car-side"></i>
+            <span>Executive 2018 Toyota Fielder</span>
         </div>
 
-        <!-- Proposed Fee Display -->
         <div id="fee-box" class="fee-display">
             <div class="fee-label">Proposed Fee</div>
             <div id="jmd-price" class="fee-amount">$0 JMD</div>
@@ -91,9 +89,8 @@
 
 <script>
     let map, ds, dr, geocoder, userMarker;
-    let currentFleet = "2018 Toyota Fielder";
-    let kmRate = 155;
-    const BASE_FARE = 600; // Updated Base Fare
+    const KM_RATE = 155;
+    const BASE_FARE = 600;
     const EX_RATE = 156;
 
     function initMap() {
@@ -124,9 +121,7 @@
             if (stat === 'OK') {
                 dr.setDirections(res);
                 const km = res.routes[0].legs[0].distance.value / 1000;
-                
-                // Logic: Base Fare (600) + (Rate per km * Distance)
-                const total = Math.round((BASE_FARE + (km * kmRate)) / 10) * 10;
+                const total = Math.round((BASE_FARE + (km * KM_RATE)) / 10) * 10;
                 
                 document.getElementById('jmd-price').innerText = `$${total.toLocaleString()} JMD`;
                 document.getElementById('usd-price').innerText = `≈ $${(total / EX_RATE).toFixed(2)} USD`;
@@ -158,19 +153,11 @@
         }
     }
 
-    function updateFleet(name, rate, el) {
-        currentFleet = name;
-        kmRate = rate;
-        document.querySelectorAll('.car-option').forEach(opt => opt.classList.remove('active'));
-        el.classList.add('active');
-        calculateProposedFee();
-    }
-
     function sendWhatsApp() {
         const pickup = document.getElementById('pickup').value;
         const dest = document.getElementById('destination').value;
         const fee = document.getElementById('jmd-price').innerText;
-        const msg = `*COOL COMFORT LUXURY RESERVATION*\n--------------------------\n✨ VEHICLE: ${currentFleet}\n📍 PICKUP: ${pickup}\n🏁 DESTINATION: ${dest}\n💰 PROPOSED FEE: ${fee}\n🛰️ STATUS: Satellite Verified`;
+        const msg = `*COOL COMFORT LUXURY RESERVATION*\n--------------------------\n✨ VEHICLE: 2018 Toyota Fielder\n📍 PICKUP: ${pickup}\n🏁 DESTINATION: ${dest}\n💰 PROPOSED FEE: ${fee}\n🛰️ STATUS: Satellite Verified`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
