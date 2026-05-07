@@ -3,255 +3,247 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort | The Gold Standard</title>
+    <title>Cool Comfort | Premier Island Logistics</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <script src="https://www.paypal.com/sdk/js?client-id=BAA8P6X3C7B5W&merchant-id=26SBN3BDG55FQ&currency=USD"></script>
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuIwI0J-NdnVMzachSB41NZsayKUuOMU&libraries=places,geometry"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places,geometry"></script>
     
     <style>
-        :root { --gold: #d4af37; --navy: #001f26; --glass: rgba(255, 255, 255, 0.08); --white: #ffffff; }
+        :root { --gold: #d4af37; --navy: #001f26; --glass: rgba(255, 255, 255, 0.06); --white: #ffffff; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { margin: 0; font-family: 'Montserrat', sans-serif; background: var(--navy); color: var(--white); overflow-x: hidden; }
 
-        .hero { min-height: 100vh; background: linear-gradient(rgba(0,31,38,0.85), rgba(0,31,38,0.95)), url('Cover Photo.jpg'); background-size: cover; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px 20px; }
+        /* Elegant Parallax Background */
+        .hero { min-height: 100vh; background: linear-gradient(rgba(0,31,38,0.8), rgba(0,31,38,0.95)), url('Cover Photo.jpg'); background-size: cover; background-attachment: fixed; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px 20px; }
         
-        #portal { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 450px; text-align: center; }
-        .portal-btn { background: var(--glass); border: 1px solid var(--gold); padding: 30px; border-radius: 30px; cursor: pointer; transition: 0.3s; backdrop-filter: blur(20px); }
-        .portal-btn:hover { background: rgba(212,175,55,0.15); transform: translateY(-5px); }
-        .portal-btn h2 { margin: 0; font-family: 'Playfair Display', serif; color: var(--gold); }
+        .header-box { text-align: center; margin-bottom: 50px; }
+        h1 { font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 4rem); color: var(--gold); margin: 0; letter-spacing: 8px; text-transform: uppercase; }
+        .tagline { letter-spacing: 5px; font-size: 0.7rem; opacity: 0.8; text-transform: uppercase; border-top: 1px solid var(--gold); border-bottom: 1px solid var(--gold); padding: 5px 20px; display: inline-block; margin-top: 15px; }
 
-        .booking-card { display: none; background: var(--glass); backdrop-filter: blur(45px); border: 1px solid rgba(255,255,255,0.1); padding: 30px; border-radius: 40px; width: 100%; max-width: 600px; box-shadow: 0 50px 100px rgba(0,0,0,0.7); }
-        .active-card { display: block; animation: slideUp 0.5s ease; }
+        /* Main Service Portal */
+        .portal-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; width: 100%; max-width: 900px; animation: fadeIn 1s ease; }
+        .service-card { background: var(--glass); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); padding: 40px; border-radius: 40px; cursor: pointer; transition: 0.4s; text-align: center; }
+        .service-card:hover { transform: translateY(-10px); border-color: var(--gold); background: rgba(212,175,55,0.05); }
+        .service-card i { font-size: 3rem; color: var(--gold); margin-bottom: 20px; display: block; }
+        .service-card h2 { font-family: 'Playfair Display', serif; font-size: 1.8rem; margin: 0; color: var(--gold); }
+        .service-card p { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; opacity: 0.6; }
 
-        #map-ins, #map-cha { width: 100%; height: 180px; border-radius: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        input, select { width: 100%; padding: 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: white; margin-bottom: 12px; font-family: inherit; font-size: 0.95rem; }
-        input:focus { border-color: var(--gold); outline: none; }
+        /* Unified Booking Interface */
+        .booking-ui { display: none; background: var(--glass); backdrop-filter: blur(50px); border: 1px solid rgba(255,255,255,0.15); padding: 35px; border-radius: 50px; width: 100%; max-width: 650px; box-shadow: 0 50px 100px rgba(0,0,0,0.8); }
+        .active-ui { display: block; animation: slideIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+        #map-v { width: 100%; height: 220px; border-radius: 30px; margin-bottom: 25px; border: 1px solid rgba(255,255,255,0.1); }
+        input, select { width: 100%; padding: 18px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; color: white; margin-bottom: 15px; font-family: inherit; font-size: 0.9rem; }
         
-        .btn-main { background: var(--gold); color: var(--navy); border: none; padding: 20px; border-radius: 18px; width: 100%; font-weight: 700; text-transform: uppercase; cursor: pointer; letter-spacing: 2px; }
-        .btn-back { background: none; border: none; color: var(--gold); cursor: pointer; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px; }
+        .premium-btn { background: var(--gold); color: var(--navy); border: none; padding: 22px; border-radius: 20px; width: 100%; font-weight: 700; text-transform: uppercase; cursor: pointer; letter-spacing: 3px; font-size: 1rem; transition: 0.3s; }
+        .premium-btn:hover { box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3); }
 
-        .discovery-area { max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 20px; padding: 10px; margin-bottom: 20px; }
-        .poi-card { background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; margin-bottom: 12px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05); }
-        .poi-card.active { border-color: var(--gold); background: rgba(212,175,55,0.1); }
-        .poi-img { width: 100%; height: 120px; background-size: cover; background-position: center; }
-        .poi-info { padding: 12px; }
-        .poi-info b { color: var(--gold); display: block; }
-        .poi-info p { font-size: 0.7rem; opacity: 0.6; margin: 4px 0; line-height: 1.4; }
+        /* Discovery Catalog */
+        .catalog { max-height: 380px; overflow-y: auto; background: rgba(0,0,0,0.25); border-radius: 30px; padding: 15px; margin-bottom: 20px; }
+        .catalog-item { background: rgba(255,255,255,0.03); border-radius: 20px; overflow: hidden; margin-bottom: 15px; cursor: pointer; border: 1px solid transparent; transition: 0.3s; display: flex; align-items: center; }
+        .catalog-item.active { border-color: var(--gold); background: rgba(212,175,55,0.1); }
+        .item-thumb { width: 100px; height: 100px; background-size: cover; background-position: center; flex-shrink: 0; }
+        .item-meta { padding: 15px; flex-grow: 1; }
+        .item-meta b { color: var(--gold); font-size: 0.9rem; }
+        .item-meta p { font-size: 0.65rem; opacity: 0.6; margin: 4px 0 0 0; }
 
-        .price-panel { text-align: center; padding: 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--gold); border-radius: 20px; margin-bottom: 15px; }
-        .usd-equivalent { font-size: 0.9rem; opacity: 0.8; margin-top: 5px; color: var(--white); }
-        .return-toggle { background: rgba(212,175,55,0.1); border: 1px solid var(--gold); padding: 15px; border-radius: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; }
-        .discount-badge { background: var(--gold); color: var(--navy); padding: 2px 8px; border-radius: 5px; font-weight: 700; font-size: 0.6rem; }
+        /* Fare Panel */
+        .fare-box { text-align: center; padding: 25px; background: rgba(0,0,0,0.5); border-radius: 30px; border: 1px solid var(--gold); margin-bottom: 20px; }
+        .fare-row { display: flex; justify-content: center; align-items: baseline; gap: 10px; }
+        .jmd { font-size: 2.2rem; font-weight: 700; color: var(--gold); }
+        .usd { font-size: 1rem; opacity: 0.7; }
 
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .back-nav { color: var(--gold); cursor: pointer; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 20px; display: inline-block; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <section class="hero">
-    <div id="portal">
-        <h1 style="font-family:'Playfair Display'; color:var(--gold); margin:0;">COOL COMFORT</h1>
-        <p style="letter-spacing:5px; font-size:0.6rem; opacity:0.7; margin-bottom:40px;">PREMIER JAMAICAN HOSPITALITY</p>
-        <div class="portal-btn" onclick="openMode('instant')"><i class="fa-solid fa-bolt"></i><h2>Instant Taxi</h2><p>Immediate Pickup</p></div>
-        <div class="portal-btn" onclick="openMode('charter')"><i class="fa-solid fa-calendar-days"></i><h2>Appointment</h2><p>Curated Island Tours</p></div>
+    <div class="header-box" id="header">
+        <h1>Cool Comfort</h1>
+        <div class="tagline">The Gold Standard of Jamaican Logistics</div>
     </div>
 
-    <div id="instant-card" class="booking-card">
-        <button class="btn-back" onclick="reset()"><i class="fa-solid fa-chevron-left"></i> Menu</button>
-        <div id="map-ins"></div>
-        <input type="text" id="ins-p" placeholder="Detecting your location...">
-        <input type="text" id="ins-d" placeholder="Enter Destination">
-        
-        <div class="return-toggle">
-            <span>Include Return Trip <span class="discount-badge">SAVE 10%</span></span>
-            <input type="checkbox" id="ins-ret" style="width:20px; margin:0;" onchange="calcIns()">
+    <div class="portal-grid" id="portal">
+        <div class="service-card" onclick="initBooking('taxi')">
+            <i class="fa-solid fa-bolt-lightning"></i>
+            <h2>Instant Taxi</h2>
+            <p>On-Demand Executive Transit</p>
         </div>
-
-        <select id="ins-pay" onchange="togglePP('ins')">
-            <option value="cash">Cash on Destination</option>
-            <option value="paypal">PayPal / Credit Card</option>
-        </select>
-
-        <div class="price-panel" id="ins-price" style="display:none;">
-            <div id="ins-jmd" style="font-size:1.8rem; font-weight:700; color:var(--gold);">$0 JMD</div>
-            <div id="ins-usd" class="usd-equivalent">$0.00 USD</div>
-            <div id="ins-paypal-box" style="display:none; margin-top:15px;"></div>
+        <div class="service-card" onclick="initBooking('tour')">
+            <i class="fa-solid fa-crown"></i>
+            <h2>Appointment</h2>
+            <p>Curated Luxury Island Tours</p>
         </div>
-        <button class="btn-main" onclick="send('ins')">Request Ride</button>
     </div>
 
-    <div id="charter-card" class="booking-card">
-        <button class="btn-back" onclick="reset()"><i class="fa-solid fa-chevron-left"></i> Menu</button>
+    <div class="booking-ui" id="ui-container">
+        <span class="back-nav" onclick="exitToPortal()"><i class="fa-solid fa-arrow-left"></i> Return to Portal</span>
         
-        <div id="step-1">
-            <span style="font-size:0.6rem; color:var(--gold); text-align:center; display:block; margin-bottom:15px; letter-spacing:2px;">SELECT OR TYPE DESTINATION</span>
-            <input type="text" id="cha-custom" placeholder="Type a specific villa or landmark..." onkeyup="handleCustom(event)">
-            <div class="discovery-area" id="cha-list"></div>
-            <button class="btn-main" onclick="nextStep(2)">Set Logistics</button>
+        <div id="discovery-stage" style="display:none;">
+            <input type="text" id="custom-search" placeholder="Type a specific resort or villa name..." onkeyup="addCustom(event)">
+            <div class="catalog" id="tour-catalog"></div>
+            <button class="premium-btn" onclick="goToLogistics()">Continue to Schedule</button>
         </div>
 
-        <div id="step-2" style="display:none;">
-            <div id="map-cha"></div>
-            <input type="text" id="cha-p" placeholder="Pickup Point">
-            <input type="date" id="cha-date">
+        <div id="logistics-stage">
+            <div id="map-v"></div>
+            <input type="text" id="p-input" placeholder="Origin (Precise Location)">
+            <input type="text" id="d-input" placeholder="Destination">
+            <div id="tour-date-wrap" style="display:none;">
+                <input type="date" id="t-date">
+            </div>
             
-            <div class="return-toggle">
-                <span>Include Return Trip <span class="discount-badge">SAVE 10%</span></span>
-                <input type="checkbox" id="cha-ret" style="width:20px; margin:0;" onchange="updateChaPrice()">
+            <div style="background:rgba(212,175,55,0.1); padding:15px; border-radius:15px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:0.75rem; font-weight:700;">Include Return Journey (-10%)</span>
+                <input type="checkbox" id="ret-trip" style="width:20px; margin:0;" onchange="calculate()">
             </div>
 
-            <select id="cha-pay" onchange="togglePP('cha')">
-                <option value="cash">Cash on Destination</option>
-                <option value="paypal">PayPal / Credit Card</option>
+            <div class="fare-box" id="fare-panel" style="display:none;">
+                <div class="fare-row">
+                    <span class="jmd" id="price-jmd">$0</span>
+                    <span class="usd" id="price-usd">≈ $0.00 USD</span>
+                </div>
+                <div id="paypal-v" style="margin-top:15px; display:none;"></div>
+            </div>
+
+            <select id="pay-mode" onchange="togglePay()">
+                <option value="cash">Settle with Cash at Destination</option>
+                <option value="paypal">Settle via PayPal / Digital Card</option>
             </select>
 
-            <div class="price-panel">
-                <div id="cha-jmd" style="font-size:1.8rem; font-weight:700; color:var(--gold);">$0 JMD</div>
-                <div id="cha-usd" class="usd-equivalent">$0.00 USD</div>
-                <div id="cha-paypal-box" style="display:none; margin-top:15px;"></div>
-            </div>
-            <button class="btn-main" onclick="send('cha')">Confirm Appointment</button>
+            <button class="premium-btn" id="final-btn" onclick="finalize()">Confirm Reservation</button>
         </div>
     </div>
 </section>
 
 <script>
-    let mapI, mapC, ds, drI, drC, geo;
-    let chaTotal = 600, currentIns = 0, selected = [];
-    const EX_RATE = 156; // Current conversion rate
+    let mode = '', map, ds, dr, geo, userPos = "";
+    let base = 600, selectedSites = [];
 
-    const poiData = [
-        { n: "Doctor's Cave Beach", p: 4000, img: "https://images.unsplash.com/photo-1545532555-90141f021235?auto=format&fit=crop&w=400", m: "St. James. The benchmark for clear Caribbean waters." },
-        { n: "Rose Hall Great House", p: 5500, img: "https://images.unsplash.com/photo-1590483734724-38fa1f0e72c0?auto=format&fit=crop&w=400", m: "St. James. 18th-century plantation with haunted legends." },
-        { n: "Luminous Lagoon", p: 7000, img: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=400", m: "Trelawny. Bioluminescent water tours in Falmouth." },
-        { n: "Dunn's River Falls", p: 9500, img: "https://images.unsplash.com/photo-1596328546171-77e37b5e8b3d?auto=format&fit=crop&w=400", m: "St. Ann. The island's iconic 600ft waterfall climb." },
-        { n: "Blue Hole", p: 8500, img: "https://images.unsplash.com/photo-1544148103-0773bf10d330?auto=format&fit=crop&w=400", m: "St. Ann. Stunning hidden lagoons and cave dives." }
+    const tours = [
+        { n: "Doctor's Cave Beach", p: 4000, img: "https://images.unsplash.com/photo-1545532555-90141f021235?auto=format&w=200", d: "St. James. World-famous crystal mineral waters." },
+        { n: "Luminous Lagoon", p: 7000, img: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&w=200", d: "Trelawny. A rare glowing bioluminescent phenomenon." },
+        { n: "Dunn's River Falls", p: 9500, img: "https://images.unsplash.com/photo-1596328546171-77e37b5e8b3d?auto=format&w=200", d: "St. Ann. The climb of a lifetime on a tiered waterfall." },
+        { n: "Rick's Cafe Negril", p: 12000, img: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&w=200", d: "Westmoreland. Cliff jumping and the world's best sunset." }
     ];
 
-    function openMode(t) {
+    function initBooking(m) {
+        mode = m;
         document.getElementById('portal').style.display = 'none';
-        document.getElementById(t + '-card').classList.add('active-card');
-        init();
-        if(t === 'charter') renderList();
+        document.getElementById('header').style.display = 'none';
+        document.getElementById('ui-container').classList.add('active-ui');
+        
+        if (m === 'tour') {
+            document.getElementById('discovery-stage').style.display = 'block';
+            document.getElementById('logistics-stage').style.display = 'none';
+            renderCatalog();
+        } else {
+            document.getElementById('logistics-stage').style.display = 'block';
+            document.getElementById('tour-date-wrap').style.display = 'none';
+            setTimeout(initMap, 100);
+        }
     }
 
-    function reset() { location.reload(); }
+    function exitToPortal() { location.reload(); }
 
-    function renderList() {
-        document.getElementById('cha-list').innerHTML = poiData.map(i => `
-            <div class="poi-card" id="poi-${i.n.replace(/\s/g,'')}" onclick="tagPOI('${i.n}', ${i.p})">
-                <div class="poi-img" style="background-image:url('${i.img}')"></div>
-                <div class="poi-info">
-                    <b>${i.n}</b>
-                    <p>${i.m}</p>
-                </div>
+    function renderCatalog() {
+        document.getElementById('tour-catalog').innerHTML = tours.map(t => `
+            <div class="catalog-item" id="item-${t.n.replace(/\s/g,'')}" onclick="toggleSite('${t.n}', ${t.p})">
+                <div class="item-thumb" style="background-image:url('${t.img}')"></div>
+                <div class="item-meta"><b>${t.n}</b><p>${t.d}</p></div>
             </div>`).join('');
     }
 
-    function init() {
+    function toggleSite(n, p) {
+        const el = document.getElementById('item-'+n.replace(/\s/g,''));
+        if (selectedSites.includes(n)) {
+            selectedSites = selectedSites.filter(x => x !== n);
+            base -= p; el.classList.remove('active');
+        } else {
+            selectedSites.push(n);
+            base += p; el.classList.add('active');
+        }
+    }
+
+    function goToLogistics() {
+        document.getElementById('discovery-stage').style.display = 'none';
+        document.getElementById('logistics-stage').style.display = 'block';
+        document.getElementById('tour-date-wrap').style.display = 'block';
+        setTimeout(initMap, 100);
+    }
+
+    function initMap() {
+        if (map) return;
         ds = new google.maps.DirectionsService();
         geo = new google.maps.Geocoder();
-        mapI = new google.maps.Map(document.getElementById("map-ins"), { zoom: 15, center: { lat: 18.47, lng: -77.89 }, mapTypeId: 'hybrid', disableDefaultUI: true });
-        drI = new google.maps.DirectionsRenderer({ map: mapI, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 5 } });
-        mapC = new google.maps.Map(document.getElementById("map-cha"), { zoom: 10, center: { lat: 18.2, lng: -77.3 }, mapTypeId: 'hybrid', disableDefaultUI: true });
-        drC = new google.maps.DirectionsRenderer({ map: mapC, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 5 } });
-        setupAC(document.getElementById('ins-p'), 'ins');
-        setupAC(document.getElementById('ins-d'), 'ins');
-        setupAC(document.getElementById('cha-p'), 'cha');
+        map = new google.maps.Map(document.getElementById("map-v"), { zoom: 14, center: { lat: 18.47, lng: -77.89 }, mapTypeId: 'hybrid', disableDefaultUI: true });
+        dr = new google.maps.DirectionsRenderer({ map, polylineOptions: { strokeColor: "#d4af37", strokeWeight: 6 } });
+        
+        setupAutocomplete(document.getElementById('p-input'));
+        setupAutocomplete(document.getElementById('d-input'));
+        
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(p => {
-                const pos = { lat: p.coords.latitude, lng: p.coords.longitude };
-                mapI.setCenter(pos);
-                geo.geocode({ location: pos }, (res, stat) => {
-                    if (stat === "OK" && res[0]) document.getElementById('ins-p').value = res[0].formatted_address;
+                userPos = `${p.coords.latitude},${p.coords.longitude}`;
+                map.setCenter({ lat: p.coords.latitude, lng: p.coords.longitude });
+                geo.geocode({ location: { lat: p.coords.latitude, lng: p.coords.longitude } }, (r, s) => {
+                    if (s === "OK" && r[0]) document.getElementById('p-input').value = r[0].formatted_address;
                 });
             }, null, { enableHighAccuracy: true });
         }
     }
 
-    function setupAC(input, type) {
+    function setupAutocomplete(input) {
         const ac = new google.maps.places.Autocomplete(input, { componentRestrictions: { country: "jm" } });
-        ac.addListener('place_changed', () => type === 'ins' ? calcIns() : null);
+        ac.addListener('place_changed', calculate);
     }
 
-    function handleCustom(e) {
-        if (e.key === 'Enter') {
-            const val = e.target.value.trim();
-            if (val && !selected.includes(val)) {
-                selected.push(val);
-                chaTotal += 5000;
-                updateChaPrice();
-                e.target.value = "";
-            }
-        }
-    }
-
-    function calcIns() {
-        const p = document.getElementById('ins-p').value, d = document.getElementById('ins-d').value;
+    function calculate() {
+        const p = document.getElementById('p-input').value, d = document.getElementById('d-input').value;
         if (!p || !d) return;
         ds.route({ origin: p, destination: d, travelMode: 'DRIVING' }, (res, stat) => {
             if (stat === "OK") {
-                drI.setDirections(res);
+                dr.setDirections(res);
                 const km = res.routes[0].legs[0].distance.value / 1000;
-                let fare = 600 + (km * 155);
-                if (document.getElementById('ins-ret').checked) fare = fare * 1.9;
-                currentIns = Math.round(fare / 10) * 10;
-                document.getElementById('ins-jmd').innerText = `$${currentIns.toLocaleString()} JMD`;
-                document.getElementById('ins-usd').innerText = `$${(currentIns / EX_RATE).toFixed(2)} USD`;
-                document.getElementById('ins-price').style.display = 'block';
-                renderPay('ins', (currentIns / EX_RATE).toFixed(2));
+                let fare = base + (km * 155);
+                if (document.getElementById('ret-trip').checked) fare *= 1.9;
+                const rounded = Math.round(fare / 10) * 10;
+                
+                document.getElementById('price-jmd').innerText = `$${rounded.toLocaleString()} JMD`;
+                document.getElementById('price-usd').innerText = `≈ $${(rounded / 156).toFixed(2)} USD`;
+                document.getElementById('fare-panel').style.display = 'block';
+                renderPay((rounded / 156).toFixed(2));
             }
         });
     }
 
-    function tagPOI(n, p) {
-        const idx = selected.indexOf(n);
-        const el = document.getElementById('poi-'+n.replace(/\s/g,''));
-        if (idx > -1) {
-            selected.splice(idx, 1); chaTotal -= p; el.classList.remove('active');
-        } else {
-            selected.push(n); chaTotal += p; el.classList.add('active');
-        }
-        updateChaPrice();
+    function togglePay() {
+        document.getElementById('paypal-v').style.display = (document.getElementById('pay-mode').value === 'paypal') ? 'block' : 'none';
     }
 
-    function updateChaPrice() {
-        let finalPrice = chaTotal;
-        if (document.getElementById('cha-ret').checked) finalPrice = finalPrice * 1.9;
-        const rounded = Math.round(finalPrice / 10) * 10;
-        document.getElementById('cha-jmd').innerText = `$${rounded.toLocaleString()} JMD`;
-        document.getElementById('cha-usd').innerText = `$${(rounded / EX_RATE).toFixed(2)} USD`;
-        renderPay('cha', (rounded / EX_RATE).toFixed(2));
+    function renderPay(amt) {
+        document.getElementById('paypal-v').innerHTML = '';
+        paypal.Buttons({ createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { value: amt } }] }) }).render('#paypal-v');
     }
 
-    function nextStep(step) {
-        document.getElementById('step-1').style.display = 'none';
-        document.getElementById('step-2').style.display = 'block';
-        google.maps.event.trigger(mapC, 'resize');
-    }
-
-    function togglePP(t) {
-        const m = document.getElementById(t + '-pay').value;
-        document.getElementById(t + '-paypal-box').style.display = (m === 'paypal') ? 'block' : 'none';
-    }
-
-    function renderPay(id, amt) {
-        const box = document.getElementById(id + '-paypal-box');
-        box.innerHTML = '';
-        paypal.Buttons({ createOrder: (data, actions) => actions.order.create({ purchase_units: [{ amount: { value: amt } }] }) }).render('#' + id + '-paypal-box');
-    }
-
-    function send(t) {
-        const ret = document.getElementById(t + '-ret').checked ? "YES" : "NO";
-        const price = document.getElementById(t + '-jmd').innerText;
-        const usd = document.getElementById(t + '-usd').innerText;
-        const msg = t === 'ins' ? 
-            `*INSTANT TAXI*\nPickup: ${document.getElementById('ins-p').value}\nDest: ${document.getElementById('ins-d').value}\nRound Trip: ${ret}\nTotal: ${price} (${usd})` :
-            `*CHARTER APPOINTMENT*\nDate: ${document.getElementById('cha-date').value}\nStops: ${selected.join(', ')}\nRound Trip: ${ret}\nTotal: ${price} (${usd})`;
+    function finalize() {
+        const gpsLink = userPos ? `https://www.google.com/maps?q=${userPos}` : "Manual Entry";
+        const msg = `*COOL COMFORT RESERVATION*\n--------------------------\nType: ${mode.toUpperCase()}\nPickup: ${document.getElementById('p-input').value}\nDest: ${document.getElementById('d-input').value}\nGPS: ${gpsLink}\nStops: ${selectedSites.join(', ') || 'Direct'}\nTotal: ${document.getElementById('price-jmd').innerText}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
+    }
+
+    function addCustom(e) {
+        if (e.key === 'Enter') {
+            const v = e.target.value.trim();
+            if (v) { selectedSites.push(v); base += 5000; e.target.value = ""; alert("Custom Spot Added: " + v); }
+        }
     }
 </script>
 </body>
