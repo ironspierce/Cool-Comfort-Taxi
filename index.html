@@ -18,7 +18,6 @@
 
         .hero { min-height: 100vh; background: linear-gradient(rgba(0,31,38,0.85), rgba(0,31,38,0.95)), url('Cover Photo.jpg'); background-size: cover; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 40px 20px; }
         
-        /* Entrance Portal */
         #portal { display: flex; flex-direction: column; gap: 20px; width: 100%; max-width: 450px; text-align: center; }
         .portal-btn { background: var(--glass); border: 1px solid var(--gold); padding: 30px; border-radius: 30px; cursor: pointer; transition: 0.3s; backdrop-filter: blur(20px); }
         .portal-btn:hover { background: rgba(212,175,55,0.15); transform: translateY(-5px); }
@@ -34,7 +33,6 @@
         .btn-main { background: var(--gold); color: var(--navy); border: none; padding: 20px; border-radius: 18px; width: 100%; font-weight: 700; text-transform: uppercase; cursor: pointer; letter-spacing: 2px; }
         .btn-back { background: none; border: none; color: var(--gold); cursor: pointer; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; margin-bottom: 15px; }
 
-        /* Listing UI */
         .discovery-area { max-height: 350px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 20px; padding: 10px; margin-bottom: 20px; }
         .poi-card { background: rgba(255,255,255,0.03); border-radius: 15px; overflow: hidden; margin-bottom: 12px; cursor: pointer; transition: 0.2s; border: 1px solid rgba(255,255,255,0.05); }
         .poi-card.active { border-color: var(--gold); background: rgba(212,175,55,0.1); }
@@ -43,8 +41,8 @@
         .poi-info b { color: var(--gold); display: block; }
         .poi-info p { font-size: 0.7rem; opacity: 0.6; margin: 4px 0; line-height: 1.4; }
 
-        /* Dynamic Pricing & Logic */
         .price-panel { text-align: center; padding: 20px; background: rgba(0,0,0,0.4); border: 1px solid var(--gold); border-radius: 20px; margin-bottom: 15px; }
+        .usd-equivalent { font-size: 0.9rem; opacity: 0.8; margin-top: 5px; color: var(--white); }
         .return-toggle { background: rgba(212,175,55,0.1); border: 1px solid var(--gold); padding: 15px; border-radius: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; }
         .discount-badge { background: var(--gold); color: var(--navy); padding: 2px 8px; border-radius: 5px; font-weight: 700; font-size: 0.6rem; }
 
@@ -79,6 +77,7 @@
 
         <div class="price-panel" id="ins-price" style="display:none;">
             <div id="ins-jmd" style="font-size:1.8rem; font-weight:700; color:var(--gold);">$0 JMD</div>
+            <div id="ins-usd" class="usd-equivalent">$0.00 USD</div>
             <div id="ins-paypal-box" style="display:none; margin-top:15px;"></div>
         </div>
         <button class="btn-main" onclick="send('ins')">Request Ride</button>
@@ -111,6 +110,7 @@
 
             <div class="price-panel">
                 <div id="cha-jmd" style="font-size:1.8rem; font-weight:700; color:var(--gold);">$0 JMD</div>
+                <div id="cha-usd" class="usd-equivalent">$0.00 USD</div>
                 <div id="cha-paypal-box" style="display:none; margin-top:15px;"></div>
             </div>
             <button class="btn-main" onclick="send('cha')">Confirm Appointment</button>
@@ -121,6 +121,7 @@
 <script>
     let mapI, mapC, ds, drI, drC, geo;
     let chaTotal = 600, currentIns = 0, selected = [];
+    const EX_RATE = 156; // Current conversion rate
 
     const poiData = [
         { n: "Doctor's Cave Beach", p: 4000, img: "https://images.unsplash.com/photo-1545532555-90141f021235?auto=format&fit=crop&w=400", m: "St. James. The benchmark for clear Caribbean waters." },
@@ -146,7 +147,6 @@
                 <div class="poi-info">
                     <b>${i.n}</b>
                     <p>${i.m}</p>
-                    <div style="font-weight:700;font-size:0.8rem;">$${i.p.toLocaleString()} JMD</div>
                 </div>
             </div>`).join('');
     }
@@ -182,8 +182,7 @@
             const val = e.target.value.trim();
             if (val && !selected.includes(val)) {
                 selected.push(val);
-                chaTotal += 5000; // Standard premium for custom destinations
-                alert("Destination Added: " + val);
+                chaTotal += 5000;
                 updateChaPrice();
                 e.target.value = "";
             }
@@ -198,11 +197,12 @@
                 drI.setDirections(res);
                 const km = res.routes[0].legs[0].distance.value / 1000;
                 let fare = 600 + (km * 155);
-                if (document.getElementById('ins-ret').checked) fare = fare + (fare * 0.9);
+                if (document.getElementById('ins-ret').checked) fare = fare * 1.9;
                 currentIns = Math.round(fare / 10) * 10;
                 document.getElementById('ins-jmd').innerText = `$${currentIns.toLocaleString()} JMD`;
+                document.getElementById('ins-usd').innerText = `$${(currentIns / EX_RATE).toFixed(2)} USD`;
                 document.getElementById('ins-price').style.display = 'block';
-                renderPay('ins', (currentIns / 156).toFixed(2));
+                renderPay('ins', (currentIns / EX_RATE).toFixed(2));
             }
         });
     }
@@ -220,10 +220,11 @@
 
     function updateChaPrice() {
         let finalPrice = chaTotal;
-        if (document.getElementById('cha-ret').checked) finalPrice = finalPrice + (finalPrice * 0.9);
+        if (document.getElementById('cha-ret').checked) finalPrice = finalPrice * 1.9;
         const rounded = Math.round(finalPrice / 10) * 10;
         document.getElementById('cha-jmd').innerText = `$${rounded.toLocaleString()} JMD`;
-        renderPay('cha', (rounded / 156).toFixed(2));
+        document.getElementById('cha-usd').innerText = `$${(rounded / EX_RATE).toFixed(2)} USD`;
+        renderPay('cha', (rounded / EX_RATE).toFixed(2));
     }
 
     function nextStep(step) {
@@ -244,10 +245,12 @@
     }
 
     function send(t) {
-        const ret = document.getElementById(t + '-ret').checked ? "YES (10% Discount applied)" : "NO";
+        const ret = document.getElementById(t + '-ret').checked ? "YES" : "NO";
+        const price = document.getElementById(t + '-jmd').innerText;
+        const usd = document.getElementById(t + '-usd').innerText;
         const msg = t === 'ins' ? 
-            `*INSTANT TAXI*\nPickup: ${document.getElementById('ins-p').value}\nDest: ${document.getElementById('ins-d').value}\nRound Trip: ${ret}\nFare: ${document.getElementById('ins-jmd').innerText}` :
-            `*CHARTER APPOINTMENT*\nDate: ${document.getElementById('cha-date').value}\nStops: ${selected.join(', ')}\nRound Trip: ${ret}\nTotal: ${document.getElementById('cha-jmd').innerText}`;
+            `*INSTANT TAXI*\nPickup: ${document.getElementById('ins-p').value}\nDest: ${document.getElementById('ins-d').value}\nRound Trip: ${ret}\nTotal: ${price} (${usd})` :
+            `*CHARTER APPOINTMENT*\nDate: ${document.getElementById('cha-date').value}\nStops: ${selected.join(', ')}\nRound Trip: ${ret}\nTotal: ${price} (${usd})`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 </script>
