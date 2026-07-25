@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cool Comfort | Scheduled Executive Logistics</title>
+    <title>Cool Comfort | Round Trip & Wait Time Logistics</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -18,29 +18,32 @@
         
         h1 { font-family: 'Playfair Display', serif; color: var(--gold); text-align: center; margin-bottom: 25px; letter-spacing: 3px; text-transform: uppercase; }
 
-        #map-v { width: 100%; height: 220px; border-radius: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        #map-v { width: 100%; height: 200px; border-radius: 25px; margin-bottom: 20px; border: 1px solid rgba(255,255,255,0.1); }
 
         .status-pill { display: inline-block; padding: 5px 12px; border-radius: 20px; font-size: 0.6rem; text-transform: uppercase; margin-bottom: 15px; font-weight: 700; background: rgba(255,255,255,0.1); color: var(--gold); }
         .detecting { animation: pulse 1.5s infinite; }
 
         .section-label { font-size: 0.6rem; color: var(--gold); letter-spacing: 3px; text-transform: uppercase; display: block; text-align: center; margin: 15px 0 10px 0; }
 
-        input { width: 100%; padding: 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: #fff; font-family: inherit; font-size: 0.85rem; margin-bottom: 10px; box-sizing: border-box; }
+        input, select { width: 100%; padding: 16px; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; color: #fff; font-family: inherit; font-size: 0.85rem; margin-bottom: 10px; box-sizing: border-box; outline: none; }
+        select option { background: #001f26; color: #fff; }
         
-        /* Calendar/Clock Icon Color Fixes for Modern Browsers */
         input[type="date"]::-webkit-calendar-picker-indicator,
         input[type="time"]::-webkit-calendar-picker-indicator {
             filter: invert(75%) sepia(50%) saturate(400%) hue-rotate(5deg);
             cursor: pointer;
         }
 
-        .datetime-row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .datetime-row input { margin-bottom: 0; }
+        .row-2 { display: flex; gap: 10px; margin-bottom: 10px; }
+        .row-2 input, .row-2 select { margin-bottom: 0; }
 
-        .add-btn { background: none; color: var(--gold); border: 1px dashed var(--gold); padding: 10px; border-radius: 12px; width: 100%; cursor: pointer; margin-bottom: 20px; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; }
+        .add-btn { background: none; color: var(--gold); border: 1px dashed var(--gold); padding: 10px; border-radius: 12px; width: 100%; cursor: pointer; margin-bottom: 15px; font-weight: 700; font-size: 0.7rem; text-transform: uppercase; }
 
-        .price-panel { background: var(--gold); color: var(--navy); border-radius: 20px; padding: 15px; text-align: center; margin-bottom: 20px; display: none; }
-        .price-panel b { font-size: 1.8rem; display: block; }
+        /* Price Breakdown UI */
+        .price-panel { background: var(--gold); color: var(--navy); border-radius: 20px; padding: 20px; text-align: center; margin-bottom: 20px; display: none; }
+        .price-panel b { font-size: 1.8rem; display: block; line-height: 1.1; }
+        .fare-breakdown { font-size: 0.7rem; font-weight: 700; opacity: 0.85; margin-top: 8px; border-top: 1px dashed rgba(0,31,38,0.2); padding-top: 8px; text-align: left; }
+        .fare-line { display: flex; justify-content: space-between; margin-bottom: 3px; }
 
         .book-btn { background: #fff; color: var(--navy); padding: 20px; border: none; border-radius: 15px; width: 100%; font-weight: 700; text-transform: uppercase; cursor: pointer; letter-spacing: 2px; }
 
@@ -56,25 +59,50 @@
         <div style="text-align: center;"><span id="geo-status" class="status-pill detecting">Initializing GPS...</span></div>
         <div id="map-v"></div>
 
-        <!-- Route Section -->
+        <!-- Route Architecture -->
         <span class="section-label">Route Architecture</span>
         <div id="route-manager">
             <input type="text" id="start" placeholder="Pickup Address (Detecting...)">
             <div id="stops-list"></div>
-            <button class="add-btn" onclick="addNewStop()">+ Add Next Leg</button>
-            <input type="text" id="end" placeholder="Final Destination">
+            <button class="add-btn" onclick="addNewStop()">+ Add Intermediate Stop</button>
+            <input type="text" id="end" placeholder="Destination">
         </div>
 
-        <!-- NEW: Schedule Section -->
+        <!-- Trip Configuration -->
+        <span class="section-label">Service Parameters</span>
+        <div class="row-2">
+            <select id="trip-type" onchange="toggleTripType()">
+                <option value="one-way">One-Way Trip</option>
+                <option value="round-trip">Round Trip</option>
+            </select>
+            <select id="wait-time" style="display: none;" onchange="calculateChain()">
+                <option value="0">No Wait Time</option>
+                <option value="0.5">30 Mins Wait ($750 JMD)</option>
+                <option value="1">1 Hour Wait ($1,500 JMD)</option>
+                <option value="2">2 Hours Wait ($3,000 JMD)</option>
+                <option value="3">3 Hours Wait ($4,500 JMD)</option>
+                <option value="4">4 Hours Wait ($6,000 JMD)</option>
+                <option value="6">6 Hours Wait ($9,000 JMD)</option>
+                <option value="8">Full Day Standby / 8 Hrs ($12,000 JMD)</option>
+            </select>
+        </div>
+
+        <!-- Schedule Dimensions -->
         <span class="section-label">Schedule Dimensions</span>
-        <div class="datetime-row">
+        <div class="row-2">
             <input type="date" id="pickup-date" required>
             <input type="time" id="pickup-time" required>
         </div>
 
+        <!-- Pricing Output -->
         <div class="price-panel" id="price-box">
             <b id="jmd-total">$0 JMD</b>
-            <span id="usd-total" style="font-weight:700; font-size: 0.8rem;">$0.00 USD</span>
+            <span id="usd-total" style="font-weight:700; font-size: 0.8rem; display:block; margin-bottom:5px;">$0.00 USD</span>
+            
+            <div class="fare-breakdown">
+                <div class="fare-line"><span>Distance Charge:</span><span id="dist-fare-ui">$0</span></div>
+                <div class="fare-line" id="wait-line-ui" style="display:none;"><span>Driver Standby Fee:</span><span id="wait-fare-ui">$0</span></div>
+            </div>
         </div>
 
         <button class="book-btn" onclick="sendToWhatsApp()">Confirm Reservation</button>
@@ -83,8 +111,9 @@
 
 <script>
     let map, ds, dr, geo;
-    const RATE = 155;
-    const BASE = 600;
+    const RATE_PER_KM = 155;
+    const BASE_FEE = 600;
+    const WAIT_RATE_PER_HOUR = 1500; // $1,500 JMD per hour wait fee
 
     function initMap() {
         ds = new google.maps.DirectionsService();
@@ -97,11 +126,21 @@
         setupAC(document.getElementById('start'));
         setupAC(document.getElementById('end'));
         
-        // Default the date input to today's date automatically
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('pickup-date').value = today;
-
+        document.getElementById('pickup-date').value = new Date().toISOString().split('T')[0];
         detectLocation();
+    }
+
+    function toggleTripType() {
+        const type = document.getElementById('trip-type').value;
+        const waitSelect = document.getElementById('wait-time');
+        
+        if (type === 'round-trip') {
+            waitSelect.style.display = 'block';
+        } else {
+            waitSelect.style.display = 'none';
+            waitSelect.value = "0";
+        }
+        calculateChain();
     }
 
     function detectLocation() {
@@ -165,7 +204,33 @@
                 dr.setDirections(res);
                 let totalKM = 0;
                 res.routes[0].legs.forEach(leg => totalKM += leg.distance.value / 1000);
-                const totalJMD = Math.round((BASE + (totalKM * RATE)) / 10) * 10;
+
+                const isRoundTrip = document.getElementById('trip-type').value === 'round-trip';
+                const waitHours = parseFloat(document.getElementById('wait-time').value) || 0;
+
+                // 1. Double the total driving distance if round-trip
+                const effectiveKM = isRoundTrip ? (totalKM * 2) : totalKM;
+                
+                // 2. Base distance charge calculation
+                const distanceFare = Math.round((BASE_FEE + (effectiveKM * RATE_PER_KM)) / 10) * 10;
+                
+                // 3. Waiting time fee calculation
+                const waitFare = waitHours * WAIT_RATE_PER_HOUR;
+                
+                // 4. Grand Total
+                const totalJMD = distanceFare + waitFare;
+
+                // Update UI Breakdown
+                document.getElementById('dist-fare-ui').innerText = `$${distanceFare.toLocaleString()} JMD (${effectiveKM.toFixed(1)} km${isRoundTrip ? ' return' : ''})`;
+                
+                const waitLine = document.getElementById('wait-line-ui');
+                if (waitFare > 0) {
+                    document.getElementById('wait-fare-ui').innerText = `$${waitFare.toLocaleString()} JMD (${waitHours} hrs)`;
+                    waitLine.style.display = 'flex';
+                } else {
+                    waitLine.style.display = 'none';
+                }
+
                 document.getElementById('jmd-total').innerText = `$${totalJMD.toLocaleString()} JMD`;
                 document.getElementById('usd-total').innerText = `$${(totalJMD / 156).toFixed(2)} USD`;
                 document.getElementById('price-box').style.display = 'block';
@@ -179,14 +244,18 @@
         const end = document.getElementById('end').value;
         const date = document.getElementById('pickup-date').value;
         const time = document.getElementById('pickup-time').value;
+        const tripType = document.getElementById('trip-type').value;
+        const waitHours = document.getElementById('wait-time').value;
         const stops = Array.from(document.querySelectorAll('.waypoint')).map(i => i.value).join(' -> ');
-        
+
         if (!date || !time) {
-            alert("Please specify a prompt Date and Time for your pickup.");
+            alert("Please specify a Date and Time for your pickup.");
             return;
         }
 
-        const msg = `*COOL COMFORT EXECUTIVE RESERVATION*\n--------------------------\n📅 DATE: ${date}\n⏰ TIME: ${time}\n\n📍 START: ${start}\n🛑 STOPS: ${stops || 'None'}\n🏁 END: ${end}\n💰 TOTAL FARE: ${jmd}`;
+        let tripSummary = tripType === 'round-trip' ? `🔁 ROUND TRIP (Wait: ${waitHours} hrs)` : `➡️ ONE-WAY TRIP`;
+
+        const msg = `*COOL COMFORT EXECUTIVE RESERVATION*\n--------------------------\n📋 TYPE: ${tripSummary}\n📅 DATE: ${date}\n⏰ TIME: ${time}\n\n📍 START: ${start}\n🛑 STOPS: ${stops || 'None'}\n🏁 DEST: ${end}\n💰 TOTAL FARE: ${jmd}`;
         window.open(`https://wa.me/18763933246?text=${encodeURIComponent(msg)}`);
     }
 
